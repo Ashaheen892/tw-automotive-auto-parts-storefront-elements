@@ -15,7 +15,7 @@ import json
 from pathlib import Path
 from uuid import NAMESPACE_URL, uuid5
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parent
 BUNDLE = ROOT / "twilight-bundle.json"
 PUBLIC = ROOT / "public" / "twilight-bundle.json"
 
