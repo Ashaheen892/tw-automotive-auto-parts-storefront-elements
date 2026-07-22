@@ -28,7 +28,15 @@ src/
       index.ts        # Main component file
       styles.ts       # Component styles (optional)
       types.ts        # Component types (optional)
+  utils/
+    localizedString.ts
+dist/
+twilight-bundle.json
+vite.config.ts
+tsconfig.json
+package.json
 ```
+
 
 ## Built-in Plugins
 
