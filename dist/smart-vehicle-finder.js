@@ -1,10 +1,12 @@
-import { css as _, LitElement as w, html as i, nothing as p } from "lit";
-import { property as y, state as h } from "lit/decorators.js";
-import { styleMap as $ } from "lit/directives/style-map.js";
-import { l as n, t as s, n as x, k as q, c as P, s as N, d as k, r as I, a as R, b as C } from "./registerSalla-Dct4KN_E.js";
-import { r as z } from "./commerceOutcome-B3T0_-WJ.js";
-import { o as S } from "./whatsapp-GI8N2VNC.js";
-const A = _`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, html, nothing } from "lit";
+import { property, state } from "lit/decorators.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { l as localizedString, t, n as normalizeCollection, k as itemIdFromLabel, c as extractImageUrl, s as sharedSectionCss, d as isTruthy, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+import { o as openWhatsApp } from "./whatsapp-C3glLfzz.js";
+const componentStyles = css`
   .svf-shell {
     display: grid;
     gap: 1.15rem;
@@ -210,43 +212,47 @@ const A = _`
     }
   }
 `;
-function B(l) {
-  const e = [];
-  return x(l).forEach((r, a) => {
-    const t = n(r.brand) || n(r.brand_name) || n(r.company) || n(r.name) || n(r.title);
-    if (!t) return;
-    const o = q(t, "") || `brand-${a + 1}`;
-    e.push({
-      brandId: o,
-      brandName: t,
-      brandImage: P(r.brand_image ?? r.image ?? r.logo)
+function parseVehicleRows(raw) {
+  const rows = [];
+  return normalizeCollection(raw).forEach((row, i) => {
+    const brandName = localizedString(row.brand) || localizedString(row.brand_name) || localizedString(row.company) || localizedString(row.name) || localizedString(row.title);
+    if (!brandName) return;
+    const brandId = itemIdFromLabel(brandName, "") || `brand-${i + 1}`;
+    rows.push({
+      brandId,
+      brandName,
+      brandImage: extractImageUrl(row.brand_image ?? row.image ?? row.logo)
     });
-  }), e;
+  }), rows;
 }
-function L(l) {
-  return B(l.svf_vehicles ?? l.svf_custom_vehicles);
+__name(parseVehicleRows, "parseVehicleRows");
+function resolveVehicleRows(config) {
+  return parseVehicleRows(config.svf_vehicles ?? config.svf_custom_vehicles);
 }
-function W(l) {
-  const e = /* @__PURE__ */ new Map();
-  for (const r of l) {
-    const a = e.get(r.brandId);
-    a ? !a.image && r.brandImage && (a.image = r.brandImage) : e.set(r.brandId, {
-      id: r.brandId,
-      name: r.brandName,
-      image: r.brandImage
+__name(resolveVehicleRows, "resolveVehicleRows");
+function brandsFromRows(rows) {
+  const map = /* @__PURE__ */ new Map();
+  for (const row of rows) {
+    const existing = map.get(row.brandId);
+    existing ? !existing.image && row.brandImage && (existing.image = row.brandImage) : map.set(row.brandId, {
+      id: row.brandId,
+      name: row.brandName,
+      image: row.brandImage
     });
   }
-  return [...e.values()];
+  return [...map.values()];
 }
-function m(l, e, r, a) {
-  return n(l[e]) || s(r, a);
+__name(brandsFromRows, "brandsFromRows");
+function label(config, key, ar, en) {
+  return localizedString(config[key]) || t(ar, en);
 }
-var j = Object.defineProperty, f = (l, e, r, a) => {
-  for (var t = void 0, o = l.length - 1, v; o >= 0; o--)
-    (v = l[o]) && (t = v(e, r, t) || t);
-  return t && j(e, r, t), t;
-};
-const b = class b extends w {
+__name(label, "label");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _SmartVehicleFinder = class _SmartVehicleFinder extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.brandId = "", this.showRequest = !1, this.reqName = "", this.reqPhone = "", this.reqPart = "", this.reqNote = "", this.boundLangHandler = () => this.requestUpdate();
   }
@@ -256,154 +262,154 @@ const b = class b extends w {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
-  willUpdate(e) {
-    if (e.has("config") && (this.brandId = "", this.showRequest = !1, this.reqName = "", this.reqPhone = "", this.reqPart = "", this.reqNote = ""), !this.brandId) {
-      const r = this.brands[0];
-      r && (this.brandId = r.id);
+  willUpdate(changed) {
+    if (changed.has("config") && (this.brandId = "", this.showRequest = !1, this.reqName = "", this.reqPhone = "", this.reqPart = "", this.reqNote = ""), !this.brandId) {
+      const first = this.brands[0];
+      first && (this.brandId = first.id);
     }
   }
   get rows() {
-    return L(this.config || {});
+    return resolveVehicleRows(this.config || {});
   }
   get brands() {
-    return W(this.rows);
+    return brandsFromRows(this.rows);
   }
   get activeBrand() {
-    return this.brands.find((e) => e.id === this.brandId) ?? this.brands[0] ?? null;
+    return this.brands.find((b) => b.id === this.brandId) ?? this.brands[0] ?? null;
   }
   sendWhatsAppRequest() {
-    const e = this.config || {}, r = n(e.svf_whatsapp_phone) || String(e.svf_whatsapp_phone ?? "").trim();
-    if (!r) return;
-    const a = [
-      n(e.svf_whatsapp_prefix) || s("طلب قطعة غير متوفرة من محدد السيارة:", "Part request from vehicle finder:"),
-      this.reqName ? `${s("الاسم", "Name")}: ${this.reqName}` : "",
-      this.reqPhone ? `${s("جوال العميل", "Customer phone")}: ${this.reqPhone}` : "",
-      this.activeBrand ? `${s("الشركة", "Company")}: ${this.activeBrand.name}` : "",
-      this.reqPart ? `${s("القطعة المطلوبة", "Requested part")}: ${this.reqPart}` : "",
-      this.reqNote ? `${s("ملاحظات", "Notes")}: ${this.reqNote}` : ""
+    const c = this.config || {}, phone = localizedString(c.svf_whatsapp_phone) || String(c.svf_whatsapp_phone ?? "").trim();
+    if (!phone) return;
+    const lines = [
+      localizedString(c.svf_whatsapp_prefix) || t("طلب قطعة غير متوفرة من محدد السيارة:", "Part request from vehicle finder:"),
+      this.reqName ? `${t("الاسم", "Name")}: ${this.reqName}` : "",
+      this.reqPhone ? `${t("جوال العميل", "Customer phone")}: ${this.reqPhone}` : "",
+      this.activeBrand ? `${t("الشركة", "Company")}: ${this.activeBrand.name}` : "",
+      this.reqPart ? `${t("القطعة المطلوبة", "Requested part")}: ${this.reqPart}` : "",
+      this.reqNote ? `${t("ملاحظات", "Notes")}: ${this.reqNote}` : ""
     ].filter(Boolean);
-    S(r, a.join(`
+    openWhatsApp(phone, lines.join(`
 `));
   }
-  renderBrandTabs(e) {
-    return i`
+  renderBrandTabs(brands) {
+    return html`
       <div
         class="svf-tabs"
         role="tablist"
-        aria-label=${m(this.config, "svf_brand_label", "الشركة", "Company")}
+        aria-label=${label(this.config, "svf_brand_label", "الشركة", "Company")}
       >
-        ${e.map((r) => {
-      const a = this.brandId === r.id, t = r.name.charAt(0).toUpperCase();
-      return i`
+        ${brands.map((brand) => {
+      const active = this.brandId === brand.id, initial = brand.name.charAt(0).toUpperCase();
+      return html`
             <button
               type="button"
               class="svf-brand"
               role="tab"
-              aria-selected=${a ? "true" : "false"}
-              @click=${() => this.brandId = r.id}
+              aria-selected=${active ? "true" : "false"}
+              @click=${() => this.brandId = brand.id}
             >
-              ${r.image ? i`<img class="svf-brand__img" src=${r.image} alt="" loading="lazy" />` : i`<span class="svf-brand__icon" aria-hidden="true">${t}</span>`}
-              <span class="svf-brand__name">${r.name}</span>
+              ${brand.image ? html`<img class="svf-brand__img" src=${brand.image} alt="" loading="lazy" />` : html`<span class="svf-brand__icon" aria-hidden="true">${initial}</span>`}
+              <span class="svf-brand__name">${brand.name}</span>
             </button>
           `;
     })}
       </div>
     `;
   }
-  renderWhatsAppPanel(e) {
-    if (!k(e.svf_show_whatsapp_request, !0)) return p;
-    if (!(n(e.svf_whatsapp_phone) || String(e.svf_whatsapp_phone ?? "").trim())) return p;
-    const a = m(e, "svf_whatsapp_open_label", "لم تجد طلبك؟ أرسله عبر واتساب", "Can't find it? Request on WhatsApp"), t = m(e, "svf_whatsapp_send_label", "إرسال عبر واتساب", "Send via WhatsApp"), o = n(e.svf_whatsapp_title) || s("طلب قطعة غير متوفرة", "Request a missing part"), v = n(e.svf_whatsapp_desc) || s(
+  renderWhatsAppPanel(c) {
+    if (!isTruthy(c.svf_show_whatsapp_request, !0)) return nothing;
+    if (!(localizedString(c.svf_whatsapp_phone) || String(c.svf_whatsapp_phone ?? "").trim())) return nothing;
+    const openLabel = label(c, "svf_whatsapp_open_label", "لم تجد طلبك؟ أرسله عبر واتساب", "Can't find it? Request on WhatsApp"), sendLabel = label(c, "svf_whatsapp_send_label", "إرسال عبر واتساب", "Send via WhatsApp"), title = localizedString(c.svf_whatsapp_title) || t("طلب قطعة غير متوفرة", "Request a missing part"), desc = localizedString(c.svf_whatsapp_desc) || t(
       "املأ البيانات وسنفتح واتساب برسالة جاهزة للمتجر.",
       "Fill the form and we will open WhatsApp with a ready message."
     );
     if (!this.showRequest)
-      return i`
+      return html`
         <div class="svf-actions" style="justify-content:center;margin-top:0.35rem">
           <button
             type="button"
             class="fs-btn fs-btn--ghost fs-tap"
             @click=${() => {
         this.showRequest = !0, this.requestUpdate(), requestAnimationFrame(() => {
-          var c, u;
-          (u = (c = this.renderRoot) == null ? void 0 : c.querySelector(".svf-wa")) == null || u.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          var _a, _b;
+          (_b = (_a = this.renderRoot) == null ? void 0 : _a.querySelector(".svf-wa")) == null || _b.scrollIntoView({ behavior: "smooth", block: "nearest" });
         });
       }}
           >
-            ${a}
+            ${openLabel}
           </button>
         </div>
       `;
-    const g = !!(this.reqPart.trim() || this.reqNote.trim() || this.activeBrand);
-    return i`
-      <aside class="svf-wa" aria-label=${o}>
+    const canSend = !!(this.reqPart.trim() || this.reqNote.trim() || this.activeBrand);
+    return html`
+      <aside class="svf-wa" aria-label=${title}>
         <div class="svf-wa__head">
-          <h3 class="svf-wa__title">${o}</h3>
-          <p class="svf-wa__desc">${v}</p>
+          <h3 class="svf-wa__title">${title}</h3>
+          <p class="svf-wa__desc">${desc}</p>
         </div>
         <div class="svf-wa__form">
           <div class="svf-wa__row">
             <div class="svf-field">
-              <label class="svf-label" for="svf-req-name">${s("الاسم", "Name")}</label>
+              <label class="svf-label" for="svf-req-name">${t("الاسم", "Name")}</label>
               <input
                 id="svf-req-name"
                 class="svf-input"
                 .value=${this.reqName}
-                @input=${(c) => {
-      this.reqName = c.target.value;
+                @input=${(e) => {
+      this.reqName = e.target.value;
     }}
               />
             </div>
             <div class="svf-field">
-              <label class="svf-label" for="svf-req-phone">${s("رقم الجوال", "Phone")}</label>
+              <label class="svf-label" for="svf-req-phone">${t("رقم الجوال", "Phone")}</label>
               <input
                 id="svf-req-phone"
                 class="svf-input"
                 type="tel"
                 .value=${this.reqPhone}
-                @input=${(c) => {
-      this.reqPhone = c.target.value;
+                @input=${(e) => {
+      this.reqPhone = e.target.value;
     }}
               />
             </div>
           </div>
           <div class="svf-field">
-            <label class="svf-label" for="svf-req-part">${s("القطعة المطلوبة", "Requested part")}</label>
+            <label class="svf-label" for="svf-req-part">${t("القطعة المطلوبة", "Requested part")}</label>
             <input
               id="svf-req-part"
               class="svf-input"
               .value=${this.reqPart}
-              placeholder=${s("مثال: فلتر زيت أصلي", "e.g. OEM oil filter")}
-              @input=${(c) => {
-      this.reqPart = c.target.value;
+              placeholder=${t("مثال: فلتر زيت أصلي", "e.g. OEM oil filter")}
+              @input=${(e) => {
+      this.reqPart = e.target.value;
     }}
             />
           </div>
           <div class="svf-field">
-            <label class="svf-label" for="svf-req-note">${s("ملاحظات", "Notes")}</label>
+            <label class="svf-label" for="svf-req-note">${t("ملاحظات", "Notes")}</label>
             <textarea
               id="svf-req-note"
               class="svf-textarea"
               .value=${this.reqNote}
-              @input=${(c) => {
-      this.reqNote = c.target.value;
+              @input=${(e) => {
+      this.reqNote = e.target.value;
     }}
             ></textarea>
           </div>
-          ${this.activeBrand ? i`<p class="svf-field-hint">${s("الشركة المختارة", "Selected company")}: ${this.activeBrand.name}</p>` : p}
+          ${this.activeBrand ? html`<p class="svf-field-hint">${t("الشركة المختارة", "Selected company")}: ${this.activeBrand.name}</p>` : nothing}
           <div class="svf-actions">
             <button
               type="button"
               class="fs-btn fs-tap svf-btn-wa"
-              ?disabled=${!g}
+              ?disabled=${!canSend}
               @click=${() => this.sendWhatsAppRequest()}
             >
-              ${t}
+              ${sendLabel}
             </button>
             <button type="button" class="fs-btn fs-btn--ghost fs-tap" @click=${() => {
       this.showRequest = !1;
     }}>
-              ${s("إلغاء", "Cancel")}
+              ${t("إلغاء", "Cancel")}
             </button>
           </div>
         </div>
@@ -411,10 +417,10 @@ const b = class b extends w {
     `;
   }
   renderEmptyMerchant() {
-    return i`
+    return html`
       <div class="svf-card">
         <p class="svf-hint">
-          ${s(
+          ${t(
       "أضف شركات السيارات من إعدادات العنصر (الشركة والصورة) ليظهر المحدد للعملاء.",
       "Add car companies in the component settings (company and image) so shoppers can use the finder."
     )}
@@ -422,31 +428,31 @@ const b = class b extends w {
       </div>
     `;
   }
-  renderProducts(e) {
-    return z(e, "svf_", {
+  renderProducts(c) {
+    return renderCommerceOutcome(c, "svf_", {
       ready: !!this.activeBrand
     });
   }
   render() {
-    const e = this.config || {}, r = I(e, "svf_"), a = this.brands, t = n(e.svf_title), o = n(e.svf_desc);
-    return i`
+    const c = this.config || {}, theme = readSectionTheme(c, "svf_"), brands = this.brands, title = localizedString(c.svf_title), desc = localizedString(c.svf_desc);
+    return html`
       <section
         class="fs-section"
-        style=${$(R(r))}
-        aria-label=${t || s("مُحدّد السيارة الذكي", "Smart vehicle finder")}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title || t("مُحدّد السيارة الذكي", "Smart vehicle finder")}
       >
         <div class="fs-container">
           <div class="svf-shell">
-            ${t || o ? i`<div class="fs-hero">
-                  <p class="fs-eyebrow">${s("تسوق حسب الشركة", "Shop by company")}</p>
-                  ${t ? i`<h2 class="fs-title">${t}</h2>` : p}
-                  ${o ? i`<p class="fs-desc">${o}</p>` : p}
-                </div>` : p}
+            ${title || desc ? html`<div class="fs-hero">
+                  <p class="fs-eyebrow">${t("تسوق حسب الشركة", "Shop by company")}</p>
+                  ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+                  ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+                </div>` : nothing}
 
-            ${a.length ? i`
-                  ${this.renderBrandTabs(a)}
-                  ${this.renderProducts(e)}
-                  ${this.renderWhatsAppPanel(e)}
+            ${brands.length ? html`
+                  ${this.renderBrandTabs(brands)}
+                  ${this.renderProducts(c)}
+                  ${this.renderWhatsAppPanel(c)}
                 ` : this.renderEmptyMerchant()}
           </div>
         </div>
@@ -454,33 +460,33 @@ const b = class b extends w {
     `;
   }
 };
-b.styles = [N, A];
-let d = b;
-f([
-  y({ type: Object })
-], d.prototype, "config");
-f([
-  h()
-], d.prototype, "brandId");
-f([
-  h()
-], d.prototype, "showRequest");
-f([
-  h()
-], d.prototype, "reqName");
-f([
-  h()
-], d.prototype, "reqPhone");
-f([
-  h()
-], d.prototype, "reqPart");
-f([
-  h()
-], d.prototype, "reqNote");
-C(
-  d
+__name(_SmartVehicleFinder, "SmartVehicleFinder"), _SmartVehicleFinder.styles = [sharedSectionCss, componentStyles];
+let SmartVehicleFinder = _SmartVehicleFinder;
+__decorateClass([
+  property({ type: Object })
+], SmartVehicleFinder.prototype, "config");
+__decorateClass([
+  state()
+], SmartVehicleFinder.prototype, "brandId");
+__decorateClass([
+  state()
+], SmartVehicleFinder.prototype, "showRequest");
+__decorateClass([
+  state()
+], SmartVehicleFinder.prototype, "reqName");
+__decorateClass([
+  state()
+], SmartVehicleFinder.prototype, "reqPhone");
+__decorateClass([
+  state()
+], SmartVehicleFinder.prototype, "reqPart");
+__decorateClass([
+  state()
+], SmartVehicleFinder.prototype, "reqNote");
+bindSallaRegistration(
+  SmartVehicleFinder
 );
-typeof d < "u" && d.registerSallaComponent("salla-smart-vehicle-finder");
+typeof SmartVehicleFinder < "u" && SmartVehicleFinder.registerSallaComponent("salla-smart-vehicle-finder");
 export {
-  d as default
+  SmartVehicleFinder as default
 };

@@ -1,10 +1,12 @@
-import { css as C, LitElement as L, nothing as a, html as o } from "lit";
-import { property as M, state as j } from "lit/decorators.js";
-import { classMap as x } from "lit/directives/class-map.js";
-import { styleMap as z } from "lit/directives/style-map.js";
-import { l, e as v, c as w, d as p, g as F, s as P, i as E, r as O, t as h, p as U, a as R, b as q } from "./registerSalla-Dct4KN_E.js";
-import { r as N } from "./commerceOutcome-B3T0_-WJ.js";
-const T = C`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, nothing, html } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { l as localizedString, e as extractLink, c as extractImageUrl, d as isTruthy, g as getRadioValue, s as sharedSectionCss, i as isExternalUrl, r as readSectionTheme, t, p as prefersReducedMotion, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .vh-section {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
@@ -233,54 +235,63 @@ const T = C`
       transform: none;
     }
   }
-`, A = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1800&q=80";
-function D(t) {
-  return (l(t.vh_video_url) || v(t.vh_video_url) || String(t.vh_video || "").trim()).trim();
+`, DEFAULT_POSTER = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1800&q=80";
+function resolveVideoUrl(config) {
+  return (localizedString(config.vh_video_url) || extractLink(config.vh_video_url) || String(config.vh_video || "").trim()).trim();
 }
-function G(t) {
-  return w(t.vh_poster) || w(t.vh_image) || A;
+__name(resolveVideoUrl, "resolveVideoUrl");
+function resolvePoster(config) {
+  return extractImageUrl(config.vh_poster) || extractImageUrl(config.vh_image) || DEFAULT_POSTER;
 }
-function H(t) {
-  return t ? !!(/\.(mp4|webm|ogg)(\?|$)/i.test(t) || t.includes("video") && !/youtube|youtu\.be|vimeo/i.test(t)) : !1;
+__name(resolvePoster, "resolvePoster");
+function isPlayableVideo(url) {
+  return url ? !!(/\.(mp4|webm|ogg)(\?|$)/i.test(url) || url.includes("video") && !/youtube|youtu\.be|vimeo/i.test(url)) : !1;
 }
-function V(t) {
-  const e = F(t.vh_align, "start").toLowerCase();
-  return e === "center" || e === "middle" ? "center" : e === "end" || e === "left" ? "end" : "start";
+__name(isPlayableVideo, "isPlayableVideo");
+function resolveAlign(config) {
+  const raw = getRadioValue(config.vh_align, "start").toLowerCase();
+  return raw === "center" || raw === "middle" ? "center" : raw === "end" || raw === "left" ? "end" : "start";
 }
-function Y(t) {
-  const e = Number(t.vh_overlay_opacity ?? 45);
-  return Number.isFinite(e) ? Math.max(0, Math.min(85, e)) / 100 : 0.45;
+__name(resolveAlign, "resolveAlign");
+function resolveOverlayOpacity(config) {
+  const n = Number(config.vh_overlay_opacity ?? 45);
+  return Number.isFinite(n) ? Math.max(0, Math.min(85, n)) / 100 : 0.45;
 }
-function B(t) {
-  const e = Number(t.vh_min_height ?? 72);
-  return !Number.isFinite(e) || e <= 0 ? "72vh" : `${Math.max(40, Math.min(100, e))}vh`;
+__name(resolveOverlayOpacity, "resolveOverlayOpacity");
+function resolveMinHeight(config) {
+  const n = Number(config.vh_min_height ?? 72);
+  return !Number.isFinite(n) || n <= 0 ? "72vh" : `${Math.max(40, Math.min(100, n))}vh`;
 }
-function I(t) {
+__name(resolveMinHeight, "resolveMinHeight");
+function resolvePrimaryCta(config) {
   return {
-    label: l(t.vh_primary_label),
-    link: v(t.vh_primary_link) || v(t.vh_primary_url) || String(t.vh_primary_url || "").trim()
+    label: localizedString(config.vh_primary_label),
+    link: extractLink(config.vh_primary_link) || extractLink(config.vh_primary_url) || String(config.vh_primary_url || "").trim()
   };
 }
-function K(t) {
+__name(resolvePrimaryCta, "resolvePrimaryCta");
+function resolveSecondaryCta(config) {
   return {
-    label: l(t.vh_secondary_label),
-    link: v(t.vh_secondary_link) || v(t.vh_secondary_url) || String(t.vh_secondary_url || "").trim()
+    label: localizedString(config.vh_secondary_label),
+    link: extractLink(config.vh_secondary_link) || extractLink(config.vh_secondary_url) || String(config.vh_secondary_url || "").trim()
   };
 }
-function J(t) {
-  const e = p(t.vh_autoplay, !0);
+__name(resolveSecondaryCta, "resolveSecondaryCta");
+function videoPlaybackFlags(config) {
+  const autoplay = isTruthy(config.vh_autoplay, !0);
   return {
-    autoplay: e,
-    muted: p(t.vh_video_muted, !0) || e,
-    loop: p(t.vh_loop, !0)
+    autoplay,
+    muted: isTruthy(config.vh_video_muted, !0) || autoplay,
+    loop: isTruthy(config.vh_loop, !0)
   };
 }
-var Q = Object.defineProperty, _ = (t, e, n, s) => {
-  for (var r = void 0, d = t.length - 1, c; d >= 0; d--)
-    (c = t[d]) && (r = c(e, n, r) || r);
-  return r && Q(e, n, r), r;
-};
-const u = class u extends L {
+__name(videoPlaybackFlags, "videoPlaybackFlags");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _VideoHero = class _VideoHero extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.videoFailed = !1, this.boundLangHandler = () => this.requestUpdate();
   }
@@ -291,80 +302,80 @@ const u = class u extends L {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
   updated() {
-    const e = this.renderRoot.querySelector("video");
-    e && e.autoplay && e.paused && !this.videoFailed && (e.muted = !0, e.play().catch(() => {
+    const video = this.renderRoot.querySelector("video");
+    video && video.autoplay && video.paused && !this.videoFailed && (video.muted = !0, video.play().catch(() => {
     }));
   }
-  renderCta(e, n, s) {
-    if (!e || !n) return a;
-    const r = E(n);
-    return o`<a
-      class=${x({
+  renderCta(label, link, variant) {
+    if (!label || !link) return nothing;
+    const external = isExternalUrl(link);
+    return html`<a
+      class=${classMap({
       "vh-btn": !0,
-      "vh-btn--primary": s === "primary",
-      "vh-btn--ghost": s === "ghost"
+      "vh-btn--primary": variant === "primary",
+      "vh-btn--ghost": variant === "ghost"
     })}
-      href=${n}
-      target=${r ? "_blank" : a}
-      rel=${r ? "noopener noreferrer" : a}
+      href=${link}
+      target=${external ? "_blank" : nothing}
+      rel=${external ? "noopener noreferrer" : nothing}
     >
-      ${e}
+      ${label}
     </a>`;
   }
   renderProducts() {
-    const e = N(this.config || {}, "vh_", {
+    const outcome = renderCommerceOutcome(this.config || {}, "vh_", {
       ready: !0
     });
-    return e === a ? a : o`<div class="vh-below">${e}</div>`;
+    return outcome === nothing ? nothing : html`<div class="vh-below">${outcome}</div>`;
   }
   render() {
-    const e = this.config || {}, n = O(e, "vh_", {
+    const c = this.config || {}, theme = readSectionTheme(c, "vh_", {
       spaceDesktop: 0,
       spaceMobile: 0
-    }), s = l(e.vh_badge) || h("عرض موسم 2026", "Season 2026 offer"), r = l(e.vh_title) || h("امنح سيارتك الأداء الذي تستحقه", "Give your car the performance it deserves"), d = l(e.vh_desc) || h(
+    }), badge = localizedString(c.vh_badge) || t("عرض موسم 2026", "Season 2026 offer"), title = localizedString(c.vh_title) || t("امنح سيارتك الأداء الذي تستحقه", "Give your car the performance it deserves"), desc = localizedString(c.vh_desc) || t(
       "قطع أصلية عالية الجودة مع توصيل سريع لجميع مناطق المملكة. اختر قطعتك بثقة وابدأ رحلتك بأداء أفضل.",
       "Genuine high-quality parts with fast delivery across the Kingdom. Choose with confidence and drive better."
-    ), c = D(e), g = G(e), k = H(c) && !U() && !this.videoFailed, m = J(e), b = V(e), f = I(e), y = K(e), $ = f.label || h("تسوق الآن", "Shop now"), S = y.label || h("تصفح العروض", "Browse offers");
-    return o`
+    ), videoUrl = resolveVideoUrl(c), poster = resolvePoster(c), playVideo = isPlayableVideo(videoUrl) && !prefersReducedMotion() && !this.videoFailed, flags = videoPlaybackFlags(c), align = resolveAlign(c), primary = resolvePrimaryCta(c), secondary = resolveSecondaryCta(c), primaryLabel = primary.label || t("تسوق الآن", "Shop now"), secondaryLabel = secondary.label || t("تصفح العروض", "Browse offers");
+    return html`
       <section
         class="fs-section vh-section"
-        style=${z({
-      ...R(n),
-      "--vh-overlay": String(Y(e)),
-      "--vh-min-height": B(e)
+        style=${styleMap({
+      ...themeStyleMap(theme),
+      "--vh-overlay": String(resolveOverlayOpacity(c)),
+      "--vh-min-height": resolveMinHeight(c)
     })}
-        aria-label=${r}
+        aria-label=${title}
       >
         <div class="fs-container">
           <div class="vh-stage">
             <div class="vh-media" aria-hidden="true">
-              ${k ? o`<video
-                    src=${c}
-                    poster=${g}
+              ${playVideo ? html`<video
+                    src=${videoUrl}
+                    poster=${poster}
                     playsinline
-                    ?autoplay=${m.autoplay}
-                    .muted=${m.muted}
-                    ?loop=${m.loop}
+                    ?autoplay=${flags.autoplay}
+                    .muted=${flags.muted}
+                    ?loop=${flags.loop}
                     preload="metadata"
                     @error=${() => this.videoFailed = !0}
-                  ></video>` : o`<img src=${g} alt="" loading="eager" decoding="async" />`}
+                  ></video>` : html`<img src=${poster} alt="" loading="eager" decoding="async" />`}
             </div>
             <div class="vh-overlay"></div>
 
             <div
-              class=${x({
+              class=${classMap({
       "vh-content-wrap": !0,
-      "vh-content-wrap--center": b === "center",
-      "vh-content-wrap--end": b === "end"
+      "vh-content-wrap--center": align === "center",
+      "vh-content-wrap--end": align === "end"
     })}
             >
               <div class="vh-content">
-                ${s ? o`<span class="vh-badge">${s}</span>` : a}
-                ${r ? o`<h1 class="vh-title">${r}</h1>` : a}
-                ${d ? o`<p class="vh-desc">${d}</p>` : a}
+                ${badge ? html`<span class="vh-badge">${badge}</span>` : nothing}
+                ${title ? html`<h1 class="vh-title">${title}</h1>` : nothing}
+                ${desc ? html`<p class="vh-desc">${desc}</p>` : nothing}
                 <div class="vh-actions">
-                  ${this.renderCta($, f.link, "primary")}
-                  ${p(e.vh_show_secondary, !0) ? this.renderCta(S, y.link, "ghost") : a}
+                  ${this.renderCta(primaryLabel, primary.link, "primary")}
+                  ${isTruthy(c.vh_show_secondary, !0) ? this.renderCta(secondaryLabel, secondary.link, "ghost") : nothing}
                 </div>
               </div>
             </div>
@@ -376,18 +387,18 @@ const u = class u extends L {
     `;
   }
 };
-u.styles = [P, T];
-let i = u;
-_([
-  M({ type: Object })
-], i.prototype, "config");
-_([
-  j()
-], i.prototype, "videoFailed");
-q(
-  i
+__name(_VideoHero, "VideoHero"), _VideoHero.styles = [sharedSectionCss, componentStyles];
+let VideoHero = _VideoHero;
+__decorateClass([
+  property({ type: Object })
+], VideoHero.prototype, "config");
+__decorateClass([
+  state()
+], VideoHero.prototype, "videoFailed");
+bindSallaRegistration(
+  VideoHero
 );
-typeof i < "u" && i.registerSallaComponent("salla-video-hero");
+typeof VideoHero < "u" && VideoHero.registerSallaComponent("salla-video-hero");
 export {
-  i as default
+  VideoHero as default
 };

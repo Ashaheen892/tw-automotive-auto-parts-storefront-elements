@@ -1,10 +1,12 @@
-import { css as h, LitElement as b, nothing as c, html as o } from "lit";
-import { property as _, state as y } from "lit/decorators.js";
-import { classMap as f } from "lit/directives/class-map.js";
-import { styleMap as v } from "lit/directives/style-map.js";
-import { t as i, n as x, e as w, l as m, c as $, g as k, s as S, r as C, a as L, b as T } from "./registerSalla-Dct4KN_E.js";
-import { r as I } from "./commerceOutcome-B3T0_-WJ.js";
-const E = h`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, nothing, html } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { t, n as normalizeCollection, e as extractLink, l as localizedString, c as extractImageUrl, g as getRadioValue, s as sharedSectionCss, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .dwg-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
@@ -124,53 +126,58 @@ const E = h`
       grid-template-columns: repeat(auto-fill, minmax(4.8rem, 1fr));
     }
   }
-`, z = ["low", "medium", "high", "critical"];
-function A(r) {
-  const e = k(r, "medium").toLowerCase().trim();
-  return z.includes(e) ? e : "medium";
+`, SEVERITIES = ["low", "medium", "high", "critical"];
+function parseSeverity(raw) {
+  const value = getRadioValue(raw, "medium").toLowerCase().trim();
+  return SEVERITIES.includes(value) ? value : "medium";
 }
-const B = [
-  { name: i("زيت المحرك", "Engine oil"), iconText: "🛢", image: "", meaning: i("ضغط الزيت منخفض أو مستشعر الزيت.", "Low oil pressure or oil sensor alert."), severity: "high", action: i("أوقف السيارة وافحص مستوى الزيت.", "Stop and check oil level."), link: "", color: "#ea580c" },
-  { name: i("البطارية", "Battery"), iconText: "🔋", image: "", meaning: i("مشكلة في شحن البطارية أو الدينامو.", "Charging system or battery issue."), severity: "medium", action: i("افحص البطارية والأسلاك.", "Inspect battery and cables."), link: "", color: "#eab308" },
-  { name: i("ABS", "ABS"), iconText: "ABS", image: "", meaning: i("عطل في نظام الفرامل المانعة للانغلاق.", "Anti-lock brake system fault."), severity: "high", action: i("قد بحرص وافحص الفرامل.", "Drive carefully and inspect brakes."), link: "", color: "#dc2626" },
-  { name: i("درجة الحرارة", "Temperature"), iconText: "🌡", image: "", meaning: i("ارتفاع حرارة المحرك.", "Engine overheating."), severity: "critical", action: i("أوقف السيارة فورًا واتركها تبرد.", "Stop immediately and let it cool."), link: "", color: "#dc2626" },
-  { name: i("ضغط الإطارات", "Tire pressure"), iconText: "⛽", image: "", meaning: i("ضغط إطار أو أكثر غير مناسب.", "One or more tires under/over pressure."), severity: "medium", action: i("اضبط ضغط الإطارات.", "Adjust tire pressure."), link: "", color: "#ea580c" },
-  { name: i("فحص المحرك", "Check engine"), iconText: "⚠", image: "", meaning: i("خلل في نظام المحرك أو الانبعاثات.", "Engine or emissions system fault."), severity: "high", action: i("افحص السيارة في أقرب ورشة.", "Have the vehicle diagnosed soon."), link: "", color: "#f97316" }
+__name(parseSeverity, "parseSeverity");
+const DEFAULT_WARNINGS = [
+  { name: t("زيت المحرك", "Engine oil"), iconText: "🛢", image: "", meaning: t("ضغط الزيت منخفض أو مستشعر الزيت.", "Low oil pressure or oil sensor alert."), severity: "high", action: t("أوقف السيارة وافحص مستوى الزيت.", "Stop and check oil level."), link: "", color: "#ea580c" },
+  { name: t("البطارية", "Battery"), iconText: "🔋", image: "", meaning: t("مشكلة في شحن البطارية أو الدينامو.", "Charging system or battery issue."), severity: "medium", action: t("افحص البطارية والأسلاك.", "Inspect battery and cables."), link: "", color: "#eab308" },
+  { name: t("ABS", "ABS"), iconText: "ABS", image: "", meaning: t("عطل في نظام الفرامل المانعة للانغلاق.", "Anti-lock brake system fault."), severity: "high", action: t("قد بحرص وافحص الفرامل.", "Drive carefully and inspect brakes."), link: "", color: "#dc2626" },
+  { name: t("درجة الحرارة", "Temperature"), iconText: "🌡", image: "", meaning: t("ارتفاع حرارة المحرك.", "Engine overheating."), severity: "critical", action: t("أوقف السيارة فورًا واتركها تبرد.", "Stop immediately and let it cool."), link: "", color: "#dc2626" },
+  { name: t("ضغط الإطارات", "Tire pressure"), iconText: "⛽", image: "", meaning: t("ضغط إطار أو أكثر غير مناسب.", "One or more tires under/over pressure."), severity: "medium", action: t("اضبط ضغط الإطارات.", "Adjust tire pressure."), link: "", color: "#ea580c" },
+  { name: t("فحص المحرك", "Check engine"), iconText: "⚠", image: "", meaning: t("خلل في نظام المحرك أو الانبعاثات.", "Engine or emissions system fault."), severity: "high", action: t("افحص السيارة في أقرب ورشة.", "Have the vehicle diagnosed soon."), link: "", color: "#f97316" }
 ];
-function j(r) {
-  const e = x(r).map((t, d) => ({
-    id: String(t.id ?? "").trim() || `warn-${d + 1}`,
-    name: m(t.name),
-    iconText: String(t.icon_text ?? "").trim(),
-    image: $(t.image),
-    meaning: m(t.meaning),
-    severity: A(t.severity),
-    action: m(t.action),
-    link: w(t.link),
-    color: String(t.color ?? "").trim()
-  })).filter((t) => t.name);
-  return e.length ? e : B.map((t, d) => ({ id: `default-${d + 1}`, ...t }));
+function parseWarnings(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => ({
+    id: String(row.id ?? "").trim() || `warn-${i + 1}`,
+    name: localizedString(row.name),
+    iconText: String(row.icon_text ?? "").trim(),
+    image: extractImageUrl(row.image),
+    meaning: localizedString(row.meaning),
+    severity: parseSeverity(row.severity),
+    action: localizedString(row.action),
+    link: extractLink(row.link),
+    color: String(row.color ?? "").trim()
+  })).filter((w) => w.name);
+  return parsed.length ? parsed : DEFAULT_WARNINGS.map((w, i) => ({ id: `default-${i + 1}`, ...w }));
 }
-function H(r) {
+__name(parseWarnings, "parseWarnings");
+function severityValueLabel(severity) {
   return {
-    low: i("منخفض", "Low"),
-    medium: i("متوسط", "Medium"),
-    high: i("مرتفع", "High"),
-    critical: i("حرج", "Critical")
-  }[r];
+    low: t("منخفض", "Low"),
+    medium: t("متوسط", "Medium"),
+    high: t("مرتفع", "High"),
+    critical: t("حرج", "Critical")
+  }[severity];
 }
-function M(r) {
-  return m(r.dwg_severity_label) || i("الخطورة", "Severity");
+__name(severityValueLabel, "severityValueLabel");
+function severityFieldLabel(config) {
+  return localizedString(config.dwg_severity_label) || t("الخطورة", "Severity");
 }
-function O(r) {
-  return r === "critical" || r === "high" ? "fs-pill--danger" : r === "medium" ? "fs-pill--caution" : "fs-pill--success";
+__name(severityFieldLabel, "severityFieldLabel");
+function severityClass(severity) {
+  return severity === "critical" || severity === "high" ? "fs-pill--danger" : severity === "medium" ? "fs-pill--caution" : "fs-pill--success";
 }
-var R = Object.defineProperty, u = (r, e, t, d) => {
-  for (var a = void 0, s = r.length - 1, n; s >= 0; s--)
-    (n = r[s]) && (a = n(e, t, a) || a);
-  return a && R(e, t, a), a;
-};
-const g = class g extends b {
+__name(severityClass, "severityClass");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _DashboardWarningGuide = class _DashboardWarningGuide extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.activeId = "", this.boundLangHandler = () => this.requestUpdate();
   }
@@ -180,96 +187,96 @@ const g = class g extends b {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
-  willUpdate(e) {
-    e.has("config") && (this.activeId = "");
+  willUpdate(changed) {
+    changed.has("config") && (this.activeId = "");
   }
   get warnings() {
-    var e;
-    return j((e = this.config) == null ? void 0 : e.dwg_warnings);
+    var _a;
+    return parseWarnings((_a = this.config) == null ? void 0 : _a.dwg_warnings);
   }
   get active() {
-    return this.warnings.find((e) => e.id === this.activeId) ?? null;
+    return this.warnings.find((w) => w.id === this.activeId) ?? null;
   }
-  renderDetail(e) {
-    if (!e) return c;
-    const t = this.config || {};
-    return o`
+  renderDetail(warning) {
+    if (!warning) return nothing;
+    const c = this.config || {};
+    return html`
       <div class="dwg-detail" role="region" aria-live="polite">
         <div class="dwg-detail__head">
-          <h3 class="dwg-detail__title">${e.name}</h3>
-          <span class=${f({ "fs-pill": !0, [O(e.severity)]: !0 })}>
-            ${M(t)}: ${H(e.severity)}
+          <h3 class="dwg-detail__title">${warning.name}</h3>
+          <span class=${classMap({ "fs-pill": !0, [severityClass(warning.severity)]: !0 })}>
+            ${severityFieldLabel(c)}: ${severityValueLabel(warning.severity)}
           </span>
         </div>
 
-        ${e.meaning ? o`<div class="dwg-detail__block">
-              <p class="dwg-detail__label">${i("المعنى", "Meaning")}</p>
-              <p class="dwg-detail__text">${e.meaning}</p>
-            </div>` : c}
+        ${warning.meaning ? html`<div class="dwg-detail__block">
+              <p class="dwg-detail__label">${t("المعنى", "Meaning")}</p>
+              <p class="dwg-detail__text">${warning.meaning}</p>
+            </div>` : nothing}
 
-        ${e.action ? o`<div class="dwg-detail__block">
-              <p class="dwg-detail__label">${i("الإجراء المقترح", "Suggested action")}</p>
-              <div class="dwg-detail__action">${e.action}</div>
-            </div>` : c}
+        ${warning.action ? html`<div class="dwg-detail__block">
+              <p class="dwg-detail__label">${t("الإجراء المقترح", "Suggested action")}</p>
+              <div class="dwg-detail__action">${warning.action}</div>
+            </div>` : nothing}
 
-        ${e.link ? o`<a class="fs-btn fs-tap" href=${e.link} target="_blank" rel="noopener noreferrer">
-              ${i("تصفّح القطع ذات الصلة", "Browse related parts")}
-            </a>` : c}
+        ${warning.link ? html`<a class="fs-btn fs-tap" href=${warning.link} target="_blank" rel="noopener noreferrer">
+              ${t("تصفّح القطع ذات الصلة", "Browse related parts")}
+            </a>` : nothing}
       </div>
     `;
   }
   render() {
-    const e = this.config || {}, t = C(e, "dwg_"), d = this.warnings, a = m(e.dwg_title), s = m(e.dwg_desc);
-    return o`
+    const c = this.config || {}, theme = readSectionTheme(c, "dwg_"), warnings = this.warnings, title = localizedString(c.dwg_title), desc = localizedString(c.dwg_desc);
+    return html`
       <section
         class="fs-section"
-        style=${v(L(t))}
-        aria-label=${a || i("دليل أضواء التحذير", "Dashboard warning guide")}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title || t("دليل أضواء التحذير", "Dashboard warning guide")}
       >
         <div class="fs-container">
-          ${a || s ? o`<div class="fs-hero">
-                ${a ? o`<h2 class="fs-title">${a}</h2>` : c}
-                ${s ? o`<p class="fs-desc">${s}</p>` : c}
-              </div>` : c}
+          ${title || desc ? html`<div class="fs-hero">
+                ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+                ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+              </div>` : nothing}
 
           <div class="dwg-grid" role="list">
-            ${d.map((n) => {
-      const p = this.activeId === n.id;
-      return o`
+            ${warnings.map((w) => {
+      const active = this.activeId === w.id;
+      return html`
                 <button
                   type="button"
-                  class=${f({ "dwg-item": !0, "is-active": p })}
+                  class=${classMap({ "dwg-item": !0, "is-active": active })}
                   role="listitem"
-                  aria-pressed=${p ? "true" : "false"}
-                  style=${v(n.color ? { "--dwg-color": n.color } : {})}
-                  @click=${() => this.activeId = n.id}
+                  aria-pressed=${active ? "true" : "false"}
+                  style=${styleMap(w.color ? { "--dwg-color": w.color } : {})}
+                  @click=${() => this.activeId = w.id}
                 >
                   <span class="dwg-item__icon">
-                    ${n.image ? o`<img src=${n.image} alt="" loading="lazy" />` : n.iconText || "⚠"}
+                    ${w.image ? html`<img src=${w.image} alt="" loading="lazy" />` : w.iconText || "⚠"}
                   </span>
-                  <span class="dwg-item__name">${n.name}</span>
+                  <span class="dwg-item__name">${w.name}</span>
                 </button>
               `;
     })}
           </div>
 
           ${this.renderDetail(this.active)}
-          ${I(e, "dwg_", { ready: !!this.active })}
+          ${renderCommerceOutcome(c, "dwg_", { ready: !!this.active })}
         </div>
       </section>
     `;
   }
 };
-g.styles = [S, E];
-let l = g;
-u([
-  _({ type: Object })
-], l.prototype, "config");
-u([
-  y()
-], l.prototype, "activeId");
-T(l);
-typeof l < "u" && l.registerSallaComponent("salla-dashboard-warning-guide");
+__name(_DashboardWarningGuide, "DashboardWarningGuide"), _DashboardWarningGuide.styles = [sharedSectionCss, componentStyles];
+let DashboardWarningGuide = _DashboardWarningGuide;
+__decorateClass([
+  property({ type: Object })
+], DashboardWarningGuide.prototype, "config");
+__decorateClass([
+  state()
+], DashboardWarningGuide.prototype, "activeId");
+bindSallaRegistration(DashboardWarningGuide);
+typeof DashboardWarningGuide < "u" && DashboardWarningGuide.registerSallaComponent("salla-dashboard-warning-guide");
 export {
-  l as default
+  DashboardWarningGuide as default
 };

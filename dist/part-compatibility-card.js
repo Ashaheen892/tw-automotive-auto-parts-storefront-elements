@@ -1,11 +1,13 @@
-import { css as E, LitElement as T, nothing as n, html as p } from "lit";
-import { property as B, state as y } from "lit/decorators.js";
-import { classMap as x } from "lit/directives/class-map.js";
-import { styleMap as A } from "lit/directives/style-map.js";
-import { d as z, n as F, l as u, k as P, t as c, e as q, s as U, r as O, a as j, b as W } from "./registerSalla-Dct4KN_E.js";
-import { r as D } from "./commerceOutcome-B3T0_-WJ.js";
-import { o as H } from "./whatsapp-GI8N2VNC.js";
-const Y = E`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, nothing, html } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { d as isTruthy, n as normalizeCollection, l as localizedString, k as itemIdFromLabel, t, e as extractLink, s as sharedSectionCss, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+import { o as openWhatsApp } from "./whatsapp-C3glLfzz.js";
+const componentStyles = css`
   .pcc-shell {
     display: grid;
     gap: 1.15rem;
@@ -360,72 +362,81 @@ const Y = E`
     }
   }
 `;
-function Z(i) {
-  return F(i).map((e, r) => {
-    const t = u(e.label);
-    return t ? {
-      id: String(e.id ?? "").trim() || P(t, "") || `field-${r + 1}`,
-      label: t,
-      placeholder: u(e.placeholder),
-      required: z(e.required, !1)
+function parseCustomFields(raw) {
+  return normalizeCollection(raw).map((row, i) => {
+    const labelText = localizedString(row.label);
+    return labelText ? {
+      id: String(row.id ?? "").trim() || itemIdFromLabel(labelText, "") || `field-${i + 1}`,
+      label: labelText,
+      placeholder: localizedString(row.placeholder),
+      required: isTruthy(row.required, !1)
     } : null;
-  }).filter((e) => !!e);
+  }).filter((f) => !!f);
 }
-function K(i) {
-  if (typeof i == "string" || i && typeof i == "object" && !Array.isArray(i)) {
-    const e = u(i, "");
-    return e ? e.split(/\r?\n/).map((r) => r.trim()).filter(Boolean) : [];
+__name(parseCustomFields, "parseCustomFields");
+function parseTips(raw) {
+  if (typeof raw == "string" || raw && typeof raw == "object" && !Array.isArray(raw)) {
+    const text = localizedString(raw, "");
+    return text ? text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean) : [];
   }
-  return F(i).map((e) => u(e.tip) || u(e.text)).filter(Boolean);
+  return normalizeCollection(raw).map((row) => localizedString(row.tip) || localizedString(row.text)).filter(Boolean);
 }
-function R() {
+__name(parseTips, "parseTips");
+function defaultTips() {
   return [
-    c("طابق رقم القطعة مع كتالوج الشركة.", "Match the part number to the OEM catalog."),
-    c("تأكد من سنة الصنع بدقة.", "Confirm the exact model year."),
-    c("عند الشك تواصل مع الدعم.", "Contact support if unsure.")
+    t("طابق رقم القطعة مع كتالوج الشركة.", "Match the part number to the OEM catalog."),
+    t("تأكد من سنة الصنع بدقة.", "Confirm the exact model year."),
+    t("عند الشك تواصل مع الدعم.", "Contact support if unsure.")
   ];
 }
-function d(i, e, r, t) {
-  return u(i[e]) || c(r, t);
+__name(defaultTips, "defaultTips");
+function label(config, key, ar, en) {
+  return localizedString(config[key]) || t(ar, en);
 }
-function G(i) {
-  return q(i.pcc_cta_url);
+__name(label, "label");
+function resolveCtaUrl(config) {
+  return extractLink(config.pcc_cta_url);
 }
-function C(i) {
-  return String(i.pcc_whatsapp_phone ?? "").trim();
+__name(resolveCtaUrl, "resolveCtaUrl");
+function whatsappPhone(config) {
+  return String(config.pcc_whatsapp_phone ?? "").trim();
 }
-function J(i, e) {
-  const r = u(i.pcc_whatsapp_prefix) || c(
+__name(whatsappPhone, "whatsappPhone");
+function buildWhatsAppMessage(config, chips) {
+  const prefix = localizedString(config.pcc_whatsapp_prefix) || t(
     "أرغب في التحقق من توافق هذه القطعة مع سيارتي:",
     "I would like to verify this part fits my vehicle:"
-  ), t = e.map((l) => `• ${l.label}: ${l.value}`), a = typeof window < "u" ? window.location.href : "";
-  return [r, ...t, a ? `${c("الصفحة", "Page")}: ${a}` : ""].filter(Boolean).join(`
+  ), lines = chips.map((chip) => `• ${chip.label}: ${chip.value}`), pageUrl = typeof window < "u" ? window.location.href : "";
+  return [prefix, ...lines, pageUrl ? `${t("الصفحة", "Page")}: ${pageUrl}` : ""].filter(Boolean).join(`
 `);
 }
-function o(i, e, r = !0) {
-  return z(i[e], r);
+__name(buildWhatsAppMessage, "buildWhatsAppMessage");
+function showField(config, key, fallback = !0) {
+  return isTruthy(config[key], fallback);
 }
-function V(i, e, r) {
-  const t = [], a = (l, h, g, f, b) => {
-    !o(i, l, !0) || !b.trim() || t.push({ label: d(i, h, g, f), value: b.trim() });
-  };
-  return a("pcc_show_brand", "pcc_brand_label", "الماركة", "Brand", e.brand), a("pcc_show_model", "pcc_model_label", "الموديل", "Model", e.model), a("pcc_show_year", "pcc_year_label", "سنة الصنع", "Year", e.year), a("pcc_show_engine", "pcc_engine_label", "المحرك", "Engine", e.engine), a("pcc_show_vin", "pcc_vin_label", "رقم الهيكل VIN", "VIN", e.vin), a(
+__name(showField, "showField");
+function buildSummaryChips(config, values, customFields) {
+  const chips = [], push = /* @__PURE__ */ __name((showKey, labelKey, ar, en, value) => {
+    !showField(config, showKey, !0) || !value.trim() || chips.push({ label: label(config, labelKey, ar, en), value: value.trim() });
+  }, "push");
+  return push("pcc_show_brand", "pcc_brand_label", "الماركة", "Brand", values.brand), push("pcc_show_model", "pcc_model_label", "الموديل", "Model", values.model), push("pcc_show_year", "pcc_year_label", "سنة الصنع", "Year", values.year), push("pcc_show_engine", "pcc_engine_label", "المحرك", "Engine", values.engine), push("pcc_show_vin", "pcc_vin_label", "رقم الهيكل VIN", "VIN", values.vin), push(
     "pcc_show_part_number",
     "pcc_part_number_label",
     "رقم القطعة",
     "Part number",
-    e.partNumber
-  ), o(i, "pcc_show_custom_fields", !1) && r.forEach((l) => {
-    const h = (e.custom[l.id] ?? "").trim();
-    h && t.push({ label: l.label, value: h });
-  }), t;
+    values.partNumber
+  ), showField(config, "pcc_show_custom_fields", !1) && customFields.forEach((f) => {
+    const value = (values.custom[f.id] ?? "").trim();
+    value && chips.push({ label: f.label, value });
+  }), chips;
 }
-var Q = Object.defineProperty, v = (i, e, r, t) => {
-  for (var a = void 0, l = i.length - 1, h; l >= 0; l--)
-    (h = i[l]) && (a = h(e, r, a) || a);
-  return a && Q(e, r, a), a;
-};
-const w = class w extends T {
+__name(buildSummaryChips, "buildSummaryChips");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _PartCompatibilityCard = class _PartCompatibilityCard extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.values = {
       brand: "",
@@ -443,8 +454,8 @@ const w = class w extends T {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
-  willUpdate(e) {
-    e.has("config") && (this.values = {
+  willUpdate(changed) {
+    changed.has("config") && (this.values = {
       brand: "",
       model: "",
       year: "",
@@ -455,213 +466,213 @@ const w = class w extends T {
     }, this.touched = !1, this.verified = !1);
   }
   get customFields() {
-    var e;
-    return o(this.config || {}, "pcc_show_custom_fields", !1) ? Z((e = this.config) == null ? void 0 : e.pcc_fields) : [];
+    var _a;
+    return showField(this.config || {}, "pcc_show_custom_fields", !1) ? parseCustomFields((_a = this.config) == null ? void 0 : _a.pcc_fields) : [];
   }
   get tips() {
-    var r;
-    if (!o(this.config || {}, "pcc_show_tips", !0)) return [];
-    const e = K((r = this.config) == null ? void 0 : r.pcc_tips);
-    return e.length ? e : R();
+    var _a;
+    if (!showField(this.config || {}, "pcc_show_tips", !0)) return [];
+    const parsed = parseTips((_a = this.config) == null ? void 0 : _a.pcc_tips);
+    return parsed.length ? parsed : defaultTips();
   }
-  setValue(e, r) {
-    this.values = { ...this.values, [e]: r }, this.verified = !1;
+  setValue(key, val) {
+    this.values = { ...this.values, [key]: val }, this.verified = !1;
   }
-  setCustom(e, r) {
-    this.values = { ...this.values, custom: { ...this.values.custom, [e]: r } }, this.verified = !1;
+  setCustom(id, val) {
+    this.values = { ...this.values, custom: { ...this.values.custom, [id]: val } }, this.verified = !1;
   }
   requiredFields() {
-    const e = this.config || {}, r = [];
-    return o(e, "pcc_show_brand", !0) && r.push({
+    const c = this.config || {}, fields = [];
+    return showField(c, "pcc_show_brand", !0) && fields.push({
       key: "brand",
       value: this.values.brand,
-      label: d(e, "pcc_brand_label", "الماركة", "Brand")
-    }), o(e, "pcc_show_model", !0) && r.push({
+      label: label(c, "pcc_brand_label", "الماركة", "Brand")
+    }), showField(c, "pcc_show_model", !0) && fields.push({
       key: "model",
       value: this.values.model,
-      label: d(e, "pcc_model_label", "الموديل", "Model")
-    }), o(e, "pcc_show_year", !0) && r.push({
+      label: label(c, "pcc_model_label", "الموديل", "Model")
+    }), showField(c, "pcc_show_year", !0) && fields.push({
       key: "year",
       value: this.values.year,
-      label: d(e, "pcc_year_label", "سنة الصنع", "Year")
-    }), o(e, "pcc_show_part_number", !0) && r.push({
+      label: label(c, "pcc_year_label", "سنة الصنع", "Year")
+    }), showField(c, "pcc_show_part_number", !0) && fields.push({
       key: "partNumber",
       value: this.values.partNumber,
-      label: d(e, "pcc_part_number_label", "رقم القطعة", "Part number")
-    }), this.customFields.forEach((t) => {
-      t.required && r.push({ key: t.id, value: this.values.custom[t.id] ?? "", label: t.label });
-    }), r;
+      label: label(c, "pcc_part_number_label", "رقم القطعة", "Part number")
+    }), this.customFields.forEach((f) => {
+      f.required && fields.push({ key: f.id, value: this.values.custom[f.id] ?? "", label: f.label });
+    }), fields;
   }
   isValid() {
-    return this.requiredFields().every((e) => e.value.trim().length > 0);
+    return this.requiredFields().every((f) => f.value.trim().length > 0);
   }
   vehicleFilled() {
-    const e = this.config || {}, r = [];
-    return o(e, "pcc_show_brand", !0) && r.push(this.values.brand), o(e, "pcc_show_model", !0) && r.push(this.values.model), o(e, "pcc_show_year", !0) && r.push(this.values.year), r.length ? r.every((t) => t.trim().length > 0) : !0;
+    const c = this.config || {}, checks = [];
+    return showField(c, "pcc_show_brand", !0) && checks.push(this.values.brand), showField(c, "pcc_show_model", !0) && checks.push(this.values.model), showField(c, "pcc_show_year", !0) && checks.push(this.values.year), checks.length ? checks.every((v) => v.trim().length > 0) : !0;
   }
   partFilled() {
-    const e = this.config || {};
-    return o(e, "pcc_show_part_number", !0) ? this.values.partNumber.trim().length > 0 : !0;
+    const c = this.config || {};
+    return showField(c, "pcc_show_part_number", !0) ? this.values.partNumber.trim().length > 0 : !0;
   }
   verify() {
     this.touched = !0, this.isValid() && (this.verified = !0);
   }
   sendToWhatsApp() {
-    const e = this.config || {}, r = C(e);
-    if (!r) return;
-    const t = V(e, this.values, this.customFields);
-    H(r, J(e, t));
+    const c = this.config || {}, phone = whatsappPhone(c);
+    if (!phone) return;
+    const chips = buildSummaryChips(c, this.values, this.customFields);
+    openWhatsApp(phone, buildWhatsAppMessage(c, chips));
   }
-  renderInput(e, r, t, a, l, h) {
-    const g = this.touched && l && !t.trim();
-    return p`
+  renderInput(id, fieldLabel, value, placeholder, required, onInput) {
+    const invalid = this.touched && required && !value.trim();
+    return html`
       <div class="pcc-field">
-        <label class="pcc-label" for=${e}>
-          ${r}${l ? p` <span aria-hidden="true">*</span>` : n}
+        <label class="pcc-label" for=${id}>
+          ${fieldLabel}${required ? html` <span aria-hidden="true">*</span>` : nothing}
         </label>
         <input
-          id=${e}
-          class=${x({ "pcc-input": !0, "is-invalid": g })}
+          id=${id}
+          class=${classMap({ "pcc-input": !0, "is-invalid": invalid })}
           type="text"
-          .value=${t}
-          placeholder=${a}
-          ?required=${l}
-          @input=${(f) => h(f.target.value)}
+          .value=${value}
+          placeholder=${placeholder}
+          ?required=${required}
+          @input=${(e) => onInput(e.target.value)}
         />
       </div>
     `;
   }
   renderSteps() {
-    const e = this.vehicleFilled(), r = this.partFilled();
-    return p`
+    const vehicleDone = this.vehicleFilled(), partDone = this.partFilled();
+    return html`
       <div class="pcc-steps" aria-hidden="true">
         <div
-          class=${x({
+          class=${classMap({
       "pcc-step": !0,
       "is-active": !this.verified,
-      "is-done": e
+      "is-done": vehicleDone
     })}
         >
           <span class="pcc-step__num">1</span>
-          <span>${c("بيانات السيارة", "Vehicle")}</span>
+          <span>${t("بيانات السيارة", "Vehicle")}</span>
         </div>
         <div class="pcc-step-line"></div>
         <div
-          class=${x({
+          class=${classMap({
       "pcc-step": !0,
-      "is-active": e && !this.verified,
-      "is-done": this.verified || e && r
+      "is-active": vehicleDone && !this.verified,
+      "is-done": this.verified || vehicleDone && partDone
     })}
         >
           <span class="pcc-step__num">2</span>
-          <span>${c("القطعة والنتيجة", "Part & result")}</span>
+          <span>${t("القطعة والنتيجة", "Part & result")}</span>
         </div>
       </div>
     `;
   }
   render() {
-    const e = this.config || {}, r = O(e, "pcc_"), t = u(e.pcc_title) || c("تحقق من توافق القطعة", "Check part compatibility"), a = u(e.pcc_desc) || c(
+    const c = this.config || {}, theme = readSectionTheme(c, "pcc_"), title = localizedString(c.pcc_title) || t("تحقق من توافق القطعة", "Check part compatibility"), desc = localizedString(c.pcc_desc) || t(
       "أدخل بيانات سيارتك ورقم القطعة للتأكد قبل إتمام الطلب.",
       "Enter your vehicle details and part number to confirm before ordering."
-    ), l = u(e.pcc_notice) || c(
+    ), notice = localizedString(c.pcc_notice) || t(
       "التوافق النهائي يعتمد على مطابقة الماركة والموديل والسنة ورقم القطعة.",
       "Final fitment depends on matching brand, model, year, and part number."
-    ), h = d(e, "pcc_cta", "تحقق من التوافق", "Verify compatibility"), f = o(e, "pcc_show_continue_link", !1) ? G(e) : "", b = this.customFields, $ = this.tips, k = this.verified ? V(e, this.values, b) : [], S = u(e.pcc_success_title) || c("بيانات التوافق جاهزة", "Compatibility details ready"), I = u(e.pcc_success_desc) || c(
+    ), ctaLabel = label(c, "pcc_cta", "تحقق من التوافق", "Verify compatibility"), ctaUrl = showField(c, "pcc_show_continue_link", !1) ? resolveCtaUrl(c) : "", customFields = this.customFields, tips = this.tips, chips = this.verified ? buildSummaryChips(c, this.values, customFields) : [], successTitle = localizedString(c.pcc_success_title) || t("بيانات التوافق جاهزة", "Compatibility details ready"), successDesc = localizedString(c.pcc_success_desc) || t(
       "راجع الملخص أدناه ثم أكمل الطلب أو تصفّح القطع المقترحة.",
       "Review the summary below, then continue or browse suggested parts."
-    ), L = o(e, "pcc_show_whatsapp", !0) && !!C(e), M = u(e.pcc_whatsapp_text) || c(
+    ), waEnabled = showField(c, "pcc_show_whatsapp", !0) && !!whatsappPhone(c), waText = localizedString(c.pcc_whatsapp_text) || t(
       "أرسل بياناتك لفريق المتجر وسنؤكد لك التوافق قبل إتمام الطلب.",
       "Send your details to the store team and we will confirm fitment before you order."
-    ), N = d(e, "pcc_whatsapp_label", "تحقق عبر واتساب", "Verify on WhatsApp");
-    return p`
+    ), waLabel = label(c, "pcc_whatsapp_label", "تحقق عبر واتساب", "Verify on WhatsApp");
+    return html`
       <section
         class="fs-section"
-        style=${A(j(r))}
-        aria-label=${t}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title}
       >
         <div class="fs-container">
           <div class="pcc-shell">
             <div class="fs-hero">
-              <p class="fs-eyebrow">${c("قبل إتمام الطلب", "Before checkout")}</p>
-              ${t ? p`<h2 class="fs-title">${t}</h2>` : n}
-              ${a ? p`<p class="fs-desc">${a}</p>` : n}
+              <p class="fs-eyebrow">${t("قبل إتمام الطلب", "Before checkout")}</p>
+              ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+              ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
             </div>
 
             <div class="pcc-layout">
               <div class="pcc-card">
                 ${this.renderSteps()}
 
-                ${o(e, "pcc_show_notice", !0) ? p`<div class="pcc-notice" role="note">
-                      <span class="pcc-notice__label">${c("ملاحظة", "Note")}</span>
-                      <p class="pcc-notice__text">${l}</p>
-                    </div>` : n}
+                ${showField(c, "pcc_show_notice", !0) ? html`<div class="pcc-notice" role="note">
+                      <span class="pcc-notice__label">${t("ملاحظة", "Note")}</span>
+                      <p class="pcc-notice__text">${notice}</p>
+                    </div>` : nothing}
 
-                <form class="pcc-block" @submit=${(s) => s.preventDefault()}>
+                <form class="pcc-block" @submit=${(e) => e.preventDefault()}>
                   <div class="pcc-block">
-                    <p class="pcc-block__title">${c("1) بيانات السيارة", "1) Vehicle details")}</p>
+                    <p class="pcc-block__title">${t("1) بيانات السيارة", "1) Vehicle details")}</p>
                     <div class="pcc-grid">
-                      ${o(e, "pcc_show_brand", !0) ? this.renderInput(
+                      ${showField(c, "pcc_show_brand", !0) ? this.renderInput(
       "pcc-brand",
-      d(e, "pcc_brand_label", "الماركة", "Brand"),
+      label(c, "pcc_brand_label", "الماركة", "Brand"),
       this.values.brand,
-      c("مثال: تويوتا", "e.g. Toyota"),
+      t("مثال: تويوتا", "e.g. Toyota"),
       !0,
-      (s) => this.setValue("brand", s)
-    ) : n}
-                      ${o(e, "pcc_show_model", !0) ? this.renderInput(
+      (v) => this.setValue("brand", v)
+    ) : nothing}
+                      ${showField(c, "pcc_show_model", !0) ? this.renderInput(
       "pcc-model",
-      d(e, "pcc_model_label", "الموديل", "Model"),
+      label(c, "pcc_model_label", "الموديل", "Model"),
       this.values.model,
-      c("مثال: كامري", "e.g. Camry"),
+      t("مثال: كامري", "e.g. Camry"),
       !0,
-      (s) => this.setValue("model", s)
-    ) : n}
-                      ${o(e, "pcc_show_year", !0) ? this.renderInput(
+      (v) => this.setValue("model", v)
+    ) : nothing}
+                      ${showField(c, "pcc_show_year", !0) ? this.renderInput(
       "pcc-year",
-      d(e, "pcc_year_label", "سنة الصنع", "Year"),
+      label(c, "pcc_year_label", "سنة الصنع", "Year"),
       this.values.year,
-      c("مثال: 2022", "e.g. 2022"),
+      t("مثال: 2022", "e.g. 2022"),
       !0,
-      (s) => this.setValue("year", s)
-    ) : n}
-                      ${o(e, "pcc_show_engine", !0) ? this.renderInput(
+      (v) => this.setValue("year", v)
+    ) : nothing}
+                      ${showField(c, "pcc_show_engine", !0) ? this.renderInput(
       "pcc-engine",
-      d(e, "pcc_engine_label", "المحرك", "Engine"),
+      label(c, "pcc_engine_label", "المحرك", "Engine"),
       this.values.engine,
-      c("مثال: 2.5L", "e.g. 2.5L"),
+      t("مثال: 2.5L", "e.g. 2.5L"),
       !1,
-      (s) => this.setValue("engine", s)
-    ) : n}
-                      ${o(e, "pcc_show_vin", !0) ? this.renderInput(
+      (v) => this.setValue("engine", v)
+    ) : nothing}
+                      ${showField(c, "pcc_show_vin", !0) ? this.renderInput(
       "pcc-vin",
-      d(e, "pcc_vin_label", "رقم الهيكل VIN", "VIN"),
+      label(c, "pcc_vin_label", "رقم الهيكل VIN", "VIN"),
       this.values.vin,
-      c("17 حرفًا", "17 characters"),
+      t("17 حرفًا", "17 characters"),
       !1,
-      (s) => this.setValue("vin", s)
-    ) : n}
+      (v) => this.setValue("vin", v)
+    ) : nothing}
                     </div>
                   </div>
 
                   <div class="pcc-block">
-                    <p class="pcc-block__title">${c("2) بيانات القطعة", "2) Part details")}</p>
+                    <p class="pcc-block__title">${t("2) بيانات القطعة", "2) Part details")}</p>
                     <div class="pcc-grid">
-                      ${o(e, "pcc_show_part_number", !0) ? this.renderInput(
+                      ${showField(c, "pcc_show_part_number", !0) ? this.renderInput(
       "pcc-part",
-      d(e, "pcc_part_number_label", "رقم القطعة", "Part number"),
+      label(c, "pcc_part_number_label", "رقم القطعة", "Part number"),
       this.values.partNumber,
-      c("رقم OEM أو SKU", "OEM or SKU number"),
+      t("رقم OEM أو SKU", "OEM or SKU number"),
       !0,
-      (s) => this.setValue("partNumber", s)
-    ) : n}
-                      ${b.map(
-      (s) => this.renderInput(
-        `pcc-custom-${s.id}`,
-        s.label,
-        this.values.custom[s.id] ?? "",
-        s.placeholder,
-        s.required,
-        (_) => this.setCustom(s.id, _)
+      (v) => this.setValue("partNumber", v)
+    ) : nothing}
+                      ${customFields.map(
+      (f) => this.renderInput(
+        `pcc-custom-${f.id}`,
+        f.label,
+        this.values.custom[f.id] ?? "",
+        f.placeholder,
+        f.required,
+        (v) => this.setCustom(f.id, v)
       )
     )}
                     </div>
@@ -669,53 +680,53 @@ const w = class w extends T {
 
                   <div class="pcc-actions">
                     <button type="button" class="fs-btn fs-tap" @click=${() => this.verify()}>
-                      ${h}
+                      ${ctaLabel}
                     </button>
-                    ${f && this.verified ? p`<a
+                    ${ctaUrl && this.verified ? html`<a
                           class="fs-btn fs-btn--ghost fs-tap"
-                          href=${f}
+                          href=${ctaUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          ${c("متابعة الطلب", "Continue order")}
-                        </a>` : n}
+                          ${t("متابعة الطلب", "Continue order")}
+                        </a>` : nothing}
                   </div>
 
-                  ${this.touched && !this.isValid() ? p`<p class="pcc-alert" role="alert">
-                        ${c("يرجى تعبئة جميع الحقول المطلوبة.", "Please fill all required fields.")}
-                      </p>` : n}
+                  ${this.touched && !this.isValid() ? html`<p class="pcc-alert" role="alert">
+                        ${t("يرجى تعبئة جميع الحقول المطلوبة.", "Please fill all required fields.")}
+                      </p>` : nothing}
 
-                  ${this.verified ? p`<div class="pcc-result" role="status">
-                        <h3 class="pcc-result__title">${S}</h3>
-                        <p class="pcc-result__desc">${I}</p>
-                        ${k.length ? p`<div class="pcc-chips">
-                              ${k.map(
-      (s) => p`<span class="pcc-chip">
-                                  <span class="pcc-chip__k">${s.label}:</span>
-                                  <span>${s.value}</span>
+                  ${this.verified ? html`<div class="pcc-result" role="status">
+                        <h3 class="pcc-result__title">${successTitle}</h3>
+                        <p class="pcc-result__desc">${successDesc}</p>
+                        ${chips.length ? html`<div class="pcc-chips">
+                              ${chips.map(
+      (chip) => html`<span class="pcc-chip">
+                                  <span class="pcc-chip__k">${chip.label}:</span>
+                                  <span>${chip.value}</span>
                                 </span>`
     )}
-                            </div>` : n}
-                        ${L ? p`<div class="pcc-wa">
+                            </div>` : nothing}
+                        ${waEnabled ? html`<div class="pcc-wa">
                               <span class="pcc-wa__icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                                   <path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.3-1.39a9.87 9.87 0 0 0 4.74 1.21c5.46 0 9.9-4.44 9.9-9.9 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.11c-1.48 0-2.94-.4-4.2-1.15l-.3-.18-3.13.82.84-3.05-.2-.32a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.25-8.23 8.25Zm4.52-6.17c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-2-1.23-.73-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.84-.2-.49-.4-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.39 1.01 2.56.13.16 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.6.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.16-.48-.29Z"/>
                                 </svg>
                               </span>
-                              <p class="pcc-wa__text">${M}</p>
+                              <p class="pcc-wa__text">${waText}</p>
                               <button
                                 type="button"
                                 class="fs-btn fs-tap pcc-wa__btn"
                                 @click=${() => this.sendToWhatsApp()}
                               >
-                                ${N}
+                                ${waLabel}
                               </button>
-                            </div>` : n}
-                      </div>` : n}
+                            </div>` : nothing}
+                      </div>` : nothing}
                 </form>
               </div>
 
-              ${$.length ? p`<aside class="pcc-side">
+              ${tips.length ? html`<aside class="pcc-side">
                     <div class="pcc-tips">
                       <div class="pcc-tips__head">
                         <span class="pcc-tips__badge" aria-hidden="true">
@@ -723,45 +734,45 @@ const w = class w extends T {
                             <path d="M20 6 9 17l-5-5" />
                           </svg>
                         </span>
-                        <p class="pcc-tips__title">${c("نصائح التحقق", "Verification tips")}</p>
+                        <p class="pcc-tips__title">${t("نصائح التحقق", "Verification tips")}</p>
                       </div>
                       <ul>
-                        ${$.map(
-      (s, _) => p`<li>
-                            <span class="pcc-tips__num" aria-hidden="true">${_ + 1}</span>
-                            <span class="pcc-tips__text">${s}</span>
+                        ${tips.map(
+      (tip, i) => html`<li>
+                            <span class="pcc-tips__num" aria-hidden="true">${i + 1}</span>
+                            <span class="pcc-tips__text">${tip}</span>
                           </li>`
     )}
                       </ul>
                     </div>
-                  </aside>` : n}
+                  </aside>` : nothing}
             </div>
 
-            ${D(e, "pcc_", { ready: this.verified })}
+            ${renderCommerceOutcome(c, "pcc_", { ready: this.verified })}
           </div>
         </div>
       </section>
     `;
   }
 };
-w.styles = [U, Y];
-let m = w;
-v([
-  B({ type: Object })
-], m.prototype, "config");
-v([
-  y()
-], m.prototype, "values");
-v([
-  y()
-], m.prototype, "touched");
-v([
-  y()
-], m.prototype, "verified");
-W(
-  m
+__name(_PartCompatibilityCard, "PartCompatibilityCard"), _PartCompatibilityCard.styles = [sharedSectionCss, componentStyles];
+let PartCompatibilityCard = _PartCompatibilityCard;
+__decorateClass([
+  property({ type: Object })
+], PartCompatibilityCard.prototype, "config");
+__decorateClass([
+  state()
+], PartCompatibilityCard.prototype, "values");
+__decorateClass([
+  state()
+], PartCompatibilityCard.prototype, "touched");
+__decorateClass([
+  state()
+], PartCompatibilityCard.prototype, "verified");
+bindSallaRegistration(
+  PartCompatibilityCard
 );
-typeof m < "u" && m.registerSallaComponent("salla-part-compatibility-card");
+typeof PartCompatibilityCard < "u" && PartCompatibilityCard.registerSallaComponent("salla-part-compatibility-card");
 export {
-  m as default
+  PartCompatibilityCard as default
 };

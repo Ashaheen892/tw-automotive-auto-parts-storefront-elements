@@ -1,243 +1,270 @@
-import { css as S } from "lit";
-function k() {
-  var r, e, t;
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css } from "lit";
+function getPageLocale() {
+  var _a, _b, _c;
   try {
-    const o = typeof Salla < "u" ? (e = (r = Salla == null ? void 0 : Salla.lang) == null ? void 0 : r.getLocale) == null ? void 0 : e.call(r) : void 0, a = (t = document.documentElement.lang) == null ? void 0 : t.split("-")[0];
-    return String(o || a || "ar").toLowerCase();
+    const sallaLocale = typeof Salla < "u" ? (_b = (_a = Salla == null ? void 0 : Salla.lang) == null ? void 0 : _a.getLocale) == null ? void 0 : _b.call(_a) : void 0, htmlLocale = (_c = document.documentElement.lang) == null ? void 0 : _c.split("-")[0];
+    return String(sallaLocale || htmlLocale || "ar").toLowerCase();
   } catch {
     return "ar";
   }
 }
-function M(r, e = "") {
-  if (r == null)
-    return e;
-  if (typeof r == "string")
-    return r.trim() || e;
-  if (typeof r == "number")
-    return String(r);
-  if (typeof r == "object") {
-    const t = r, a = [k(), "ar", "en", ...Object.keys(t)];
-    for (const s of a) {
-      const i = t[s];
-      if (typeof i == "string" && i.trim())
-        return i.trim();
+__name(getPageLocale, "getPageLocale");
+function localizedString(value, fallback = "") {
+  if (value == null)
+    return fallback;
+  if (typeof value == "string")
+    return value.trim() || fallback;
+  if (typeof value == "number")
+    return String(value);
+  if (typeof value == "object") {
+    const obj = value, candidates = [getPageLocale(), "ar", "en", ...Object.keys(obj)];
+    for (const key of candidates) {
+      const v = obj[key];
+      if (typeof v == "string" && v.trim())
+        return v.trim();
     }
   }
-  return e;
+  return fallback;
 }
-const f = "var(--color-primary, var(--primary-color, var(--color-main, #64748b)))";
-function l() {
-  var t;
+__name(localizedString, "localizedString");
+const PRIMARY = "var(--color-primary, var(--primary-color, var(--color-main, #64748b)))";
+function detectFsTheme() {
+  var _a;
   if (typeof document > "u") return "light";
-  const r = document.documentElement, e = (r.getAttribute("data-theme") || r.getAttribute("data-mode") || "").toLowerCase();
-  if (e === "dark") return "dark";
-  if (e === "light") return "light";
-  if (r.classList.contains("dark") || (t = document.body) != null && t.classList.contains("dark"))
+  const root = document.documentElement, attr = (root.getAttribute("data-theme") || root.getAttribute("data-mode") || "").toLowerCase();
+  if (attr === "dark") return "dark";
+  if (attr === "light") return "light";
+  if (root.classList.contains("dark") || (_a = document.body) != null && _a.classList.contains("dark"))
     return "dark";
   try {
-    const o = localStorage.getItem("salla_demo_theme");
-    if (o === "dark" || o === "light") return o;
+    const stored = localStorage.getItem("salla_demo_theme");
+    if (stored === "dark" || stored === "light") return stored;
   } catch {
   }
   return "light";
 }
-function z(r = l()) {
-  const e = r === "dark";
+__name(detectFsTheme, "detectFsTheme");
+function fsThemeVars(mode = detectFsTheme()) {
+  const dark = mode === "dark";
   return {
-    "--fs-store-primary": f,
-    "--accent-color": f,
-    "--button-bg": f,
+    "--fs-store-primary": PRIMARY,
+    "--accent-color": PRIMARY,
+    "--button-bg": PRIMARY,
     "--button-color": "#ffffff",
-    "--text-color": e ? "#ffffff" : "#000000",
-    "--muted-color": e ? "#aaaaaa" : "#666666",
-    "--card-bg": e ? "#0f0f0f" : "#ffffff",
-    "--fs-surface": e ? "#0a0a0a" : "#f0f0f0",
-    "--border-color": e ? "rgba(255, 255, 255, 0.12)" : "#e5e7eb",
+    "--text-color": dark ? "#ffffff" : "#000000",
+    "--muted-color": dark ? "#aaaaaa" : "#666666",
+    "--card-bg": dark ? "#0f0f0f" : "#ffffff",
+    "--fs-surface": dark ? "#0a0a0a" : "#f0f0f0",
+    "--border-color": dark ? "rgba(255, 255, 255, 0.12)" : "#e5e7eb",
     "--section-bg": "transparent"
   };
 }
-function j(r, e) {
-  for (const [t, o] of Object.entries(e))
-    r.style.setProperty(t, o);
-  r.setAttribute("data-fs-theme", l());
+__name(fsThemeVars, "fsThemeVars");
+function applyVars(el, vars) {
+  for (const [key, value] of Object.entries(vars))
+    el.style.setProperty(key, value);
+  el.setAttribute("data-fs-theme", detectFsTheme());
 }
-function h(r, e) {
-  r.querySelectorAll(".fs-section").forEach((t) => {
-    j(t, e);
+__name(applyVars, "applyVars");
+function walkAndApply(root, vars) {
+  root.querySelectorAll(".fs-section").forEach((node) => {
+    applyVars(node, vars);
   });
 }
-function L(r = l()) {
+__name(walkAndApply, "walkAndApply");
+function applyFsThemeToDocument(mode = detectFsTheme()) {
   if (typeof document > "u") return;
-  const e = z(r);
-  h(document, e), document.querySelectorAll("*").forEach((t) => {
-    const o = t, a = o.shadowRoot;
-    a && a.querySelector(".fs-section") && (j(o, e), h(a, e));
+  const vars = fsThemeVars(mode);
+  walkAndApply(document, vars), document.querySelectorAll("*").forEach((node) => {
+    const el = node, shadow = el.shadowRoot;
+    shadow && shadow.querySelector(".fs-section") && (applyVars(el, vars), walkAndApply(shadow, vars));
   });
 }
-let u = !1, c = null;
-function n() {
-  c && clearTimeout(c), c = setTimeout(() => {
-    c = null, L();
+__name(applyFsThemeToDocument, "applyFsThemeToDocument");
+let watching = !1, syncTimer = null;
+function scheduleSync() {
+  syncTimer && clearTimeout(syncTimer), syncTimer = setTimeout(() => {
+    syncTimer = null, applyFsThemeToDocument();
   }, 50);
 }
-function C() {
-  if (!(u || typeof document > "u")) {
-    u = !0, n();
+__name(scheduleSync, "scheduleSync");
+function ensureFsThemeWatch() {
+  if (!(watching || typeof document > "u")) {
+    watching = !0, scheduleSync();
     try {
-      new MutationObserver(n).observe(document.documentElement, {
+      new MutationObserver(scheduleSync).observe(document.documentElement, {
         attributes: !0,
         attributeFilter: ["data-theme", "data-mode", "class"]
-      }), document.body && new MutationObserver(n).observe(document.body, {
+      }), document.body && new MutationObserver(scheduleSync).observe(document.body, {
         attributes: !0,
         attributeFilter: ["class", "data-theme", "data-mode"]
       });
     } catch {
     }
-    window.addEventListener("storage", (r) => {
-      r.key === "salla_demo_theme" && n();
+    window.addEventListener("storage", (event) => {
+      event.key === "salla_demo_theme" && scheduleSync();
     });
     try {
-      new MutationObserver((r) => {
-        r.some((e) => e.addedNodes.length) && n();
+      new MutationObserver((records) => {
+        records.some((r) => r.addedNodes.length) && scheduleSync();
       }).observe(document.documentElement, { childList: !0, subtree: !0 });
     } catch {
     }
   }
 }
-function T(r) {
-  return Object.entries(r || {}).reduce((e, [t, o]) => {
-    const a = t.includes(".") ? t.split(".").pop() : t;
-    return e[a] = o, e;
+__name(ensureFsThemeWatch, "ensureFsThemeWatch");
+function normalizeItem(item) {
+  return Object.entries(item || {}).reduce((acc, [key, value]) => {
+    const normalizedKey = key.includes(".") ? key.split(".").pop() : key;
+    return acc[normalizedKey] = value, acc;
   }, {});
 }
-function g(r, e = "") {
-  const t = typeof r == "string" || typeof r == "number" ? String(r).trim() : M(r, "").trim();
-  return t && t.toLowerCase().replace(/[^a-z0-9\u0600-\u06ff]+/gi, "-").replace(/^-+|-+$/g, "").slice(0, 48) || e;
+__name(normalizeItem, "normalizeItem");
+function slugifyId(value, fallback = "") {
+  const raw = typeof value == "string" || typeof value == "number" ? String(value).trim() : localizedString(value, "").trim();
+  return raw && raw.toLowerCase().replace(/[^a-z0-9\u0600-\u06ff]+/gi, "-").replace(/^-+|-+$/g, "").slice(0, 48) || fallback;
 }
-function $(r, e = "") {
-  if (r && typeof r == "object" && !Array.isArray(r)) {
-    const t = r, o = String(t.en ?? "").trim(), a = String(t.ar ?? "").trim();
-    return g(o || a, e);
+__name(slugifyId, "slugifyId");
+function itemIdFromLabel(value, fallback = "") {
+  if (value && typeof value == "object" && !Array.isArray(value)) {
+    const row = value, en = String(row.en ?? "").trim(), ar = String(row.ar ?? "").trim();
+    return slugifyId(en || ar, fallback);
   }
-  return g(r, e);
+  return slugifyId(value, fallback);
 }
-function F(r, e, t = "item") {
-  const o = String(r.id ?? r.value ?? r.key ?? "").trim();
-  return o || $(r.name ?? r.title ?? r.label ?? r.brand ?? r.model, "") || `${t}-${e + 1}`;
+__name(itemIdFromLabel, "itemIdFromLabel");
+function resolveItemId(item, index, prefix = "item") {
+  const explicit = String(item.id ?? item.value ?? item.key ?? "").trim();
+  return explicit || itemIdFromLabel(item.name ?? item.title ?? item.label ?? item.brand ?? item.model, "") || `${prefix}-${index + 1}`;
 }
-function N(r) {
-  let e = r;
-  if (e && typeof e == "object" && !Array.isArray(e)) {
-    const t = e;
-    Array.isArray(t.value) ? e = t.value : Array.isArray(t.selected) ? e = t.selected : Array.isArray(t.items) ? e = t.items : Array.isArray(t.data) && (e = t.data);
+__name(resolveItemId, "resolveItemId");
+function normalizeCollection(items) {
+  let list = items;
+  if (list && typeof list == "object" && !Array.isArray(list)) {
+    const obj = list;
+    Array.isArray(obj.value) ? list = obj.value : Array.isArray(obj.selected) ? list = obj.selected : Array.isArray(obj.items) ? list = obj.items : Array.isArray(obj.data) && (list = obj.data);
   }
-  return Array.isArray(e) ? e.filter((t) => !!t && typeof t == "object").map((t, o) => {
-    const a = T(t), s = a;
-    return String(s.id ?? "").trim() || (s.id = F(s, o)), a;
+  return Array.isArray(list) ? list.filter((item) => !!item && typeof item == "object").map((item, index) => {
+    const normalized = normalizeItem(item), row = normalized;
+    return String(row.id ?? "").trim() || (row.id = resolveItemId(row, index)), normalized;
   }) : [];
 }
-function d(r, e = 0) {
-  return typeof r == "number" && Number.isFinite(r) ? r : typeof r == "string" && r.trim() !== "" && Number.isFinite(Number(r)) ? Number(r) : r && typeof r == "object" && "value" in r ? d(r.value, e) : e;
+__name(normalizeCollection, "normalizeCollection");
+function getUnitValue(val, fallback = 0) {
+  return typeof val == "number" && Number.isFinite(val) ? val : typeof val == "string" && val.trim() !== "" && Number.isFinite(Number(val)) ? Number(val) : val && typeof val == "object" && "value" in val ? getUnitValue(val.value, fallback) : fallback;
 }
-function x(r, e = 0) {
-  if (typeof r == "number" && Number.isFinite(r)) return r;
-  if (typeof r == "string" && r.trim() !== "") {
-    const t = Number(r.replace(",", "."));
-    return Number.isFinite(t) ? t : e;
+__name(getUnitValue, "getUnitValue");
+function toNumber(val, fallback = 0) {
+  if (typeof val == "number" && Number.isFinite(val)) return val;
+  if (typeof val == "string" && val.trim() !== "") {
+    const n = Number(val.replace(",", "."));
+    return Number.isFinite(n) ? n : fallback;
   }
-  return e;
+  return fallback;
 }
-function O(r, e, t) {
-  return Math.min(t, Math.max(e, r));
+__name(toNumber, "toNumber");
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
 }
-function _(r, e = !1) {
-  if (typeof r == "boolean") return r;
-  if (typeof r == "string") {
-    const t = r.toLowerCase().trim();
-    if (["true", "1", "yes", "on"].includes(t)) return !0;
-    if (["false", "0", "no", "off", ""].includes(t)) return !1;
+__name(clamp, "clamp");
+function isTruthy(val, fallback = !1) {
+  if (typeof val == "boolean") return val;
+  if (typeof val == "string") {
+    const v = val.toLowerCase().trim();
+    if (["true", "1", "yes", "on"].includes(v)) return !0;
+    if (["false", "0", "no", "off", ""].includes(v)) return !1;
   }
-  if (typeof r == "number") return r !== 0;
-  if (r && typeof r == "object") {
-    const t = r;
-    if ("value" in t && t.value !== t) return _(t.value, e);
-    if ("selected" in t) return _(t.selected, e);
+  if (typeof val == "number") return val !== 0;
+  if (val && typeof val == "object") {
+    const obj = val;
+    if ("value" in obj && obj.value !== obj) return isTruthy(obj.value, fallback);
+    if ("selected" in obj) return isTruthy(obj.selected, fallback);
   }
-  return e;
+  return fallback;
 }
-function v(r) {
-  if (!r) return "";
-  if (typeof r == "string") {
-    const e = r.trim();
-    return I(e) ? e : "";
+__name(isTruthy, "isTruthy");
+function extractLink(value) {
+  if (!value) return "";
+  if (typeof value == "string") {
+    const trimmed = value.trim();
+    return isValidHref(trimmed) ? trimmed : "";
   }
-  if (Array.isArray(r)) {
-    for (const e of r) {
-      const t = v(e);
-      if (t) return t;
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const link = extractLink(item);
+      if (link) return link;
     }
     return "";
   }
-  if (typeof r == "object") {
-    const e = r, t = [
-      e.url,
-      e.href,
-      e.link,
-      e.value,
-      e.custom,
-      e.path
+  if (typeof value == "object") {
+    const obj = value, candidates = [
+      obj.url,
+      obj.href,
+      obj.link,
+      obj.value,
+      obj.custom,
+      obj.path
     ];
-    for (const o of t) {
-      const a = v(o);
-      if (a) return a;
+    for (const candidate of candidates) {
+      const link = extractLink(candidate);
+      if (link) return link;
     }
   }
   return "";
 }
-function I(r) {
-  if (!r || r === "#") return !1;
-  if (r.startsWith("/") || r.startsWith("#") || r.startsWith("?") || r.startsWith("mailto:") || r.startsWith("tel:") || r.startsWith("whatsapp:"))
+__name(extractLink, "extractLink");
+function isValidHref(url) {
+  if (!url || url === "#") return !1;
+  if (url.startsWith("/") || url.startsWith("#") || url.startsWith("?") || url.startsWith("mailto:") || url.startsWith("tel:") || url.startsWith("whatsapp:"))
     return !0;
   try {
-    const e = new URL(r, window.location.origin);
-    return ["http:", "https:", "mailto:", "tel:"].includes(e.protocol);
+    const parsed = new URL(url, window.location.origin);
+    return ["http:", "https:", "mailto:", "tel:"].includes(parsed.protocol);
   } catch {
     return !1;
   }
 }
-function U(r) {
+__name(isValidHref, "isValidHref");
+function isExternalUrl(url) {
   try {
-    return new URL(r, window.location.origin).origin !== window.location.origin;
+    return new URL(url, window.location.origin).origin !== window.location.origin;
   } catch {
     return !1;
   }
 }
-function R(r) {
-  if (!r || typeof r != "string") return !1;
+__name(isExternalUrl, "isExternalUrl");
+function isDirectMediaUrl(url) {
+  if (!url || typeof url != "string") return !1;
   try {
-    const e = new URL(r, window.location.origin);
-    return !!["http:", "https:"].includes(e.protocol);
+    const parsed = new URL(url, window.location.origin);
+    return !!["http:", "https:"].includes(parsed.protocol);
   } catch {
     return !1;
   }
 }
-function W(r, e = "group_order") {
-  return [...r].sort(
-    (t, o) => x(t[e], 0) - x(o[e], 0)
+__name(isDirectMediaUrl, "isDirectMediaUrl");
+function sortByOrder(items, orderKey = "group_order") {
+  return [...items].sort(
+    (a, b) => toNumber(a[orderKey], 0) - toNumber(b[orderKey], 0)
   );
 }
-function D(r, e, t, o) {
-  return k() === "en" ? e : o || r;
+__name(sortByOrder, "sortByOrder");
+function t(ar, en, value, fallbackAr) {
+  return getPageLocale() === "en" ? en : fallbackAr || ar;
 }
-function q() {
+__name(t, "t");
+function prefersReducedMotion() {
   try {
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   } catch {
     return !1;
   }
 }
-function B(r, e, t) {
-  const o = r || {};
+__name(prefersReducedMotion, "prefersReducedMotion");
+function readSectionTheme(config, prefix, defaults) {
+  const c = config || {};
   return {
     bg: "transparent",
     text: "#000000",
@@ -247,77 +274,81 @@ function B(r, e, t) {
     border: "var(--color-border, #e5e7eb)",
     buttonBg: "var(--color-primary, var(--primary-color, var(--color-main, #64748b)))",
     buttonColor: "#ffffff",
-    radius: `${d(o[`${e}radius`], t != null && t.radius ? Number(String(t.radius).replace("px", "")) : 20)}px`,
-    spaceDesktop: d(
-      o[`${e}space_desktop`],
-      (t == null ? void 0 : t.spaceDesktop) ?? 48
+    radius: `${getUnitValue(c[`${prefix}radius`], defaults != null && defaults.radius ? Number(String(defaults.radius).replace("px", "")) : 20)}px`,
+    spaceDesktop: getUnitValue(
+      c[`${prefix}space_desktop`],
+      (defaults == null ? void 0 : defaults.spaceDesktop) ?? 48
     ),
-    spaceMobile: d(
-      o[`${e}space_mobile`],
-      (t == null ? void 0 : t.spaceMobile) ?? 28
+    spaceMobile: getUnitValue(
+      c[`${prefix}space_mobile`],
+      (defaults == null ? void 0 : defaults.spaceMobile) ?? 28
     ),
     noBottomMargin: !1,
     hasContainer: !0
   };
 }
-function P(r) {
-  const e = r.hasContainer !== !1;
-  return C(), {
-    ...z(),
-    "--section-radius": r.radius,
-    "--space-desktop": `${r.spaceDesktop}px`,
-    "--space-mobile": `${r.spaceMobile}px`,
-    "--space-desktop-bottom": r.noBottomMargin ? "0px" : `${r.spaceDesktop}px`,
-    "--space-mobile-bottom": r.noBottomMargin ? "0px" : `${r.spaceMobile}px`,
-    "--section-container-max": e ? "1440px" : "none",
-    "--section-container-pad": e ? "16px" : "0px",
-    "--section-container-pad-sm": e ? "12px" : "0px"
+__name(readSectionTheme, "readSectionTheme");
+function themeStyleMap(theme) {
+  const useContainer = theme.hasContainer !== !1;
+  return ensureFsThemeWatch(), {
+    ...fsThemeVars(),
+    "--section-radius": theme.radius,
+    "--space-desktop": `${theme.spaceDesktop}px`,
+    "--space-mobile": `${theme.spaceMobile}px`,
+    "--space-desktop-bottom": theme.noBottomMargin ? "0px" : `${theme.spaceDesktop}px`,
+    "--space-mobile-bottom": theme.noBottomMargin ? "0px" : `${theme.spaceMobile}px`,
+    "--section-container-max": useContainer ? "1440px" : "none",
+    "--section-container-pad": useContainer ? "16px" : "0px",
+    "--section-container-pad-sm": useContainer ? "12px" : "0px"
   };
 }
-function y(r, e = "") {
-  if (typeof r == "string" && r.trim()) return r.trim();
-  if (Array.isArray(r) && r[0]) {
-    const t = r[0];
-    if (typeof t == "string") return t;
-    if (t && typeof t == "object" && "value" in t)
-      return String(t.value ?? e);
-    if (t && typeof t == "object" && "key" in t)
-      return String(t.key ?? e);
+__name(themeStyleMap, "themeStyleMap");
+function getRadioValue(value, fallback = "") {
+  if (typeof value == "string" && value.trim()) return value.trim();
+  if (Array.isArray(value) && value[0]) {
+    const first = value[0];
+    if (typeof first == "string") return first;
+    if (first && typeof first == "object" && "value" in first)
+      return String(first.value ?? fallback);
+    if (first && typeof first == "object" && "key" in first)
+      return String(first.key ?? fallback);
   }
-  if (r && typeof r == "object") {
-    const t = r;
-    if (Array.isArray(t.selected) && t.selected[0])
-      return y(t.selected, e);
-    if ("value" in t && t.value != null && !Array.isArray(t.value))
-      return String(t.value ?? e);
-    if (Array.isArray(t.value) && t.value[0])
-      return y(t.value, e);
+  if (value && typeof value == "object") {
+    const obj = value;
+    if (Array.isArray(obj.selected) && obj.selected[0])
+      return getRadioValue(obj.selected, fallback);
+    if ("value" in obj && obj.value != null && !Array.isArray(obj.value))
+      return String(obj.value ?? fallback);
+    if (Array.isArray(obj.value) && obj.value[0])
+      return getRadioValue(obj.value, fallback);
   }
-  return e;
+  return fallback;
 }
-function w(r) {
-  if (!r) return "";
-  if (typeof r == "string") {
-    const e = r.trim();
-    return R(e) || e.startsWith("/") ? e : "";
+__name(getRadioValue, "getRadioValue");
+function extractImageUrl(val) {
+  if (!val) return "";
+  if (typeof val == "string") {
+    const trimmed = val.trim();
+    return isDirectMediaUrl(trimmed) || trimmed.startsWith("/") ? trimmed : "";
   }
-  if (Array.isArray(r)) {
-    for (const e of r) {
-      const t = w(e);
-      if (t) return t;
+  if (Array.isArray(val)) {
+    for (const item of val) {
+      const url = extractImageUrl(item);
+      if (url) return url;
     }
     return "";
   }
-  if (typeof r == "object") {
-    const e = r, t = [e.url, e.src, e.image, e.thumbnail, e.original];
-    for (const o of t) {
-      const a = w(o);
-      if (a) return a;
+  if (typeof val == "object") {
+    const obj = val, candidates = [obj.url, obj.src, obj.image, obj.thumbnail, obj.original];
+    for (const candidate of candidates) {
+      const url = extractImageUrl(candidate);
+      if (url) return url;
     }
   }
   return "";
 }
-const V = S`
+__name(extractImageUrl, "extractImageUrl");
+const sharedSectionCss = css`
   :host {
     direction: inherit;
     width: 100%;
@@ -2009,42 +2040,43 @@ const V = S`
     }
   }
 `;
-function Y(r) {
-  r.registerSallaComponent = function(t) {
-    const o = () => {
-      var p, b;
-      const i = (p = window.Salla) == null ? void 0 : p.bundles;
-      if (i != null && i.registerComponent) {
-        if ((b = i.isRegistered) != null && b.call(i, t)) return !0;
-        const A = `${t}-${Math.random().toString(36).slice(2, 8)}`;
-        return i.registerComponent(t, { component: this, dynamicTagName: A }), !0;
+function bindSallaRegistration(ctor) {
+  ctor.registerSallaComponent = /* @__PURE__ */ __name(function(tagName) {
+    const attempt = /* @__PURE__ */ __name(() => {
+      var _a, _b;
+      const bundles = (_a = window.Salla) == null ? void 0 : _a.bundles;
+      if (bundles != null && bundles.registerComponent) {
+        if ((_b = bundles.isRegistered) != null && _b.call(bundles, tagName)) return !0;
+        const dynamicTagName = `${tagName}-${Math.random().toString(36).slice(2, 8)}`;
+        return bundles.registerComponent(tagName, { component: this, dynamicTagName }), !0;
       }
-      const m = HTMLElement;
-      return typeof m.registerSallaComponent == "function" ? (m.registerSallaComponent.call(this, t), !0) : !1;
-    };
-    if (o()) return;
-    let a = 0;
-    const s = window.setInterval(() => {
-      a += 1, (o() || a > 200) && window.clearInterval(s);
+      const host = HTMLElement;
+      return typeof host.registerSallaComponent == "function" ? (host.registerSallaComponent.call(this, tagName), !0) : !1;
+    }, "attempt");
+    if (attempt()) return;
+    let ticks = 0;
+    const timer = window.setInterval(() => {
+      ticks += 1, (attempt() || ticks > 200) && window.clearInterval(timer);
     }, 50);
-  };
+  }, "registerSallaComponent");
 }
+__name(bindSallaRegistration, "bindSallaRegistration");
 export {
-  P as a,
-  Y as b,
-  w as c,
-  _ as d,
-  v as e,
-  x as f,
-  y as g,
-  W as h,
-  U as i,
-  O as j,
-  $ as k,
-  M as l,
-  N as n,
-  q as p,
-  B as r,
-  V as s,
-  D as t
+  themeStyleMap as a,
+  bindSallaRegistration as b,
+  extractImageUrl as c,
+  isTruthy as d,
+  extractLink as e,
+  toNumber as f,
+  getRadioValue as g,
+  sortByOrder as h,
+  isExternalUrl as i,
+  clamp as j,
+  itemIdFromLabel as k,
+  localizedString as l,
+  normalizeCollection as n,
+  prefersReducedMotion as p,
+  readSectionTheme as r,
+  sharedSectionCss as s,
+  t
 };

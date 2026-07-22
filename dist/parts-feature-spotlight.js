@@ -1,10 +1,12 @@
-import { css as $, LitElement as k, nothing as p, html as s } from "lit";
-import { property as C, state as I } from "lit/decorators.js";
-import { classMap as _ } from "lit/directives/class-map.js";
-import { styleMap as z } from "lit/directives/style-map.js";
-import { n as L, l as c, c as g, k as x, d as S, t as o, s as F, r as E, a as H, b as j } from "./registerSalla-Dct4KN_E.js";
-import { r as M } from "./commerceOutcome-B3T0_-WJ.js";
-const T = $`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, nothing, html } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, l as localizedString, c as extractImageUrl, k as itemIdFromLabel, d as isTruthy, t, s as sharedSectionCss, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .pfs-shell {
     display: grid;
     gap: 1.15rem;
@@ -245,7 +247,7 @@ const T = $`
       transition: none !important;
     }
   }
-`, U = [
+`, DEFAULT_META = [
   {
     ar: "أداء عالي",
     en: "High performance",
@@ -289,49 +291,53 @@ const T = $`
     icon: "06"
   }
 ];
-function A() {
-  return U.map((r, e) => {
-    const t = o(r.ar, r.en);
+function defaultFeatures() {
+  return DEFAULT_META.map((m, i) => {
+    const title = t(m.ar, m.en);
     return {
-      id: x(t, "") || `feat-${e + 1}`,
-      title: t,
-      desc: o(r.dar, r.den),
-      icon: r.icon,
+      id: itemIdFromLabel(title, "") || `feat-${i + 1}`,
+      title,
+      desc: t(m.dar, m.den),
+      icon: m.icon,
       iconImage: ""
     };
   });
 }
-function B(r) {
-  const e = L(r).map((t, n) => {
-    const a = c(t.title) || c(t.name);
-    if (!a) return null;
-    const i = String(t.icon ?? "").trim();
+__name(defaultFeatures, "defaultFeatures");
+function parseFeatures(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => {
+    const title = localizedString(row.title) || localizedString(row.name);
+    if (!title) return null;
+    const iconRaw = String(row.icon ?? "").trim();
     return {
-      id: String(t.id ?? "").trim() || x(a, "") || `feat-${n + 1}`,
-      title: a,
-      desc: c(t.desc) || c(t.description),
-      icon: i || String(n + 1).padStart(2, "0"),
-      iconImage: g(t.icon_image) || g(t.image)
+      id: String(row.id ?? "").trim() || itemIdFromLabel(title, "") || `feat-${i + 1}`,
+      title,
+      desc: localizedString(row.desc) || localizedString(row.description),
+      icon: iconRaw || String(i + 1).padStart(2, "0"),
+      iconImage: extractImageUrl(row.icon_image) || extractImageUrl(row.image)
     };
-  }).filter((t) => !!t);
-  return e.length ? e : A();
+  }).filter((x) => !!x);
+  return parsed.length ? parsed : defaultFeatures();
 }
-function O(r) {
-  const e = Math.ceil(r.length / 2);
+__name(parseFeatures, "parseFeatures");
+function splitFeatures(items) {
+  const mid = Math.ceil(items.length / 2);
   return {
-    start: r.slice(0, e),
-    end: r.slice(e)
+    start: items.slice(0, mid),
+    end: items.slice(mid)
   };
 }
-function P(r) {
-  return S(r.pfs_show_connectors, !0);
+__name(splitFeatures, "splitFeatures");
+function showConnectors(config) {
+  return isTruthy(config.pfs_show_connectors, !0);
 }
-var q = Object.defineProperty, y = (r, e, t, n) => {
-  for (var a = void 0, i = r.length - 1, l; i >= 0; i--)
-    (l = r[i]) && (a = l(e, t, a) || a);
-  return a && q(e, t, a), a;
-};
-const h = class h extends k {
+__name(showConnectors, "showConnectors");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _PartsFeatureSpotlight = class _PartsFeatureSpotlight extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.activeId = "", this.boundLangHandler = () => this.requestUpdate();
   }
@@ -341,113 +347,113 @@ const h = class h extends k {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
-  willUpdate(e) {
-    var t;
-    e.has("config") && (this.activeId = ((t = this.features[0]) == null ? void 0 : t.id) ?? "");
+  willUpdate(changed) {
+    var _a;
+    changed.has("config") && (this.activeId = ((_a = this.features[0]) == null ? void 0 : _a.id) ?? "");
   }
   get features() {
-    var e;
-    return B((e = this.config) == null ? void 0 : e.pfs_features);
+    var _a;
+    return parseFeatures((_a = this.config) == null ? void 0 : _a.pfs_features);
   }
   get active() {
-    return this.features.find((e) => e.id === this.activeId) ?? this.features[0] ?? null;
+    return this.features.find((f) => f.id === this.activeId) ?? this.features[0] ?? null;
   }
-  select(e) {
-    this.activeId = e;
+  select(id) {
+    this.activeId = id;
   }
-  renderFeature(e) {
-    var n;
-    const t = e.id === ((n = this.active) == null ? void 0 : n.id);
-    return s`
+  renderFeature(item) {
+    var _a;
+    const active = item.id === ((_a = this.active) == null ? void 0 : _a.id);
+    return html`
       <button
         type="button"
-        class=${_({ "pfs-feat": !0, "is-active": t })}
-        aria-pressed=${t ? "true" : "false"}
-        @click=${() => this.select(e.id)}
+        class=${classMap({ "pfs-feat": !0, "is-active": active })}
+        aria-pressed=${active ? "true" : "false"}
+        @click=${() => this.select(item.id)}
       >
         <span class="pfs-feat__icon" aria-hidden="true">
-          ${e.iconImage ? s`<img src=${e.iconImage} alt="" loading="lazy" decoding="async" />` : e.icon}
+          ${item.iconImage ? html`<img src=${item.iconImage} alt="" loading="lazy" decoding="async" />` : item.icon}
         </span>
         <span class="pfs-feat__body">
-          <h3 class="pfs-feat__title">${e.title}</h3>
-          ${e.desc ? s`<p class="pfs-feat__desc">${e.desc}</p>` : p}
+          <h3 class="pfs-feat__title">${item.title}</h3>
+          ${item.desc ? html`<p class="pfs-feat__desc">${item.desc}</p>` : nothing}
         </span>
       </button>
     `;
   }
-  renderProducts(e) {
-    return M(this.config || {}, "pfs_", {
-      ready: !!e
+  renderProducts(item) {
+    return renderCommerceOutcome(this.config || {}, "pfs_", {
+      ready: !!item
     });
   }
   render() {
-    const e = this.config || {}, t = E(e, "pfs_"), n = this.features, { start: a, end: i } = O(n), l = this.active, f = c(e.pfs_title) || o("مميزات القطعة في لمحة", "Part features at a glance"), u = c(e.pfs_desc) || o(
+    const c = this.config || {}, theme = readSectionTheme(c, "pfs_"), features = this.features, { start, end } = splitFeatures(features), active = this.active, title = localizedString(c.pfs_title) || t("مميزات القطعة في لمحة", "Part features at a glance"), desc = localizedString(c.pfs_desc) || t(
       "استكشف أبرز مزايا القطعة حول الصورة المركزية، ثم تصفّح المنتجات المرتبطة.",
       "Explore key part benefits around the center image, then browse related products."
-    ), v = g(e.pfs_center_image), b = c(e.pfs_center_caption) || o("القطعة المختارة", "Featured part"), w = P(e);
-    return n.length ? s`
+    ), centerImage = extractImageUrl(c.pfs_center_image), centerCaption = localizedString(c.pfs_center_caption) || t("القطعة المختارة", "Featured part"), connectors = showConnectors(c);
+    return features.length ? html`
       <section
         class="fs-section"
-        style=${z(H(t))}
-        aria-label=${f}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title}
       >
         <div class="fs-container">
           <div class="pfs-shell">
             <div class="fs-hero">
-              <p class="fs-eyebrow">${o("لماذا هذه القطعة؟", "Why this part?")}</p>
-              ${f ? s`<h2 class="fs-title">${f}</h2>` : p}
-              ${u ? s`<p class="fs-desc">${u}</p>` : p}
+              <p class="fs-eyebrow">${t("لماذا هذه القطعة؟", "Why this part?")}</p>
+              ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+              ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
             </div>
 
             <div
-              class=${_({
+              class=${classMap({
       "pfs-stage": !0,
-      "has-connectors": w
+      "has-connectors": connectors
     })}
             >
               <div class="pfs-col pfs-col--start" role="list">
-                ${a.map((m) => s`<div role="listitem">${this.renderFeature(m)}</div>`)}
+                ${start.map((item) => html`<div role="listitem">${this.renderFeature(item)}</div>`)}
               </div>
 
               <div class="pfs-center">
                 <div class="pfs-center__frame">
-                  ${v ? s`<img
+                  ${centerImage ? html`<img
                         class="pfs-center__img"
-                        src=${v}
+                        src=${centerImage}
                         alt=""
                         loading="lazy"
                         decoding="async"
-                      />` : s`<span class="pfs-center__placeholder" aria-hidden="true">+</span>`}
+                      />` : html`<span class="pfs-center__placeholder" aria-hidden="true">+</span>`}
                 </div>
-                ${b ? s`<p class="pfs-center__caption">${b}</p>` : p}
+                ${centerCaption ? html`<p class="pfs-center__caption">${centerCaption}</p>` : nothing}
               </div>
 
               <div class="pfs-col pfs-col--end" role="list">
-                ${i.map((m) => s`<div role="listitem">${this.renderFeature(m)}</div>`)}
+                ${end.map((item) => html`<div role="listitem">${this.renderFeature(item)}</div>`)}
               </div>
             </div>
 
-            ${this.renderProducts(l)}
+            ${this.renderProducts(active)}
           </div>
         </div>
       </section>
-    ` : s`<div class="fs-empty" role="status">
-        ${o("أضف المميزات من إعدادات العنصر", "Add features in element settings")}
+    ` : html`<div class="fs-empty" role="status">
+        ${t("أضف المميزات من إعدادات العنصر", "Add features in element settings")}
       </div>`;
   }
 };
-h.styles = [F, T];
-let d = h;
-y([
-  C({ type: Object })
-], d.prototype, "config");
-y([
-  I()
-], d.prototype, "activeId");
-j(
-  d
+__name(_PartsFeatureSpotlight, "PartsFeatureSpotlight"), _PartsFeatureSpotlight.styles = [sharedSectionCss, componentStyles];
+let PartsFeatureSpotlight = _PartsFeatureSpotlight;
+__decorateClass([
+  property({ type: Object })
+], PartsFeatureSpotlight.prototype, "config");
+__decorateClass([
+  state()
+], PartsFeatureSpotlight.prototype, "activeId");
+bindSallaRegistration(
+  PartsFeatureSpotlight
 );
-typeof d < "u" && d.registerSallaComponent("salla-parts-feature-spotlight");
+typeof PartsFeatureSpotlight < "u" && PartsFeatureSpotlight.registerSallaComponent("salla-parts-feature-spotlight");
 export {
-  d as default
+  PartsFeatureSpotlight as default
 };

@@ -1,10 +1,12 @@
-import { css as x, LitElement as k, nothing as t, html as n } from "lit";
-import { property as y, state as $ } from "lit/decorators.js";
-import { classMap as f } from "lit/directives/class-map.js";
-import { styleMap as w } from "lit/directives/style-map.js";
-import { n as C, l as o, e as S, c as z, g as T, t as e, s as B, i as L, r as A, a as P, b as I } from "./registerSalla-Dct4KN_E.js";
-import { r as E } from "./commerceOutcome-B3T0_-WJ.js";
-const H = x`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, nothing, html } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, l as localizedString, e as extractLink, c as extractImageUrl, g as getRadioValue, t, s as sharedSectionCss, i as isExternalUrl, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .dcg-shell {
     display: grid;
     gap: 1.25rem;
@@ -350,113 +352,117 @@ const H = x`
     }
   }
 `;
-function v(d) {
-  const r = o(d, "");
-  return r ? r.split(/\r?\n/).map((a) => a.trim()).filter(Boolean) : [];
+function splitLines(raw) {
+  const text = localizedString(raw, "");
+  return text ? text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean) : [];
 }
-function D(d) {
-  return T(d, "cards").toLowerCase() === "tabs" ? "tabs" : "cards";
+__name(splitLines, "splitLines");
+function resolveLayout(value) {
+  return getRadioValue(value, "cards").toLowerCase() === "tabs" ? "tabs" : "cards";
 }
-function h(d) {
-  const r = C(d).map((a, i) => {
-    const c = o(a.name);
+__name(resolveLayout, "resolveLayout");
+function parseConditions(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => {
+    const name = localizedString(row.name);
     return {
-      id: String(a.id ?? "").trim() || `cond-${i + 1}`,
-      name: c,
-      icon: String(a.icon ?? "").trim(),
-      image: z(a.image),
-      desc: o(a.desc) || o(a.description),
-      checks: v(a.checks),
-      parts: v(a.parts),
-      maintenance: v(a.maintenance),
-      prep: v(a.prep),
-      link: S(a.link)
+      id: String(row.id ?? "").trim() || `cond-${i + 1}`,
+      name,
+      icon: String(row.icon ?? "").trim(),
+      image: extractImageUrl(row.image),
+      desc: localizedString(row.desc) || localizedString(row.description),
+      checks: splitLines(row.checks),
+      parts: splitLines(row.parts),
+      maintenance: splitLines(row.maintenance),
+      prep: splitLines(row.prep),
+      link: extractLink(row.link)
     };
-  }).filter((a) => a.name);
-  return r.length ? r : M();
+  }).filter((c) => c.name);
+  return parsed.length ? parsed : defaultConditions();
 }
-function M() {
+__name(parseConditions, "parseConditions");
+function defaultConditions() {
   return [
     {
       id: "heat",
-      name: e("أجواء شديدة الحرارة", "Extreme heat"),
+      name: t("أجواء شديدة الحرارة", "Extreme heat"),
       icon: "☀",
       image: "",
-      desc: e("حرارة عالية تؤثر على التبريد والبطارية والإطارات.", "High heat affects cooling, battery, and tires."),
-      checks: [e("درجة حرارة المحرك", "Engine temperature"), e("ضغط الإطارات", "Tire pressure"), e("سائل التبريد", "Coolant level")],
-      parts: [e("مبرد", "Radiator"), e("ثرموستات", "Thermostat"), e("بطارية", "Battery")],
-      maintenance: [e("فحص سائل التبريد", "Check coolant"), e("تنظيف المكثف", "Clean condenser")],
-      prep: [e("ظل للسيارة", "Park in shade"), e("فحص قبل السفر", "Pre-trip check")],
+      desc: t("حرارة عالية تؤثر على التبريد والبطارية والإطارات.", "High heat affects cooling, battery, and tires."),
+      checks: [t("درجة حرارة المحرك", "Engine temperature"), t("ضغط الإطارات", "Tire pressure"), t("سائل التبريد", "Coolant level")],
+      parts: [t("مبرد", "Radiator"), t("ثرموستات", "Thermostat"), t("بطارية", "Battery")],
+      maintenance: [t("فحص سائل التبريد", "Check coolant"), t("تنظيف المكثف", "Clean condenser")],
+      prep: [t("ظل للسيارة", "Park in shade"), t("فحص قبل السفر", "Pre-trip check")],
       link: ""
     },
     {
       id: "desert",
-      name: e("طرق صحراوية", "Desert roads"),
+      name: t("طرق صحراوية", "Desert roads"),
       icon: "🏜",
       image: "",
-      desc: e("غبار رملي واهتزازات على طرق غير معبدة.", "Dust and vibration on unpaved roads."),
-      checks: [e("فلتر الهواء", "Air filter"), e("نظام التعليق", "Suspension"), e("درع المحرك", "Skid plate")],
-      parts: [e("فلتر هواء", "Air filter"), e("مساعدات", "Shocks")],
-      maintenance: [e("تنظيف الفلاتر", "Clean filters"), e("فحص البراغي", "Check fasteners")],
-      prep: [e("ضغط إطارات مناسب", "Proper tire pressure"), e("ماء وطوارئ", "Water & emergency kit")],
+      desc: t("غبار رملي واهتزازات على طرق غير معبدة.", "Dust and vibration on unpaved roads."),
+      checks: [t("فلتر الهواء", "Air filter"), t("نظام التعليق", "Suspension"), t("درع المحرك", "Skid plate")],
+      parts: [t("فلتر هواء", "Air filter"), t("مساعدات", "Shocks")],
+      maintenance: [t("تنظيف الفلاتر", "Clean filters"), t("فحص البراغي", "Check fasteners")],
+      prep: [t("ضغط إطارات مناسب", "Proper tire pressure"), t("ماء وطوارئ", "Water & emergency kit")],
       link: ""
     },
     {
       id: "long-trip",
-      name: e("سفر لمسافات طويلة", "Long-distance travel"),
+      name: t("سفر لمسافات طويلة", "Long-distance travel"),
       icon: "🛣",
       image: "",
-      desc: e("قيادة مستمرة لساعات — زيت، فرامل، وإطارات.", "Hours of driving — oil, brakes, tires."),
-      checks: [e("زيت المحرك", "Engine oil"), e("الفرامل", "Brakes"), e("الإطارات", "Tires")],
-      parts: [e("زيت وفلاتر", "Oil & filters"), e("مساحات", "Wipers")],
-      maintenance: [e("تغيير زيت قبل الرحلة", "Pre-trip oil change"), e("فحص شامل", "Full inspection")],
-      prep: [e("ضغط إطارات", "Tire pressure"), e("طقم إسعافات", "Emergency kit")],
+      desc: t("قيادة مستمرة لساعات — زيت، فرامل، وإطارات.", "Hours of driving — oil, brakes, tires."),
+      checks: [t("زيت المحرك", "Engine oil"), t("الفرامل", "Brakes"), t("الإطارات", "Tires")],
+      parts: [t("زيت وفلاتر", "Oil & filters"), t("مساحات", "Wipers")],
+      maintenance: [t("تغيير زيت قبل الرحلة", "Pre-trip oil change"), t("فحص شامل", "Full inspection")],
+      prep: [t("ضغط إطارات", "Tire pressure"), t("طقم إسعافات", "Emergency kit")],
       link: ""
     },
     {
       id: "city",
-      name: e("قيادة داخل المدن", "City driving"),
+      name: t("قيادة داخل المدن", "City driving"),
       icon: "🏙",
       image: "",
-      desc: e("توقف وانطلاق متكرر — فرامل وبطارية.", "Stop-and-go — brakes and battery."),
-      checks: [e("فرامل", "Brakes"), e("بطارية", "Battery"), e("تكييف", "AC")],
-      parts: [e("فحمات فرامل", "Brake pads"), e("بطارية", "Battery")],
-      maintenance: [e("فحص الفرامل", "Brake check"), e("تنظيف حساسات", "Clean sensors")],
-      prep: [e("فحص دوري", "Routine check")],
+      desc: t("توقف وانطلاق متكرر — فرامل وبطارية.", "Stop-and-go — brakes and battery."),
+      checks: [t("فرامل", "Brakes"), t("بطارية", "Battery"), t("تكييف", "AC")],
+      parts: [t("فحمات فرامل", "Brake pads"), t("بطارية", "Battery")],
+      maintenance: [t("فحص الفرامل", "Brake check"), t("تنظيف حساسات", "Clean sensors")],
+      prep: [t("فحص دوري", "Routine check")],
       link: ""
     },
     {
       id: "rain",
-      name: e("طرق ممطرة", "Rainy roads"),
+      name: t("طرق ممطرة", "Rainy roads"),
       icon: "🌧",
       image: "",
-      desc: e("انزلاق وتآكل — إطارات ومساحات وإضاءة.", "Slip and wear — tires, wipers, lights."),
-      checks: [e("عمق مداس الإطار", "Tread depth"), e("مساحات", "Wipers"), e("أضواء", "Lights")],
-      parts: [e("إطارات", "Tires"), e("مساحات", "Wipers")],
-      maintenance: [e("فحص الإطارات", "Tire inspection"), e("تنظيف مصابيح", "Clean lamps")],
-      prep: [e("قيادة هادئة", "Drive gently"), e("مسافة أمان", "Safe distance")],
+      desc: t("انزلاق وتآكل — إطارات ومساحات وإضاءة.", "Slip and wear — tires, wipers, lights."),
+      checks: [t("عمق مداس الإطار", "Tread depth"), t("مساحات", "Wipers"), t("أضواء", "Lights")],
+      parts: [t("إطارات", "Tires"), t("مساحات", "Wipers")],
+      maintenance: [t("فحص الإطارات", "Tire inspection"), t("تنظيف مصابيح", "Clean lamps")],
+      prep: [t("قيادة هادئة", "Drive gently"), t("مسافة أمان", "Safe distance")],
       link: ""
     },
     {
       id: "daily",
-      name: e("استخدام يومي مكثف", "Heavy daily use"),
+      name: t("استخدام يومي مكثف", "Heavy daily use"),
       icon: "🚗",
       image: "",
-      desc: e("استخدام يومي مرتفع — صيانة أسرع.", "High daily mileage — faster wear."),
-      checks: [e("زيت", "Oil"), e("إطارات", "Tires"), e("فرامل", "Brakes")],
-      parts: [e("زيت وفلاتر", "Oil & filters"), e("إطارات", "Tires")],
-      maintenance: [e("جدول صيانة مختصر", "Shortened service interval"), e("فحص أسبوعي", "Weekly check")],
-      prep: [e("سجل صيانة", "Maintenance log")],
+      desc: t("استخدام يومي مرتفع — صيانة أسرع.", "High daily mileage — faster wear."),
+      checks: [t("زيت", "Oil"), t("إطارات", "Tires"), t("فرامل", "Brakes")],
+      parts: [t("زيت وفلاتر", "Oil & filters"), t("إطارات", "Tires")],
+      maintenance: [t("جدول صيانة مختصر", "Shortened service interval"), t("فحص أسبوعي", "Weekly check")],
+      prep: [t("سجل صيانة", "Maintenance log")],
       link: ""
     }
   ];
 }
-var O = Object.defineProperty, u = (d, r, a, i) => {
-  for (var c = void 0, s = d.length - 1, l; s >= 0; s--)
-    (l = d[s]) && (c = l(r, a, c) || c);
-  return c && O(r, a, c), c;
-};
-const b = class b extends k {
+__name(defaultConditions, "defaultConditions");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _DrivingConditionsGuide = class _DrivingConditionsGuide extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.activeId = "", this.boundLangHandler = () => this.requestUpdate();
   }
@@ -466,141 +472,141 @@ const b = class b extends k {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
-  willUpdate(r) {
-    var a, i;
-    if (r.has("config")) {
-      const c = h((a = this.config) == null ? void 0 : a.dcg_conditions);
-      c.some((s) => s.id === this.activeId) || (this.activeId = ((i = c[0]) == null ? void 0 : i.id) ?? "");
+  willUpdate(changed) {
+    var _a, _b;
+    if (changed.has("config")) {
+      const items = parseConditions((_a = this.config) == null ? void 0 : _a.dcg_conditions);
+      items.some((item) => item.id === this.activeId) || (this.activeId = ((_b = items[0]) == null ? void 0 : _b.id) ?? "");
     }
   }
   get conditions() {
-    var r;
-    return h((r = this.config) == null ? void 0 : r.dcg_conditions);
+    var _a;
+    return parseConditions((_a = this.config) == null ? void 0 : _a.dcg_conditions);
   }
   get active() {
-    return this.conditions.find((r) => r.id === this.activeId) ?? this.conditions[0] ?? null;
+    return this.conditions.find((c) => c.id === this.activeId) ?? this.conditions[0] ?? null;
   }
-  select(r) {
-    this.activeId = r;
+  select(id) {
+    this.activeId = id;
   }
-  renderAdviceCard(r, a, i) {
-    return i.length ? n`
-      <div class=${f({ "dcg-advice": !0, [`dcg-advice--${r}`]: !0 })}>
-        <p class="dcg-advice__label">${a}</p>
+  renderAdviceCard(tone, label, items) {
+    return items.length ? html`
+      <div class=${classMap({ "dcg-advice": !0, [`dcg-advice--${tone}`]: !0 })}>
+        <p class="dcg-advice__label">${label}</p>
         <ul class="dcg-advice__list">
-          ${i.map((c) => n`<li>${c}</li>`)}
+          ${items.map((item) => html`<li>${item}</li>`)}
         </ul>
       </div>
-    ` : t;
+    ` : nothing;
   }
-  renderPanel(r, a, i) {
-    var s, l, g, m;
-    const c = !!r.image;
-    return n`
+  renderPanel(item, index, total) {
+    var _a, _b, _c, _d;
+    const hasMedia = !!item.image;
+    return html`
       <article
-        class=${f({
+        class=${classMap({
       "dcg-panel": !0,
-      "dcg-panel--split": c
+      "dcg-panel--split": hasMedia
     })}
         role="region"
         aria-live="polite"
       >
         <div class="dcg-panel__visual">
-          ${r.image ? n`<img src=${r.image} alt="" loading="lazy" decoding="async" />` : n`<div class="dcg-panel__visual-fallback" aria-hidden="true">
-                <span>${r.icon || "🚗"}</span>
+          ${item.image ? html`<img src=${item.image} alt="" loading="lazy" decoding="async" />` : html`<div class="dcg-panel__visual-fallback" aria-hidden="true">
+                <span>${item.icon || "🚗"}</span>
               </div>`}
           <div class="dcg-panel__overlay">
             <span class="dcg-panel__count"
-              >${e("الظرف", "Condition")} ${a + 1}/${i}</span
+              >${t("الظرف", "Condition")} ${index + 1}/${total}</span
             >
           </div>
         </div>
 
         <div class="dcg-panel__copy">
           <div class="dcg-panel__head">
-            ${r.icon ? n`<span class="dcg-panel__icon" aria-hidden="true">${r.icon}</span>` : t}
+            ${item.icon ? html`<span class="dcg-panel__icon" aria-hidden="true">${item.icon}</span>` : nothing}
             <div>
-              <p class="fs-eyebrow">${e("توصيات القيادة", "Driving advice")}</p>
-              <h3 class="dcg-panel__title">${r.name}</h3>
+              <p class="fs-eyebrow">${t("توصيات القيادة", "Driving advice")}</p>
+              <h3 class="dcg-panel__title">${item.name}</h3>
             </div>
           </div>
 
-          ${r.desc ? n`<p class="dcg-panel__desc">${r.desc}</p>` : t}
+          ${item.desc ? html`<p class="dcg-panel__desc">${item.desc}</p>` : nothing}
 
           <div class="dcg-panel__grid">
             ${this.renderAdviceCard(
       "checks",
-      o((s = this.config) == null ? void 0 : s.dcg_checks_label) || e("الفحص المطلوب", "Required checks"),
-      r.checks
+      localizedString((_a = this.config) == null ? void 0 : _a.dcg_checks_label) || t("الفحص المطلوب", "Required checks"),
+      item.checks
     )}
             ${this.renderAdviceCard(
       "parts",
-      o((l = this.config) == null ? void 0 : l.dcg_parts_label) || e("قطع تحتاج اهتمامًا", "Parts to watch"),
-      r.parts
+      localizedString((_b = this.config) == null ? void 0 : _b.dcg_parts_label) || t("قطع تحتاج اهتمامًا", "Parts to watch"),
+      item.parts
     )}
             ${this.renderAdviceCard(
       "maint",
-      o((g = this.config) == null ? void 0 : g.dcg_maint_label) || e("صيانة وقائية", "Preventive maintenance"),
-      r.maintenance
+      localizedString((_c = this.config) == null ? void 0 : _c.dcg_maint_label) || t("صيانة وقائية", "Preventive maintenance"),
+      item.maintenance
     )}
             ${this.renderAdviceCard(
       "prep",
-      o((m = this.config) == null ? void 0 : m.dcg_prep_label) || e("تجهيز قبل الرحلة", "Trip prep"),
-      r.prep
+      localizedString((_d = this.config) == null ? void 0 : _d.dcg_prep_label) || t("تجهيز قبل الرحلة", "Trip prep"),
+      item.prep
     )}
           </div>
 
-          ${r.link ? n`<a
+          ${item.link ? html`<a
                 class="fs-btn fs-tap dcg-panel__cta"
-                href=${r.link}
+                href=${item.link}
                 target="_blank"
-                rel=${L(r.link) ? "noopener noreferrer" : t}
+                rel=${isExternalUrl(item.link) ? "noopener noreferrer" : nothing}
               >
-                ${e("تصفّح القطع المناسبة", "Browse matching parts")}
-              </a>` : t}
+                ${t("تصفّح القطع المناسبة", "Browse matching parts")}
+              </a>` : nothing}
         </div>
       </article>
     `;
   }
-  renderTabs(r) {
-    const a = this.active;
-    return n`
-      <div class="dcg-tabs" role="tablist" aria-label=${e("ظروف القيادة", "Driving conditions")}>
-        ${r.map((i) => {
-      const c = i.id === (a == null ? void 0 : a.id);
-      return n`
+  renderTabs(items) {
+    const active = this.active;
+    return html`
+      <div class="dcg-tabs" role="tablist" aria-label=${t("ظروف القيادة", "Driving conditions")}>
+        ${items.map((item) => {
+      const isActive = item.id === (active == null ? void 0 : active.id);
+      return html`
             <button
               type="button"
-              class=${f({ "dcg-tab": !0, "is-active": c })}
+              class=${classMap({ "dcg-tab": !0, "is-active": isActive })}
               role="tab"
-              aria-selected=${c ? "true" : "false"}
-              @click=${() => this.select(i.id)}
+              aria-selected=${isActive ? "true" : "false"}
+              @click=${() => this.select(item.id)}
             >
-              ${i.icon ? n`<span class="dcg-tab__icon" aria-hidden="true">${i.icon}</span>` : t}
-              <span>${i.name}</span>
+              ${item.icon ? html`<span class="dcg-tab__icon" aria-hidden="true">${item.icon}</span>` : nothing}
+              <span>${item.name}</span>
             </button>
           `;
     })}
       </div>
     `;
   }
-  renderCards(r) {
-    const a = this.active;
-    return n`
-      <div class="dcg-cards" role="listbox" aria-label=${e("ظروف القيادة", "Driving conditions")}>
-        ${r.map((i) => {
-      const c = i.id === (a == null ? void 0 : a.id);
-      return n`
+  renderCards(items) {
+    const active = this.active;
+    return html`
+      <div class="dcg-cards" role="listbox" aria-label=${t("ظروف القيادة", "Driving conditions")}>
+        ${items.map((item) => {
+      const isActive = item.id === (active == null ? void 0 : active.id);
+      return html`
             <button
               type="button"
-              class=${f({ "dcg-card": !0, "is-active": c })}
+              class=${classMap({ "dcg-card": !0, "is-active": isActive })}
               role="option"
-              aria-selected=${c ? "true" : "false"}
-              @click=${() => this.select(i.id)}
+              aria-selected=${isActive ? "true" : "false"}
+              @click=${() => this.select(item.id)}
             >
-              <span class="dcg-card__icon" aria-hidden="true">${i.icon || "◎"}</span>
-              <span class="dcg-card__name">${i.name}</span>
-              ${i.desc ? n`<span class="dcg-card__hint">${i.desc}</span>` : t}
+              <span class="dcg-card__icon" aria-hidden="true">${item.icon || "◎"}</span>
+              <span class="dcg-card__name">${item.name}</span>
+              ${item.desc ? html`<span class="dcg-card__hint">${item.desc}</span>` : nothing}
             </button>
           `;
     })}
@@ -608,45 +614,45 @@ const b = class b extends k {
     `;
   }
   render() {
-    const r = this.config || {}, a = A(r, "dcg_"), i = this.conditions, c = this.active, s = Math.max(
+    const c = this.config || {}, theme = readSectionTheme(c, "dcg_"), items = this.conditions, active = this.active, activeIndex = Math.max(
       0,
-      i.findIndex((_) => _.id === (c == null ? void 0 : c.id))
-    ), l = D(r.dcg_layout), g = o(r.dcg_title), m = o(r.dcg_desc);
-    return n`
+      items.findIndex((item) => item.id === (active == null ? void 0 : active.id))
+    ), layout = resolveLayout(c.dcg_layout), title = localizedString(c.dcg_title), desc = localizedString(c.dcg_desc);
+    return html`
       <section
         class="fs-section"
-        style=${w(P(a))}
-        aria-label=${g || e("دليل ظروف القيادة", "Driving conditions guide")}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title || t("دليل ظروف القيادة", "Driving conditions guide")}
       >
         <div class="fs-container">
-          ${g || m ? n`<div class="fs-hero">
-                ${g ? n`<h2 class="fs-title">${g}</h2>` : t}
-                ${m ? n`<p class="fs-desc">${m}</p>` : t}
-              </div>` : t}
+          ${title || desc ? html`<div class="fs-hero">
+                ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+                ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+              </div>` : nothing}
 
           <div class="dcg-shell">
-            ${l === "tabs" ? this.renderTabs(i) : this.renderCards(i)}
-            ${c ? this.renderPanel(c, s, i.length) : t}
+            ${layout === "tabs" ? this.renderTabs(items) : this.renderCards(items)}
+            ${active ? this.renderPanel(active, activeIndex, items.length) : nothing}
           </div>
 
-          ${E(r, "dcg_", { ready: !!c })}
+          ${renderCommerceOutcome(c, "dcg_", { ready: !!active })}
         </div>
       </section>
     `;
   }
 };
-b.styles = [B, H];
-let p = b;
-u([
-  y({ type: Object })
-], p.prototype, "config");
-u([
-  $()
-], p.prototype, "activeId");
-I(
-  p
+__name(_DrivingConditionsGuide, "DrivingConditionsGuide"), _DrivingConditionsGuide.styles = [sharedSectionCss, componentStyles];
+let DrivingConditionsGuide = _DrivingConditionsGuide;
+__decorateClass([
+  property({ type: Object })
+], DrivingConditionsGuide.prototype, "config");
+__decorateClass([
+  state()
+], DrivingConditionsGuide.prototype, "activeId");
+bindSallaRegistration(
+  DrivingConditionsGuide
 );
-typeof p < "u" && p.registerSallaComponent("salla-driving-conditions-guide");
+typeof DrivingConditionsGuide < "u" && DrivingConditionsGuide.registerSallaComponent("salla-driving-conditions-guide");
 export {
-  p as default
+  DrivingConditionsGuide as default
 };

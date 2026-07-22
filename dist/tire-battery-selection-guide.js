@@ -1,10 +1,12 @@
-import { css as y, LitElement as x, nothing as c, html as l } from "lit";
-import { property as _, state as $ } from "lit/decorators.js";
-import { classMap as w } from "lit/directives/class-map.js";
-import { styleMap as C } from "lit/directives/style-map.js";
-import { g as k, n as u, l as s, t, s as T, r as z, a as S, b as R } from "./registerSalla-Dct4KN_E.js";
-import { r as L } from "./commerceOutcome-B3T0_-WJ.js";
-const A = y`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, nothing, html } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { g as getRadioValue, n as normalizeCollection, l as localizedString, t, s as sharedSectionCss, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .tbsg-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -151,50 +153,52 @@ const A = y`
     }
   }
 `;
-function p(n) {
-  const e = k(n, "both").toLowerCase();
-  return e === "tires" || e === "batteries" ? e : "both";
+function resolveMode(value) {
+  const raw = getRadioValue(value, "both").toLowerCase();
+  return raw === "tires" || raw === "batteries" ? raw : "both";
 }
-function M(n) {
-  const e = n.trim().match(/^(\d{3})\/(\d{2})\s*([A-Z])\s*(\d{2})$/i);
-  return e ? {
-    width: e[1],
-    aspect: e[2],
-    construction: e[3].toUpperCase(),
-    rim: e[4],
-    raw: n.trim()
+__name(resolveMode, "resolveMode");
+function parseTireCode(raw) {
+  const match = raw.trim().match(/^(\d{3})\/(\d{2})\s*([A-Z])\s*(\d{2})$/i);
+  return match ? {
+    width: match[1],
+    aspect: match[2],
+    construction: match[3].toUpperCase(),
+    rim: match[4],
+    raw: raw.trim()
   } : null;
 }
-function I(n, e) {
-  const a = u(n).map((r, i) => ({
-    key: String(r.key ?? r.part ?? `part-${i + 1}`).trim(),
-    label: s(r.label) || s(r.name),
-    value: s(r.value),
-    note: s(r.note) || s(r.desc)
-  })).filter((r) => r.label);
-  return a.length ? a : e ? [
+__name(parseTireCode, "parseTireCode");
+function parseTireParts(raw, example) {
+  const fromConfig = normalizeCollection(raw).map((row, i) => ({
+    key: String(row.key ?? row.part ?? `part-${i + 1}`).trim(),
+    label: localizedString(row.label) || localizedString(row.name),
+    value: localizedString(row.value),
+    note: localizedString(row.note) || localizedString(row.desc)
+  })).filter((part) => part.label);
+  return fromConfig.length ? fromConfig : example ? [
     {
       key: "width",
       label: t("العرض (مم)", "Width (mm)"),
-      value: e.width,
+      value: example.width,
       note: t("عرض نقطة التلامس مع الطريق", "Tread contact width in millimeters")
     },
     {
       key: "aspect",
       label: t("نسبة الارتفاع", "Aspect ratio"),
-      value: `${e.aspect}%`,
+      value: `${example.aspect}%`,
       note: t("ارتفاع الجانب كنسبة من العرض", "Sidewall height as % of width")
     },
     {
       key: "construction",
       label: t("نوع الهيكل", "Construction"),
-      value: e.construction,
+      value: example.construction,
       note: t("R = radial — الأكثر شيوعًا", "R = radial — most common")
     },
     {
       key: "rim",
       label: t("قطر الجنط (inch)", "Rim diameter"),
-      value: `${e.rim}"`,
+      value: `${example.rim}"`,
       note: t("يجب مطابقته مع جنط سيارتك", "Must match your wheel size")
     }
   ] : [
@@ -224,16 +228,18 @@ function I(n, e) {
     }
   ];
 }
-function P(n) {
-  const e = u(n).map((a, r) => ({
-    id: String(a.id ?? "").trim() || `spec-${r + 1}`,
-    label: s(a.label) || s(a.name),
-    value: s(a.value),
-    note: s(a.note) || s(a.desc)
-  })).filter((a) => a.label);
-  return e.length ? e : B();
+__name(parseTireParts, "parseTireParts");
+function parseBatterySpecs(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => ({
+    id: String(row.id ?? "").trim() || `spec-${i + 1}`,
+    label: localizedString(row.label) || localizedString(row.name),
+    value: localizedString(row.value),
+    note: localizedString(row.note) || localizedString(row.desc)
+  })).filter((spec) => spec.label);
+  return parsed.length ? parsed : defaultBatterySpecs();
 }
-function B() {
+__name(parseBatterySpecs, "parseBatterySpecs");
+function defaultBatterySpecs() {
   return [
     {
       id: "capacity",
@@ -273,18 +279,20 @@ function B() {
     }
   ];
 }
-function E(n) {
-  return s(n) || t(
+__name(defaultBatterySpecs, "defaultBatterySpecs");
+function parseTireNotes(raw) {
+  return localizedString(raw) || t(
     "راجع دليل السيارة أو الملصق على باب السائق قبل الشراء. المقاس الصحيح يضمن الأمان والاقتصاد في الوقود.",
     "Check owner manual or driver door sticker before buying. Correct size ensures safety and fuel economy."
   );
 }
-var U = Object.defineProperty, f = (n, e, a, r) => {
-  for (var i = void 0, o = n.length - 1, b; o >= 0; o--)
-    (b = n[o]) && (i = b(e, a, i) || i);
-  return i && U(e, a, i), i;
-};
-const g = class g extends x {
+__name(parseTireNotes, "parseTireNotes");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _TireBatterySelectionGuide = class _TireBatterySelectionGuide extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.activeTab = "tires", this.boundLangHandler = () => this.requestUpdate();
   }
@@ -294,73 +302,73 @@ const g = class g extends x {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
-  willUpdate(e) {
-    var a;
-    e.has("config") && (p((a = this.config) == null ? void 0 : a.tbsg_mode) === "batteries" ? this.activeTab = "batteries" : this.activeTab = "tires");
+  willUpdate(changed) {
+    var _a;
+    changed.has("config") && (resolveMode((_a = this.config) == null ? void 0 : _a.tbsg_mode) === "batteries" ? this.activeTab = "batteries" : this.activeTab = "tires");
   }
   get mode() {
-    var e;
-    return p((e = this.config) == null ? void 0 : e.tbsg_mode);
+    var _a;
+    return resolveMode((_a = this.config) == null ? void 0 : _a.tbsg_mode);
   }
-  setTab(e) {
-    this.activeTab = e;
+  setTab(tab) {
+    this.activeTab = tab;
   }
-  renderSpecItem(e, a, r) {
-    return l`
+  renderSpecItem(label, value, note) {
+    return html`
       <div class="tbsg-item">
-        <p class="tbsg-item__label">${e}</p>
-        <p class="tbsg-item__value">${a || "—"}</p>
-        ${r ? l`<p class="tbsg-item__note">${r}</p>` : c}
+        <p class="tbsg-item__label">${label}</p>
+        <p class="tbsg-item__value">${value || "—"}</p>
+        ${note ? html`<p class="tbsg-item__note">${note}</p>` : nothing}
       </div>
     `;
   }
   renderTiresPanel() {
-    const e = this.config || {}, a = s(e.tbsg_tire_example) || "225/45 R18", r = M(a), i = I(e.tbsg_tire_parts, r), o = E(e.tbsg_tire_notes), b = s(e.tbsg_tire_title) || t("فهم مقاس الإطار", "Understanding tire size");
-    return l`
+    const c = this.config || {}, exampleRaw = localizedString(c.tbsg_tire_example) || "225/45 R18", parsed = parseTireCode(exampleRaw), parts = parseTireParts(c.tbsg_tire_parts, parsed), notes = parseTireNotes(c.tbsg_tire_notes), tireTitle = localizedString(c.tbsg_tire_title) || t("فهم مقاس الإطار", "Understanding tire size");
+    return html`
       <div class="tbsg-panel" role="tabpanel">
-        <h3 class="tbsg-panel__title">${b}</h3>
-        <div class="tbsg-example" aria-label=${t("مثال مقاس", "Example size")}>${a}</div>
-        ${r ? c : l`<p class="tbsg-notes">${t("صيغة المثال: 225/45 R18", "Example format: 225/45 R18")}</p>`}
+        <h3 class="tbsg-panel__title">${tireTitle}</h3>
+        <div class="tbsg-example" aria-label=${t("مثال مقاس", "Example size")}>${exampleRaw}</div>
+        ${parsed ? nothing : html`<p class="tbsg-notes">${t("صيغة المثال: 225/45 R18", "Example format: 225/45 R18")}</p>`}
         <div class="tbsg-grid">
-          ${i.map((m) => this.renderSpecItem(m.label, m.value, m.note))}
+          ${parts.map((part) => this.renderSpecItem(part.label, part.value, part.note))}
         </div>
-        ${o ? l`<p class="tbsg-notes">${o}</p>` : c}
+        ${notes ? html`<p class="tbsg-notes">${notes}</p>` : nothing}
       </div>
     `;
   }
   renderBatteriesPanel() {
-    const e = this.config || {}, a = P(e.tbsg_battery_specs), r = s(e.tbsg_battery_title) || t("مواصفات البطارية", "Battery specifications");
-    return l`
+    const c = this.config || {}, specs = parseBatterySpecs(c.tbsg_battery_specs), batteryTitle = localizedString(c.tbsg_battery_title) || t("مواصفات البطارية", "Battery specifications");
+    return html`
       <div class="tbsg-panel" role="tabpanel">
-        <h3 class="tbsg-panel__title">${r}</h3>
+        <h3 class="tbsg-panel__title">${batteryTitle}</h3>
         <div class="tbsg-grid">
-          ${a.map((i) => this.renderSpecItem(i.label, i.value, i.note))}
+          ${specs.map((spec) => this.renderSpecItem(spec.label, spec.value, spec.note))}
         </div>
       </div>
     `;
   }
-  renderTabs(e) {
-    var r, i;
-    if (e !== "both") return c;
-    const a = [
-      { id: "tires", label: s((r = this.config) == null ? void 0 : r.tbsg_tire_title) || t("الإطارات", "Tires") },
+  renderTabs(mode) {
+    var _a, _b;
+    if (mode !== "both") return nothing;
+    const tabs = [
+      { id: "tires", label: localizedString((_a = this.config) == null ? void 0 : _a.tbsg_tire_title) || t("الإطارات", "Tires") },
       {
         id: "batteries",
-        label: s((i = this.config) == null ? void 0 : i.tbsg_battery_title) || t("البطاريات", "Batteries")
+        label: localizedString((_b = this.config) == null ? void 0 : _b.tbsg_battery_title) || t("البطاريات", "Batteries")
       }
     ];
-    return l`
+    return html`
       <div class="tbsg-toolbar" role="tablist">
-        ${a.map(
-      (o) => l`
+        ${tabs.map(
+      (tab) => html`
             <button
               type="button"
-              class=${w({ "tbsg-tab": !0, "is-active": this.activeTab === o.id })}
+              class=${classMap({ "tbsg-tab": !0, "is-active": this.activeTab === tab.id })}
               role="tab"
-              aria-selected=${this.activeTab === o.id ? "true" : "false"}
-              @click=${() => this.setTab(o.id)}
+              aria-selected=${this.activeTab === tab.id ? "true" : "false"}
+              @click=${() => this.setTab(tab.id)}
             >
-              ${o.label}
+              ${tab.label}
             </button>
           `
     )}
@@ -368,39 +376,39 @@ const g = class g extends x {
     `;
   }
   render() {
-    const e = this.config || {}, a = z(e, "tbsg_"), r = this.mode, i = s(e.tbsg_title), o = s(e.tbsg_desc), b = r === "tires" || r === "both", m = r === "batteries" || r === "both", h = r === "tires" || r === "both" && this.activeTab === "tires", v = r === "batteries" || r === "both" && this.activeTab === "batteries";
-    return l`
+    const c = this.config || {}, theme = readSectionTheme(c, "tbsg_"), mode = this.mode, title = localizedString(c.tbsg_title), desc = localizedString(c.tbsg_desc), showTires = mode === "tires" || mode === "both", showBatteries = mode === "batteries" || mode === "both", tiresVisible = mode === "tires" || mode === "both" && this.activeTab === "tires", batteriesVisible = mode === "batteries" || mode === "both" && this.activeTab === "batteries";
+    return html`
       <section
         class="fs-section"
-        style=${C(S(a))}
-        aria-label=${i || t("دليل اختيار الإطارات والبطاريات", "Tire & battery selection guide")}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title || t("دليل اختيار الإطارات والبطاريات", "Tire & battery selection guide")}
       >
         <div class="fs-container">
-          ${i || o ? l`<div class="fs-hero">
-                ${i ? l`<h2 class="fs-title">${i}</h2>` : c}
-                ${o ? l`<p class="fs-desc">${o}</p>` : c}
-              </div>` : c}
+          ${title || desc ? html`<div class="fs-hero">
+                ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+                ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+              </div>` : nothing}
 
-          ${r === "both" ? this.renderTabs(r) : c}
+          ${mode === "both" ? this.renderTabs(mode) : nothing}
 
-          ${b && h ? this.renderTiresPanel() : c}
-          ${m && v ? this.renderBatteriesPanel() : c}
-          ${L(e, "tbsg_", { ready: !!this.activeTab })}
+          ${showTires && tiresVisible ? this.renderTiresPanel() : nothing}
+          ${showBatteries && batteriesVisible ? this.renderBatteriesPanel() : nothing}
+          ${renderCommerceOutcome(c, "tbsg_", { ready: !!this.activeTab })}
         </div>
       </section>
     `;
   }
 };
-g.styles = [T, A];
-let d = g;
-f([
-  _({ type: Object })
-], d.prototype, "config");
-f([
-  $()
-], d.prototype, "activeTab");
-R(d);
-typeof d < "u" && d.registerSallaComponent("salla-tire-battery-selection-guide");
+__name(_TireBatterySelectionGuide, "TireBatterySelectionGuide"), _TireBatterySelectionGuide.styles = [sharedSectionCss, componentStyles];
+let TireBatterySelectionGuide = _TireBatterySelectionGuide;
+__decorateClass([
+  property({ type: Object })
+], TireBatterySelectionGuide.prototype, "config");
+__decorateClass([
+  state()
+], TireBatterySelectionGuide.prototype, "activeTab");
+bindSallaRegistration(TireBatterySelectionGuide);
+typeof TireBatterySelectionGuide < "u" && TireBatterySelectionGuide.registerSallaComponent("salla-tire-battery-selection-guide");
 export {
-  d as default
+  TireBatterySelectionGuide as default
 };

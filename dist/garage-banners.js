@@ -1,10 +1,12 @@
-import { css as _, LitElement as w, nothing as l, html as o } from "lit";
-import { property as $, state as S } from "lit/decorators.js";
-import { classMap as b } from "lit/directives/class-map.js";
-import { styleMap as k } from "lit/directives/style-map.js";
-import { n as T, l as g, t as s, e as m, c as L, s as A, d as I, p as P, i as f, r as X, a as z, b as C } from "./registerSalla-Dct4KN_E.js";
-import { r as Y } from "./commerceOutcome-B3T0_-WJ.js";
-const M = _`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, nothing, html } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, l as localizedString, t, e as extractLink, c as extractImageUrl, s as sharedSectionCss, d as isTruthy, p as prefersReducedMotion, i as isExternalUrl, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .gba-shell {
     position: relative;
     border-radius: 10px;
@@ -192,63 +194,65 @@ const M = _`
       transition: none !important;
     }
   }
-`, N = "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1400&q=80", U = "https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=1400&q=80", j = "https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1400&q=80";
-function E(h) {
-  const t = T(h).map((e, a) => ({
-    id: String(e.id ?? "").trim() || `banner-${a + 1}`,
-    title: g(e.title),
-    subtitle: g(e.subtitle) || g(e.desc),
-    image: L(e.image),
-    link: m(e.link) || m(e.url),
-    ctaLabel: g(e.cta_label) || s("تسوق الآن", "Shop now")
-  })).filter((e) => e.title || e.image);
-  if (!t.length) return v();
-  const i = v();
-  return t.map((e, a) => ({
-    ...e,
-    image: e.image || i[a % i.length].image,
-    title: e.title || i[a % i.length].title,
-    subtitle: e.subtitle || i[a % i.length].subtitle,
-    ctaLabel: e.ctaLabel || i[a % i.length].ctaLabel
+`, B1 = "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1400&q=80", B2 = "https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=1400&q=80", B3 = "https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1400&q=80";
+function parseBanners(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => ({
+    id: String(row.id ?? "").trim() || `banner-${i + 1}`,
+    title: localizedString(row.title),
+    subtitle: localizedString(row.subtitle) || localizedString(row.desc),
+    image: extractImageUrl(row.image),
+    link: extractLink(row.link) || extractLink(row.url),
+    ctaLabel: localizedString(row.cta_label) || t("تسوق الآن", "Shop now")
+  })).filter((b) => b.title || b.image);
+  if (!parsed.length) return defaultBanners();
+  const defaults = defaultBanners();
+  return parsed.map((b, i) => ({
+    ...b,
+    image: b.image || defaults[i % defaults.length].image,
+    title: b.title || defaults[i % defaults.length].title,
+    subtitle: b.subtitle || defaults[i % defaults.length].subtitle,
+    ctaLabel: b.ctaLabel || defaults[i % defaults.length].ctaLabel
   }));
 }
-function v() {
+__name(parseBanners, "parseBanners");
+function defaultBanners() {
   return [
     {
       id: "promo-1",
-      title: s("عروض قطع الغيار", "Parts deals"),
-      subtitle: s("وفّر على زيوت وفلاتر أصلية", "Save on genuine oils & filters"),
-      image: N,
+      title: t("عروض قطع الغيار", "Parts deals"),
+      subtitle: t("وفّر على زيوت وفلاتر أصلية", "Save on genuine oils & filters"),
+      image: B1,
       link: "",
-      ctaLabel: s("تسوق الآن", "Shop now")
+      ctaLabel: t("تسوق الآن", "Shop now")
     },
     {
       id: "promo-2",
-      title: s("صيانة موسمية", "Seasonal service"),
-      subtitle: s("جهّز سيارتك قبل الرحلة", "Prep your car before the trip"),
-      image: U,
+      title: t("صيانة موسمية", "Seasonal service"),
+      subtitle: t("جهّز سيارتك قبل الرحلة", "Prep your car before the trip"),
+      image: B2,
       link: "",
-      ctaLabel: s("اكتشف القطع", "Browse parts")
+      ctaLabel: t("اكتشف القطع", "Browse parts")
     },
     {
       id: "promo-3",
-      title: s("وصول حديث", "Just arrived"),
-      subtitle: s(
+      title: t("وصول حديث", "Just arrived"),
+      subtitle: t(
         "قطع جديدة متوافقة مع أغلب الموديلات",
         "New parts for popular models"
       ),
-      image: j,
+      image: B3,
       link: "",
-      ctaLabel: s("شاهد الجديد", "See new")
+      ctaLabel: t("شاهد الجديد", "See new")
     }
   ];
 }
-var q = Object.defineProperty, y = (h, t, i, e) => {
-  for (var a = void 0, n = h.length - 1, d; n >= 0; n--)
-    (d = h[n]) && (a = d(t, i, a) || a);
-  return a && q(t, i, a), a;
-};
-const B = 5e3, p = class p extends w {
+__name(defaultBanners, "defaultBanners");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const AUTOPLAY_MS = 5e3, _GarageBanners = class _GarageBanners extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.activeIndex = 0, this.autoTimer = null, this.boundLangHandler = () => this.requestUpdate(), this.swipeStartX = null, this.swipeStartY = null, this.mouseStartX = null;
   }
@@ -258,145 +262,145 @@ const B = 5e3, p = class p extends w {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), this.clearAutoplay(), super.disconnectedCallback();
   }
-  willUpdate(t) {
-    if (t.has("config")) {
-      const i = this.banners;
-      this.activeIndex >= i.length && (this.activeIndex = 0), this.syncAutoplay();
+  willUpdate(changed) {
+    if (changed.has("config")) {
+      const banners = this.banners;
+      this.activeIndex >= banners.length && (this.activeIndex = 0), this.syncAutoplay();
     }
   }
   get banners() {
-    var t;
-    return E((t = this.config) == null ? void 0 : t.gba_items);
+    var _a;
+    return parseBanners((_a = this.config) == null ? void 0 : _a.gba_items);
   }
   clearAutoplay() {
     this.autoTimer && (clearInterval(this.autoTimer), this.autoTimer = null);
   }
   syncAutoplay() {
     this.clearAutoplay();
-    const t = this.config || {};
-    !I(t.gba_autoplay, !0) || P() || this.banners.length < 2 || (this.autoTimer = setInterval(() => {
+    const c = this.config || {};
+    !isTruthy(c.gba_autoplay, !0) || prefersReducedMotion() || this.banners.length < 2 || (this.autoTimer = setInterval(() => {
       this.activeIndex = (this.activeIndex + 1) % this.banners.length;
-    }, B));
+    }, AUTOPLAY_MS));
   }
-  goTo(t) {
-    this.activeIndex = t, this.syncAutoplay();
+  goTo(index) {
+    this.activeIndex = index, this.syncAutoplay();
   }
   goPrev() {
-    const t = this.banners.length;
-    this.goTo((this.activeIndex - 1 + t) % t);
+    const total = this.banners.length;
+    this.goTo((this.activeIndex - 1 + total) % total);
   }
   goNext() {
     this.goTo((this.activeIndex + 1) % this.banners.length);
   }
-  onTouchStart(t) {
-    const i = t.touches[0];
-    this.swipeStartX = i.clientX, this.swipeStartY = i.clientY, this.clearAutoplay();
+  onTouchStart(e) {
+    const touch = e.touches[0];
+    this.swipeStartX = touch.clientX, this.swipeStartY = touch.clientY, this.clearAutoplay();
   }
-  onTouchEnd(t) {
-    const i = this.swipeStartX, e = this.swipeStartY;
-    if (this.swipeStartX = null, this.swipeStartY = null, this.syncAutoplay(), i == null || e == null) return;
-    const a = t.changedTouches[0], n = a.clientX - i, d = a.clientY - e;
-    if (Math.abs(n) < 45 || Math.abs(n) < Math.abs(d)) return;
-    (getComputedStyle(this).direction === "rtl" ? n > 0 : n < 0) ? this.goNext() : this.goPrev();
+  onTouchEnd(e) {
+    const startX = this.swipeStartX, startY = this.swipeStartY;
+    if (this.swipeStartX = null, this.swipeStartY = null, this.syncAutoplay(), startX == null || startY == null) return;
+    const touch = e.changedTouches[0], dx = touch.clientX - startX, dy = touch.clientY - startY;
+    if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)) return;
+    (getComputedStyle(this).direction === "rtl" ? dx > 0 : dx < 0) ? this.goNext() : this.goPrev();
   }
-  onPointerDown(t) {
-    t.pointerType !== "mouse" || t.button !== 0 || (this.mouseStartX = t.clientX, this.clearAutoplay());
+  onPointerDown(e) {
+    e.pointerType !== "mouse" || e.button !== 0 || (this.mouseStartX = e.clientX, this.clearAutoplay());
   }
-  onPointerUp(t) {
-    if (t.pointerType !== "mouse") return;
-    const i = this.mouseStartX;
-    if (this.mouseStartX = null, this.syncAutoplay(), i == null) return;
-    const e = t.clientX - i;
-    if (Math.abs(e) < 40) return;
-    (getComputedStyle(this).direction === "rtl" ? e > 0 : e < 0) ? this.goNext() : this.goPrev();
+  onPointerUp(e) {
+    if (e.pointerType !== "mouse") return;
+    const startX = this.mouseStartX;
+    if (this.mouseStartX = null, this.syncAutoplay(), startX == null) return;
+    const dx = e.clientX - startX;
+    if (Math.abs(dx) < 40) return;
+    (getComputedStyle(this).direction === "rtl" ? dx > 0 : dx < 0) ? this.goNext() : this.goPrev();
   }
-  renderSlide(t, i) {
-    return o`
+  renderSlide(banner, active) {
+    return html`
       <div
-        class=${b({ "gba-slide": !0, "gba-slide--active": i })}
-        aria-hidden=${i ? "false" : "true"}
+        class=${classMap({ "gba-slide": !0, "gba-slide--active": active })}
+        aria-hidden=${active ? "false" : "true"}
       >
-        <div class=${b({ "gba-slide__bg": !0, "gba-slide__bg--empty": !t.image })}>
-          ${t.image ? o`<img src=${t.image} alt="" loading="eager" decoding="async" />` : l}
+        <div class=${classMap({ "gba-slide__bg": !0, "gba-slide__bg--empty": !banner.image })}>
+          ${banner.image ? html`<img src=${banner.image} alt="" loading="eager" decoding="async" />` : nothing}
         </div>
         <div class="gba-slide__overlay"></div>
         <div class="gba-slide__content">
-          ${t.title ? o`<h3 class="gba-slide__title">${t.title}</h3>` : l}
-          ${t.subtitle ? o`<p class="gba-slide__subtitle">${t.subtitle}</p>` : l}
-          ${t.link ? o`<a
+          ${banner.title ? html`<h3 class="gba-slide__title">${banner.title}</h3>` : nothing}
+          ${banner.subtitle ? html`<p class="gba-slide__subtitle">${banner.subtitle}</p>` : nothing}
+          ${banner.link ? html`<a
                 class="gba-slide__cta"
-                href=${t.link}
-                target=${f(t.link) ? "_blank" : l}
-                rel=${f(t.link) ? "noopener noreferrer" : l}
-              >${t.ctaLabel}</a>` : l}
+                href=${banner.link}
+                target=${isExternalUrl(banner.link) ? "_blank" : nothing}
+                rel=${isExternalUrl(banner.link) ? "noopener noreferrer" : nothing}
+              >${banner.ctaLabel}</a>` : nothing}
         </div>
       </div>
     `;
   }
   render() {
-    const t = this.config || {}, i = X(t, "gba_"), e = this.banners, a = g(t.gba_title), n = g(t.gba_desc);
-    if (!e.length)
-      return o`<div class="fs-empty" role="status">
-        ${s("أضف بانرات من إعدادات العنصر", "Add banners in element settings")}
+    const c = this.config || {}, theme = readSectionTheme(c, "gba_"), banners = this.banners, title = localizedString(c.gba_title), desc = localizedString(c.gba_desc);
+    if (!banners.length)
+      return html`<div class="fs-empty" role="status">
+        ${t("أضف بانرات من إعدادات العنصر", "Add banners in element settings")}
       </div>`;
-    const d = this.activeIndex < e.length ? this.activeIndex : 0, u = e.length > 1;
-    return o`
+    const activeIndex = this.activeIndex < banners.length ? this.activeIndex : 0, multi = banners.length > 1;
+    return html`
       <section
         class="fs-section"
-        style=${k(z(i))}
-        aria-label=${a || s("عروض الورشة", "Garage promotions")}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title || t("عروض الورشة", "Garage promotions")}
       >
         <div class="fs-container">
-          ${a || n ? o`<div class="fs-hero">
-                ${a ? o`<h2 class="fs-title">${a}</h2>` : l}
-                ${n ? o`<p class="fs-desc">${n}</p>` : l}
-              </div>` : l}
+          ${title || desc ? html`<div class="fs-hero">
+                ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+                ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+              </div>` : nothing}
 
           <div
             class="gba-shell"
             aria-live="polite"
-            @touchstart=${(r) => this.onTouchStart(r)}
-            @touchend=${(r) => this.onTouchEnd(r)}
-            @pointerdown=${(r) => this.onPointerDown(r)}
-            @pointerup=${(r) => this.onPointerUp(r)}
-            @dragstart=${(r) => r.preventDefault()}
+            @touchstart=${(e) => this.onTouchStart(e)}
+            @touchend=${(e) => this.onTouchEnd(e)}
+            @pointerdown=${(e) => this.onPointerDown(e)}
+            @pointerup=${(e) => this.onPointerUp(e)}
+            @dragstart=${(e) => e.preventDefault()}
           >
             <div class="gba-track">
-              ${e.map((r, x) => this.renderSlide(r, x === d))}
+              ${banners.map((banner, i) => this.renderSlide(banner, i === activeIndex))}
             </div>
 
-            ${u ? o`
+            ${multi ? html`
                   <button
                     type="button"
                     class="gba-nav gba-nav--prev"
-                    aria-label=${s("السابق", "Previous")}
+                    aria-label=${t("السابق", "Previous")}
                     @click=${() => this.goPrev()}
                   >‹</button>
                   <button
                     type="button"
                     class="gba-nav gba-nav--next"
-                    aria-label=${s("التالي", "Next")}
+                    aria-label=${t("التالي", "Next")}
                     @click=${() => this.goNext()}
                   >›</button>
-                ` : l}
+                ` : nothing}
           </div>
 
-          ${Y(t, "gba_", { ready: !0 })}
+          ${renderCommerceOutcome(c, "gba_", { ready: !0 })}
         </div>
       </section>
     `;
   }
 };
-p.styles = [A, M];
-let c = p;
-y([
-  $({ type: Object })
-], c.prototype, "config");
-y([
-  S()
-], c.prototype, "activeIndex");
-C(c);
-typeof c < "u" && c.registerSallaComponent("salla-garage-banners");
+__name(_GarageBanners, "GarageBanners"), _GarageBanners.styles = [sharedSectionCss, componentStyles];
+let GarageBanners = _GarageBanners;
+__decorateClass([
+  property({ type: Object })
+], GarageBanners.prototype, "config");
+__decorateClass([
+  state()
+], GarageBanners.prototype, "activeIndex");
+bindSallaRegistration(GarageBanners);
+typeof GarageBanners < "u" && GarageBanners.registerSallaComponent("salla-garage-banners");
 export {
-  c as default
+  GarageBanners as default
 };

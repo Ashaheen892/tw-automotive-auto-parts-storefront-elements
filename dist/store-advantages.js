@@ -1,8 +1,10 @@
-import { css as k, LitElement as x, nothing as d, html as s } from "lit";
-import { property as y } from "lit/decorators.js";
-import { styleMap as w } from "lit/directives/style-map.js";
-import { n as $, l as c, c as g, t as m, e as b, k as f, s as C, d as L, i as M, r as S, p as B, a as T, b as H } from "./registerSalla-Dct4KN_E.js";
-const N = k`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, nothing, html } from "lit";
+import { property } from "lit/decorators.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, l as localizedString, c as extractImageUrl, t, e as extractLink, k as itemIdFromLabel, s as sharedSectionCss, d as isTruthy, i as isExternalUrl, r as readSectionTheme, p as prefersReducedMotion, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+const componentStyles = css`
   .sta-shell {
     display: grid;
     gap: 1rem;
@@ -136,7 +138,7 @@ const N = k`
       mask-image: none;
     }
   }
-`, j = [
+`, DEFAULT_BRANDS = [
   {
     ar: "تويوتا",
     en: "Toyota",
@@ -168,37 +170,39 @@ const N = k`
     image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Chevrolet_logo.svg/200px-Chevrolet_logo.svg.png"
   }
 ];
-function q() {
-  return j.map((o, a) => {
-    const e = m(o.ar, o.en);
+function defaultBrands() {
+  return DEFAULT_BRANDS.map((b, i) => {
+    const name = t(b.ar, b.en);
     return {
-      id: f(e, "") || `brand-${a + 1}`,
-      name: e,
-      image: o.image,
+      id: itemIdFromLabel(name, "") || `brand-${i + 1}`,
+      name,
+      image: b.image,
       link: ""
     };
   });
 }
-function z(o) {
-  const a = $(o).map((e, n) => {
-    const r = c(e.name) || c(e.title) || c(e.brand), t = g(e.image) || g(e.logo) || g(e.brand_image);
-    if (!r && !t) return null;
-    const i = r || m("ماركة", "Brand");
+__name(defaultBrands, "defaultBrands");
+function parseBrands(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => {
+    const name = localizedString(row.name) || localizedString(row.title) || localizedString(row.brand), image = extractImageUrl(row.image) || extractImageUrl(row.logo) || extractImageUrl(row.brand_image);
+    if (!name && !image) return null;
+    const label = name || t("ماركة", "Brand");
     return {
-      id: String(e.id ?? "").trim() || f(i, "") || `brand-${n + 1}`,
-      name: i,
-      image: t,
-      link: b(e.link) || b(e.url)
+      id: String(row.id ?? "").trim() || itemIdFromLabel(label, "") || `brand-${i + 1}`,
+      name: label,
+      image,
+      link: extractLink(row.link) || extractLink(row.url)
     };
-  }).filter((e) => !!e);
-  return a.length ? a : q();
+  }).filter((item) => !!item);
+  return parsed.length ? parsed : defaultBrands();
 }
-var E = Object.defineProperty, F = (o, a, e, n) => {
-  for (var r = void 0, t = o.length - 1, i; t >= 0; t--)
-    (i = o[t]) && (r = i(a, e, r) || r);
-  return r && E(a, e, r), r;
-};
-const h = class h extends x {
+__name(parseBrands, "parseBrands");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _StoreAdvantages = class _StoreAdvantages extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.boundLangHandler = () => this.requestUpdate();
   }
@@ -209,74 +213,74 @@ const h = class h extends x {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
   get brands() {
-    var a;
-    return z((a = this.config) == null ? void 0 : a.sta_items);
+    var _a;
+    return parseBrands((_a = this.config) == null ? void 0 : _a.sta_items);
   }
-  renderBrand(a, e) {
-    var p;
-    const n = L((p = this.config) == null ? void 0 : p.sta_show_names, !0), r = a.name.charAt(0).toUpperCase(), t = s`
+  renderBrand(item, key) {
+    var _a;
+    const showName = isTruthy((_a = this.config) == null ? void 0 : _a.sta_show_names, !0), initial = item.name.charAt(0).toUpperCase(), body = html`
       <span class="sta-brand__logo" aria-hidden="true">
-        ${a.image ? s`<img src=${a.image} alt="" loading="lazy" decoding="async" />` : s`<span class="sta-brand__fallback">${r}</span>`}
+        ${item.image ? html`<img src=${item.image} alt="" loading="lazy" decoding="async" />` : html`<span class="sta-brand__fallback">${initial}</span>`}
       </span>
-      ${n ? s`<p class="sta-brand__name">${a.name}</p>` : d}
+      ${showName ? html`<p class="sta-brand__name">${item.name}</p>` : nothing}
     `;
-    if (!a.link)
-      return s`<div class="sta-brand" data-key=${e}>${t}</div>`;
-    const i = M(a.link);
-    return s`<a
+    if (!item.link)
+      return html`<div class="sta-brand" data-key=${key}>${body}</div>`;
+    const external = isExternalUrl(item.link);
+    return html`<a
       class="sta-brand"
-      data-key=${e}
-      href=${a.link}
-      target=${i ? "_blank" : d}
-      rel=${i ? "noopener noreferrer" : d}
-      aria-label=${a.name}
+      data-key=${key}
+      href=${item.link}
+      target=${external ? "_blank" : nothing}
+      rel=${external ? "noopener noreferrer" : nothing}
+      aria-label=${item.name}
     >
-      ${t}
+      ${body}
     </a>`;
   }
   render() {
-    const a = this.config || {}, e = S(a, "sta_", {
+    const c = this.config || {}, theme = readSectionTheme(c, "sta_", {
       spaceDesktop: 28,
       spaceMobile: 18
-    }), n = this.brands, r = c(a.sta_title), t = c(a.sta_desc), i = Math.max(12, Math.min(90, Number(a.sta_speed) || 35)), v = B() || n.length < 2 ? n : [...n, ...n];
-    return n.length ? s`
+    }), brands = this.brands, title = localizedString(c.sta_title), desc = localizedString(c.sta_desc), speed = Math.max(12, Math.min(90, Number(c.sta_speed) || 35)), loop = prefersReducedMotion() || brands.length < 2 ? brands : [...brands, ...brands];
+    return brands.length ? html`
       <section
         class="fs-section"
-        style=${w({
-      ...T(e),
-      "--sta-speed": `${i}s`
+        style=${styleMap({
+      ...themeStyleMap(theme),
+      "--sta-speed": `${speed}s`
     })}
-        aria-label=${r || m("الماركات التجارية", "Store brands")}
+        aria-label=${title || t("الماركات التجارية", "Store brands")}
       >
         <div class="fs-container">
           <div class="sta-shell">
-            ${r || t ? s`<div class="fs-hero">
-                  ${r ? s`<h2 class="fs-title">${r}</h2>` : d}
-                  ${t ? s`<p class="fs-desc">${t}</p>` : d}
-                </div>` : d}
+            ${title || desc ? html`<div class="fs-hero">
+                  ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+                  ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+                </div>` : nothing}
 
-            <div class="sta-marquee" role="list" aria-label=${m("الماركات", "Brands")}>
+            <div class="sta-marquee" role="list" aria-label=${t("الماركات", "Brands")}>
               <div class="sta-track">
-                ${v.map((u, _) => this.renderBrand(u, `${u.id}-${_}`))}
+                ${loop.map((brand, i) => this.renderBrand(brand, `${brand.id}-${i}`))}
               </div>
             </div>
           </div>
         </div>
       </section>
-    ` : s`<div class="fs-empty" role="status">
-        ${m("أضف الماركات من إعدادات العنصر", "Add brands in element settings")}
+    ` : html`<div class="fs-empty" role="status">
+        ${t("أضف الماركات من إعدادات العنصر", "Add brands in element settings")}
       </div>`;
   }
 };
-h.styles = [C, N];
-let l = h;
-F([
-  y({ type: Object })
-], l.prototype, "config");
-H(
-  l
+__name(_StoreAdvantages, "StoreAdvantages"), _StoreAdvantages.styles = [sharedSectionCss, componentStyles];
+let StoreAdvantages = _StoreAdvantages;
+__decorateClass([
+  property({ type: Object })
+], StoreAdvantages.prototype, "config");
+bindSallaRegistration(
+  StoreAdvantages
 );
-typeof l < "u" && l.registerSallaComponent("salla-store-advantages");
+typeof StoreAdvantages < "u" && StoreAdvantages.registerSallaComponent("salla-store-advantages");
 export {
-  l as default
+  StoreAdvantages as default
 };

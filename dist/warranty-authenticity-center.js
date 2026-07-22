@@ -1,10 +1,12 @@
-import { css as w, LitElement as v, nothing as n, html as t } from "lit";
-import { property as x, state as u } from "lit/decorators.js";
-import { classMap as b } from "lit/directives/class-map.js";
-import { styleMap as y } from "lit/directives/style-map.js";
-import { n as _, l as p, e as k, c as $, g as I, t as i, s as L, i as z, r as A, a as S, b as C } from "./registerSalla-Dct4KN_E.js";
-import { r as B } from "./commerceOutcome-B3T0_-WJ.js";
-const E = w`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, nothing, html } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, l as localizedString, e as extractLink, c as extractImageUrl, g as getRadioValue, t, s as sharedSectionCss, i as isExternalUrl, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .wac-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -270,89 +272,92 @@ const E = w`
     }
   }
 `;
-function H(l) {
-  const e = I(l, "tabs").toLowerCase();
-  return e === "accordion" || e === "cards" ? e : "tabs";
+function resolveLayout(value) {
+  const raw = getRadioValue(value, "tabs").toLowerCase();
+  return raw === "accordion" || raw === "cards" ? raw : "tabs";
 }
-function h(l) {
-  const e = _(l).map((r, a) => {
-    const o = p(r.title);
+__name(resolveLayout, "resolveLayout");
+function parseItems(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => {
+    const title = localizedString(row.title);
     return {
-      id: String(r.id ?? "").trim() || `item-${a + 1}`,
-      title: o,
-      icon: String(r.icon ?? "").trim(),
-      body: p(r.body) || p(r.desc),
-      image: $(r.image),
-      link: k(r.link),
-      linkLabel: p(r.link_label)
+      id: String(row.id ?? "").trim() || `item-${i + 1}`,
+      title,
+      icon: String(row.icon ?? "").trim(),
+      body: localizedString(row.body) || localizedString(row.desc),
+      image: extractImageUrl(row.image),
+      link: extractLink(row.link),
+      linkLabel: localizedString(row.link_label)
     };
-  }).filter((r) => r.title);
-  return e.length ? e : M();
+  }).filter((item) => item.title);
+  return parsed.length ? parsed : defaultItems();
 }
-function M() {
+__name(parseItems, "parseItems");
+function defaultItems() {
   return [
     {
       id: "duration",
-      title: i("مدة الضمان", "Warranty duration"),
+      title: t("مدة الضمان", "Warranty duration"),
       icon: "📅",
-      body: i("تختلف حسب نوع القطعة — الأصلي غالبًا 12–24 شهرًا.", "Varies by part type — OEM often 12–24 months."),
+      body: t("تختلف حسب نوع القطعة — الأصلي غالبًا 12–24 شهرًا.", "Varies by part type — OEM often 12–24 months."),
       image: "",
       link: "",
       linkLabel: ""
     },
     {
       id: "coverage",
-      title: i("ما يشمله الضمان", "What is covered"),
+      title: t("ما يشمله الضمان", "What is covered"),
       icon: "✅",
-      body: i("عيوب التصنيع والأداء تحت الاستخدام العادي.", "Manufacturing defects under normal use."),
+      body: t("عيوب التصنيع والأداء تحت الاستخدام العادي.", "Manufacturing defects under normal use."),
       image: "",
       link: "",
       linkLabel: ""
     },
     {
       id: "replacement",
-      title: i("شروط الاستبدال", "Replacement terms"),
+      title: t("شروط الاستبدال", "Replacement terms"),
       icon: "🔄",
-      body: i("فاتورة الشراء + فحص الورشة المعتمدة.", "Purchase invoice + certified workshop inspection."),
+      body: t("فاتورة الشراء + فحص الورشة المعتمدة.", "Purchase invoice + certified workshop inspection."),
       image: "",
       link: "",
       linkLabel: ""
     },
     {
       id: "source",
-      title: i("مصدر القطعة", "Part source"),
+      title: t("مصدر القطعة", "Part source"),
       icon: "🏭",
-      body: i("نوضح مصدر كل فئة: أصلي، بديل معتمد، أو مجدد.", "We disclose source for each category: OEM, certified aftermarket, or refurbished."),
+      body: t("نوضح مصدر كل فئة: أصلي، بديل معتمد، أو مجدد.", "We disclose source for each category: OEM, certified aftermarket, or refurbished."),
       image: "",
       link: "",
       linkLabel: ""
     },
     {
       id: "certs",
-      title: i("شهادات الاعتماد", "Certifications"),
+      title: t("شهادات الاعتماد", "Certifications"),
       icon: "📜",
-      body: i("قطعنا المختارة تتوافق مع معايير الجودة المعترف بها.", "Selected parts meet recognized quality standards."),
+      body: t("قطعنا المختارة تتوافق مع معايير الجودة المعترف بها.", "Selected parts meet recognized quality standards."),
       image: "",
       link: "",
       linkLabel: ""
     },
     {
       id: "care",
-      title: i("إرشادات الحفاظ على الضمان", "Keeping warranty valid"),
+      title: t("إرشادات الحفاظ على الضمان", "Keeping warranty valid"),
       icon: "🛡️",
-      body: i("التركيب في ورشة معتمدة والاحتفاظ بالفاتورة.", "Professional installation and keeping your invoice."),
+      body: t("التركيب في ورشة معتمدة والاحتفاظ بالفاتورة.", "Professional installation and keeping your invoice."),
       image: "",
       link: "",
       linkLabel: ""
     }
   ];
 }
-var W = Object.defineProperty, m = (l, e, r, a) => {
-  for (var o = void 0, c = l.length - 1, s; c >= 0; c--)
-    (s = l[c]) && (o = s(e, r, o) || o);
-  return o && W(e, r, o), o;
-};
-const g = class g extends v {
+__name(defaultItems, "defaultItems");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _WarrantyAuthenticityCenter = class _WarrantyAuthenticityCenter extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.activeId = "", this.openAccordion = /* @__PURE__ */ new Set(), this.boundLangHandler = () => this.requestUpdate();
   }
@@ -362,139 +367,139 @@ const g = class g extends v {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
-  willUpdate(e) {
-    var r, a;
-    if (e.has("config")) {
-      const o = h((r = this.config) == null ? void 0 : r.wac_items);
-      o.some((c) => c.id === this.activeId) || (this.activeId = ((a = o[0]) == null ? void 0 : a.id) ?? ""), !this.openAccordion.size && o.length && (this.openAccordion = /* @__PURE__ */ new Set([o[0].id]));
+  willUpdate(changed) {
+    var _a, _b;
+    if (changed.has("config")) {
+      const items = parseItems((_a = this.config) == null ? void 0 : _a.wac_items);
+      items.some((item) => item.id === this.activeId) || (this.activeId = ((_b = items[0]) == null ? void 0 : _b.id) ?? ""), !this.openAccordion.size && items.length && (this.openAccordion = /* @__PURE__ */ new Set([items[0].id]));
     }
   }
   get items() {
-    var e;
-    return h((e = this.config) == null ? void 0 : e.wac_items);
+    var _a;
+    return parseItems((_a = this.config) == null ? void 0 : _a.wac_items);
   }
   get active() {
-    return this.items.find((e) => e.id === this.activeId) ?? this.items[0] ?? null;
+    return this.items.find((item) => item.id === this.activeId) ?? this.items[0] ?? null;
   }
-  renderItemLink(e) {
-    if (!e.link) return n;
-    const r = e.linkLabel || i("المزيد", "Learn more");
-    return t`
+  renderItemLink(item) {
+    if (!item.link) return nothing;
+    const label = item.linkLabel || t("المزيد", "Learn more");
+    return html`
       <a
         class="wac-panel__link"
-        href=${e.link}
+        href=${item.link}
         target="_blank"
-        rel=${z(e.link) ? "noopener noreferrer" : n}
+        rel=${isExternalUrl(item.link) ? "noopener noreferrer" : nothing}
       >
-        ${r}
+        ${label}
       </a>
     `;
   }
-  renderItemImage(e) {
-    return e.image ? t`
+  renderItemImage(item) {
+    return item.image ? html`
       <figure class="wac-panel__media">
-        <img src=${e.image} alt=${e.title} loading="lazy" />
+        <img src=${item.image} alt=${item.title} loading="lazy" />
       </figure>
-    ` : n;
+    ` : nothing;
   }
-  renderItemBody(e) {
-    return t`
-      ${this.renderItemImage(e)}
-      ${e.body ? t`<p class="wac-panel__body">${e.body}</p>` : n}
-      ${this.renderItemLink(e)}
+  renderItemBody(item) {
+    return html`
+      ${this.renderItemImage(item)}
+      ${item.body ? html`<p class="wac-panel__body">${item.body}</p>` : nothing}
+      ${this.renderItemLink(item)}
     `;
   }
-  renderItemHead(e) {
-    return t`
+  renderItemHead(item) {
+    return html`
       <div class="wac-panel__head">
-        ${e.icon ? t`<span class="wac-panel__icon ${e.icon.startsWith("sicon-") ? e.icon : ""}" aria-hidden="true">
-              ${e.icon.startsWith("sicon-") ? "" : e.icon}
-            </span>` : n}
-        <h3 class="wac-panel__title">${e.title}</h3>
+        ${item.icon ? html`<span class="wac-panel__icon ${item.icon.startsWith("sicon-") ? item.icon : ""}" aria-hidden="true">
+              ${item.icon.startsWith("sicon-") ? "" : item.icon}
+            </span>` : nothing}
+        <h3 class="wac-panel__title">${item.title}</h3>
       </div>
     `;
   }
   onTabsKeydown(e) {
-    const r = this.items;
-    if (r.length < 2) return;
-    const a = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
-    if (!a) return;
+    const items = this.items;
+    if (items.length < 2) return;
+    const delta = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
+    if (!delta) return;
     e.preventDefault();
-    const c = (r.findIndex((s) => {
-      var f;
-      return s.id === ((f = this.active) == null ? void 0 : f.id);
-    }) + a + r.length) % r.length;
-    this.activeId = r[c].id, this.updateComplete.then(() => {
-      var s;
-      (s = this.renderRoot.querySelector(".wac-tab.is-active")) == null || s.focus();
+    const next = (items.findIndex((item) => {
+      var _a;
+      return item.id === ((_a = this.active) == null ? void 0 : _a.id);
+    }) + delta + items.length) % items.length;
+    this.activeId = items[next].id, this.updateComplete.then(() => {
+      var _a;
+      (_a = this.renderRoot.querySelector(".wac-tab.is-active")) == null || _a.focus();
     });
   }
-  renderTabs(e) {
-    const r = this.active;
-    return t`
-      <div class="wac-tabs" role="tablist" @keydown=${(a) => this.onTabsKeydown(a)}>
-        ${e.map(
-      (a) => t`
+  renderTabs(items) {
+    const active = this.active;
+    return html`
+      <div class="wac-tabs" role="tablist" @keydown=${(e) => this.onTabsKeydown(e)}>
+        ${items.map(
+      (item) => html`
             <button
               type="button"
-              class=${b({ "wac-tab": !0, "is-active": a.id === (r == null ? void 0 : r.id) })}
+              class=${classMap({ "wac-tab": !0, "is-active": item.id === (active == null ? void 0 : active.id) })}
               role="tab"
-              aria-selected=${a.id === (r == null ? void 0 : r.id) ? "true" : "false"}
-              tabindex=${a.id === (r == null ? void 0 : r.id) ? "0" : "-1"}
-              @click=${() => this.activeId = a.id}
+              aria-selected=${item.id === (active == null ? void 0 : active.id) ? "true" : "false"}
+              tabindex=${item.id === (active == null ? void 0 : active.id) ? "0" : "-1"}
+              @click=${() => this.activeId = item.id}
             >
-              ${a.icon && !a.icon.startsWith("sicon-") ? t`<span class="wac-tab__icon" aria-hidden="true">${a.icon}</span>` : n}
-              <span>${a.title}</span>
+              ${item.icon && !item.icon.startsWith("sicon-") ? html`<span class="wac-tab__icon" aria-hidden="true">${item.icon}</span>` : nothing}
+              <span>${item.title}</span>
             </button>
           `
     )}
       </div>
-      ${r ? t`<div class="wac-panel" role="tabpanel">
-            ${this.renderItemHead(r)}
-            ${this.renderItemBody(r)}
-          </div>` : n}
+      ${active ? html`<div class="wac-panel" role="tabpanel">
+            ${this.renderItemHead(active)}
+            ${this.renderItemBody(active)}
+          </div>` : nothing}
     `;
   }
-  toggleAccordion(e) {
-    const r = new Set(this.openAccordion);
-    r.has(e) ? r.delete(e) : r.add(e), this.openAccordion = r;
+  toggleAccordion(id) {
+    const next = new Set(this.openAccordion);
+    next.has(id) ? next.delete(id) : next.add(id), this.openAccordion = next;
   }
-  renderAccordion(e) {
-    return t`
+  renderAccordion(items) {
+    return html`
       <div class="wac-accordion">
-        ${e.map((r) => {
-      const a = this.openAccordion.has(r.id);
-      return t`
-            <div class=${b({ "wac-acc": !0, "is-open": a })}>
+        ${items.map((item) => {
+      const open = this.openAccordion.has(item.id);
+      return html`
+            <div class=${classMap({ "wac-acc": !0, "is-open": open })}>
               <button
                 type="button"
                 class="wac-acc__trigger"
-                aria-expanded=${a ? "true" : "false"}
-                @click=${() => this.toggleAccordion(r.id)}
+                aria-expanded=${open ? "true" : "false"}
+                @click=${() => this.toggleAccordion(item.id)}
               >
-                ${r.icon && !r.icon.startsWith("sicon-") ? t`<span class="wac-acc__icon" aria-hidden="true">${r.icon}</span>` : n}
-                <span class="wac-acc__title">${r.title}</span>
+                ${item.icon && !item.icon.startsWith("sicon-") ? html`<span class="wac-acc__icon" aria-hidden="true">${item.icon}</span>` : nothing}
+                <span class="wac-acc__title">${item.title}</span>
                 <span class="wac-acc__chevron" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m6 9 6 6 6-6" />
                   </svg>
                 </span>
               </button>
-              ${a ? t`<div class="wac-acc__content">${this.renderItemBody(r)}</div>` : n}
+              ${open ? html`<div class="wac-acc__content">${this.renderItemBody(item)}</div>` : nothing}
             </div>
           `;
     })}
       </div>
     `;
   }
-  renderCards(e) {
-    return t`
+  renderCards(items) {
+    return html`
       <div class="wac-cards">
-        ${e.map(
-      (r) => t`
+        ${items.map(
+      (item) => html`
             <article class="wac-card">
-              ${this.renderItemHead(r)}
-              ${this.renderItemBody(r)}
+              ${this.renderItemHead(item)}
+              ${this.renderItemBody(item)}
             </article>
           `
     )}
@@ -502,45 +507,45 @@ const g = class g extends v {
     `;
   }
   render() {
-    const e = this.config || {}, r = A(e, "wac_"), a = this.items, o = H(e.wac_layout), c = p(e.wac_title), s = p(e.wac_desc);
-    return a.length ? t`
+    const c = this.config || {}, theme = readSectionTheme(c, "wac_"), items = this.items, layout = resolveLayout(c.wac_layout), title = localizedString(c.wac_title), desc = localizedString(c.wac_desc);
+    return items.length ? html`
       <section
         class="fs-section"
-        style=${y(S(r))}
-        aria-label=${c || i("مركز الضمان والأصالة", "Warranty & authenticity center")}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title || t("مركز الضمان والأصالة", "Warranty & authenticity center")}
       >
         <div class="fs-container">
-          ${c || s ? t`<div class="fs-hero">
-                <p class="fs-eyebrow">${i("اشترِ بثقة", "Buy with confidence")}</p>
-                ${c ? t`<h2 class="fs-title">${c}</h2>` : n}
-                ${s ? t`<p class="fs-desc">${s}</p>` : n}
-              </div>` : n}
+          ${title || desc ? html`<div class="fs-hero">
+                <p class="fs-eyebrow">${t("اشترِ بثقة", "Buy with confidence")}</p>
+                ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+                ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+              </div>` : nothing}
 
-          ${o === "tabs" ? this.renderTabs(a) : n}
-          ${o === "accordion" ? this.renderAccordion(a) : n}
-          ${o === "cards" ? this.renderCards(a) : n}
+          ${layout === "tabs" ? this.renderTabs(items) : nothing}
+          ${layout === "accordion" ? this.renderAccordion(items) : nothing}
+          ${layout === "cards" ? this.renderCards(items) : nothing}
 
-          ${B(e, "wac_", { ready: a.length > 0 })}
+          ${renderCommerceOutcome(c, "wac_", { ready: items.length > 0 })}
         </div>
       </section>
-    ` : t`<div class="fs-empty" role="status">
-        ${i("أضف عناصر مركز الثقة من الإعدادات", "Add trust center items in settings")}
+    ` : html`<div class="fs-empty" role="status">
+        ${t("أضف عناصر مركز الثقة من الإعدادات", "Add trust center items in settings")}
       </div>`;
   }
 };
-g.styles = [L, E];
-let d = g;
-m([
-  x({ type: Object })
-], d.prototype, "config");
-m([
-  u()
-], d.prototype, "activeId");
-m([
-  u()
-], d.prototype, "openAccordion");
-C(d);
-typeof d < "u" && d.registerSallaComponent("salla-warranty-authenticity-center");
+__name(_WarrantyAuthenticityCenter, "WarrantyAuthenticityCenter"), _WarrantyAuthenticityCenter.styles = [sharedSectionCss, componentStyles];
+let WarrantyAuthenticityCenter = _WarrantyAuthenticityCenter;
+__decorateClass([
+  property({ type: Object })
+], WarrantyAuthenticityCenter.prototype, "config");
+__decorateClass([
+  state()
+], WarrantyAuthenticityCenter.prototype, "activeId");
+__decorateClass([
+  state()
+], WarrantyAuthenticityCenter.prototype, "openAccordion");
+bindSallaRegistration(WarrantyAuthenticityCenter);
+typeof WarrantyAuthenticityCenter < "u" && WarrantyAuthenticityCenter.registerSallaComponent("salla-warranty-authenticity-center");
 export {
-  d as default
+  WarrantyAuthenticityCenter as default
 };

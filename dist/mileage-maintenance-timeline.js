@@ -1,10 +1,12 @@
-import { css as E, LitElement as A, nothing as c, html as m } from "lit";
-import { property as L, state as S } from "lit/decorators.js";
-import { classMap as h } from "lit/directives/class-map.js";
-import { styleMap as w } from "lit/directives/style-map.js";
-import { n as $, l as d, f as C, t as a, e as M, k as O, d as N, s as P, r as B, g as F, a as j, b as D } from "./registerSalla-Dct4KN_E.js";
-import { r as T } from "./commerceOutcome-B3T0_-WJ.js";
-const U = E`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, nothing, html } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, l as localizedString, f as toNumber, t, e as extractLink, k as itemIdFromLabel, d as isTruthy, s as sharedSectionCss, r as readSectionTheme, g as getRadioValue, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .mmt-shell {
     display: grid;
     gap: 1.15rem;
@@ -560,11 +562,12 @@ const U = E`
     }
   }
 `;
-function H(t) {
-  const e = d(t, "");
-  return e ? e.split(/\r?\n|،|;|,/).map((r) => r.trim()).filter(Boolean) : [];
+function splitServices(raw) {
+  const text = localizedString(raw, "");
+  return text ? text.split(/\r?\n|،|;|,/).map((part) => part.trim()).filter(Boolean) : [];
 }
-const K = [
+__name(splitServices, "splitServices");
+const DEFAULT_META = [
   {
     km: 5e3,
     ar: "صيانة 5,000 كم",
@@ -624,72 +627,81 @@ const K = [
     noteEn: "Major service interval."
   }
 ];
-function R() {
-  return K.map((t, e) => ({
-    id: `default-${e + 1}`,
-    km: t.km,
-    title: a(t.ar, t.en),
-    services: t.services.map(([r, o]) => a(r, o)),
-    icon: String(e + 1).padStart(2, "0"),
+function defaultMilestones() {
+  return DEFAULT_META.map((m, i) => ({
+    id: `default-${i + 1}`,
+    km: m.km,
+    title: t(m.ar, m.en),
+    services: m.services.map(([ar, en]) => t(ar, en)),
+    icon: String(i + 1).padStart(2, "0"),
     link: "",
-    note: t.noteAr || t.noteEn ? a(t.noteAr, t.noteEn) : ""
+    note: m.noteAr || m.noteEn ? t(m.noteAr, m.noteEn) : ""
   }));
 }
-function V(t) {
-  const e = $(t).map((o, i) => {
-    const n = d(o.title), s = C(o.km, 0), f = o.services, g = typeof f == "string" || f && typeof f == "object" ? H(f) : $(f).map((u) => d(u.name) || String(u.text ?? "").trim()).filter(Boolean);
-    if (!s && !n) return null;
-    const b = n || x(s, a("كم", "km"));
+__name(defaultMilestones, "defaultMilestones");
+function parseMilestones(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => {
+    const title = localizedString(row.title), km = toNumber(row.km, 0), servicesRaw = row.services, services = typeof servicesRaw == "string" || servicesRaw && typeof servicesRaw == "object" ? splitServices(servicesRaw) : normalizeCollection(servicesRaw).map((s) => localizedString(s.name) || String(s.text ?? "").trim()).filter(Boolean);
+    if (!km && !title) return null;
+    const label2 = title || formatKm(km, t("كم", "km"));
     return {
-      id: String(o.id ?? "").trim() || O(b, "") || `mile-${i + 1}`,
-      km: s,
-      title: b,
-      services: g,
-      icon: String(o.icon ?? "").trim() || String(i + 1).padStart(2, "0"),
-      link: M(o.link),
-      note: d(o.note)
+      id: String(row.id ?? "").trim() || itemIdFromLabel(label2, "") || `mile-${i + 1}`,
+      km,
+      title: label2,
+      services,
+      icon: String(row.icon ?? "").trim() || String(i + 1).padStart(2, "0"),
+      link: extractLink(row.link),
+      note: localizedString(row.note)
     };
-  }).filter((o) => !!o);
-  return [...e.length ? e : R()].sort((o, i) => o.km - i.km);
+  }).filter((m) => !!m);
+  return [...parsed.length ? parsed : defaultMilestones()].sort((a, b) => a.km - b.km);
 }
-function x(t, e) {
-  const r = Number.isFinite(t) ? t.toLocaleString() : "0";
-  return e ? `${r} ${e}` : r;
+__name(parseMilestones, "parseMilestones");
+function formatKm(km, unitLabel) {
+  const formatted = Number.isFinite(km) ? km.toLocaleString() : "0";
+  return unitLabel ? `${formatted} ${unitLabel}` : formatted;
 }
-function z(t) {
-  return N(t.mmt_show_odometer, !0);
+__name(formatKm, "formatKm");
+function showOdometer(config) {
+  return isTruthy(config.mmt_show_odometer, !0);
 }
-function q(t, e, r = 1500) {
-  return e == null || !Number.isFinite(e) || e < 0 ? "neutral" : t.km < e - r ? "done" : Math.abs(t.km - e) <= r || t.km <= e ? "due" : "upcoming";
+__name(showOdometer, "showOdometer");
+function milestoneStatus(milestone, currentKm, dueWindow = 1500) {
+  return currentKm == null || !Number.isFinite(currentKm) || currentKm < 0 ? "neutral" : milestone.km < currentKm - dueWindow ? "done" : Math.abs(milestone.km - currentKm) <= dueWindow || milestone.km <= currentKm ? "due" : "upcoming";
 }
-function Y(t, e) {
-  var o;
-  if (!t.length || e == null || !Number.isFinite(e)) return 0;
-  const r = ((o = t[t.length - 1]) == null ? void 0 : o.km) || 1;
-  return Math.max(0, Math.min(100, e / r * 100));
+__name(milestoneStatus, "milestoneStatus");
+function progressPercent(milestones, currentKm) {
+  var _a;
+  if (!milestones.length || currentKm == null || !Number.isFinite(currentKm)) return 0;
+  const max = ((_a = milestones[milestones.length - 1]) == null ? void 0 : _a.km) || 1;
+  return Math.max(0, Math.min(100, currentKm / max * 100));
 }
-function G(t, e) {
-  if (!t.length) return "";
-  let r = t[0], o = Math.abs(r.km - e);
-  for (const i of t) {
-    const n = Math.abs(i.km - e);
-    n < o && (r = i, o = n);
+__name(progressPercent, "progressPercent");
+function nearestMilestoneId(milestones, currentKm) {
+  if (!milestones.length) return "";
+  let best = milestones[0], bestDist = Math.abs(best.km - currentKm);
+  for (const m of milestones) {
+    const dist = Math.abs(m.km - currentKm);
+    dist < bestDist && (best = m, bestDist = dist);
   }
-  return r.id;
+  return best.id;
 }
-function J(t, e, r, o) {
-  return d(t[e]) || a(r, o);
+__name(nearestMilestoneId, "nearestMilestoneId");
+function label(config, key, ar, en) {
+  return localizedString(config[key]) || t(ar, en);
 }
-function Q(t, e) {
-  const r = String(t.icon || "").trim();
-  return r && r.length <= 3 && !new RegExp("\\p{Extended_Pictographic}", "u").test(r) ? r : String(e + 1).padStart(2, "0");
+__name(label, "label");
+function pinLabel(milestone, index) {
+  const raw = String(milestone.icon || "").trim();
+  return raw && raw.length <= 3 && !new RegExp("\\p{Extended_Pictographic}", "u").test(raw) ? raw : String(index + 1).padStart(2, "0");
 }
-var X = Object.defineProperty, _ = (t, e, r, o) => {
-  for (var i = void 0, n = t.length - 1, s; n >= 0; n--)
-    (s = t[n]) && (i = s(e, r, i) || i);
-  return i && X(e, r, i), i;
-};
-const y = class y extends A {
+__name(pinLabel, "pinLabel");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _MileageMaintenanceTimeline = class _MileageMaintenanceTimeline extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.activeId = "", this.currentKmInput = "", this.boundLangHandler = () => this.requestUpdate();
   }
@@ -699,70 +711,70 @@ const y = class y extends A {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
-  willUpdate(e) {
-    var r;
-    e.has("config") && (this.activeId = ((r = this.milestones[0]) == null ? void 0 : r.id) ?? "", this.currentKmInput = "");
+  willUpdate(changed) {
+    var _a;
+    changed.has("config") && (this.activeId = ((_a = this.milestones[0]) == null ? void 0 : _a.id) ?? "", this.currentKmInput = "");
   }
   get milestones() {
-    var e;
-    return V((e = this.config) == null ? void 0 : e.mmt_milestones);
+    var _a;
+    return parseMilestones((_a = this.config) == null ? void 0 : _a.mmt_milestones);
   }
   get currentKm() {
-    if (!z(this.config || {})) return null;
-    const e = this.currentKmInput.replace(/[^\d.]/g, "");
-    if (!e) return null;
-    const r = Number(e);
-    return Number.isFinite(r) ? r : null;
+    if (!showOdometer(this.config || {})) return null;
+    const raw = this.currentKmInput.replace(/[^\d.]/g, "");
+    if (!raw) return null;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
   }
   get active() {
-    return this.milestones.find((e) => e.id === this.activeId) ?? this.milestones[0] ?? null;
+    return this.milestones.find((m) => m.id === this.activeId) ?? this.milestones[0] ?? null;
   }
-  statusOf(e) {
-    return q(e, this.currentKm);
+  statusOf(m) {
+    return milestoneStatus(m, this.currentKm);
   }
-  statusLabel(e) {
-    return e === "done" ? a("تمت", "Done") : e === "due" ? a("مستحقة", "Due") : e === "upcoming" ? a("قادمة", "Upcoming") : "";
+  statusLabel(status) {
+    return status === "done" ? t("تمت", "Done") : status === "due" ? t("مستحقة", "Due") : status === "upcoming" ? t("قادمة", "Upcoming") : "";
   }
-  select(e) {
-    this.activeId = e;
+  select(id) {
+    this.activeId = id;
   }
-  onOdometerInput(e) {
-    this.currentKmInput = e;
-    const r = Number(e.replace(/[^\d.]/g, ""));
-    if (!Number.isFinite(r) || r < 0) return;
-    const o = G(this.milestones, r);
-    o && (this.activeId = o);
+  onOdometerInput(value) {
+    this.currentKmInput = value;
+    const km = Number(value.replace(/[^\d.]/g, ""));
+    if (!Number.isFinite(km) || km < 0) return;
+    const nearest = nearestMilestoneId(this.milestones, km);
+    nearest && (this.activeId = nearest);
   }
-  shiftActive(e) {
-    const r = this.milestones;
-    if (!r.length) return;
-    const i = (Math.max(
+  shiftActive(delta) {
+    const list = this.milestones;
+    if (!list.length) return;
+    const next = (Math.max(
       0,
-      r.findIndex((n) => {
-        var s;
-        return n.id === ((s = this.active) == null ? void 0 : s.id);
+      list.findIndex((m) => {
+        var _a;
+        return m.id === ((_a = this.active) == null ? void 0 : _a.id);
       })
-    ) + e + r.length) % r.length;
-    this.activeId = r[i].id;
+    ) + delta + list.length) % list.length;
+    this.activeId = list[next].id;
   }
-  renderPanel(e, r) {
-    if (!e) return c;
-    const o = this.statusOf(e), i = r.findIndex((s) => s.id === e.id), n = d((this.config || {}).mmt_unit_label) || a("كم", "km");
-    return m`
+  renderPanel(milestone, list) {
+    if (!milestone) return nothing;
+    const status = this.statusOf(milestone), idx = list.findIndex((m) => m.id === milestone.id), unitLabel = localizedString((this.config || {}).mmt_unit_label) || t("كم", "km");
+    return html`
       <div class="mmt-panel" role="region" aria-live="polite">
         <div class="mmt-panel__head">
           <div>
             <p class="mmt-panel__kicker">
-              ${x(e.km, n)}
-              ${i >= 0 ? ` · ${i + 1}/${r.length}` : ""}
+              ${formatKm(milestone.km, unitLabel)}
+              ${idx >= 0 ? ` · ${idx + 1}/${list.length}` : ""}
             </p>
-            <h3 class="mmt-panel__title">${e.title}</h3>
+            <h3 class="mmt-panel__title">${milestone.title}</h3>
           </div>
-          ${r.length > 1 ? m`<div class="mmt-panel__nav" dir="ltr">
+          ${list.length > 1 ? html`<div class="mmt-panel__nav" dir="ltr">
                 <button
                   type="button"
                   class="mmt-nav-btn"
-                  aria-label=${a("السابق", "Previous")}
+                  aria-label=${t("السابق", "Previous")}
                   @click=${() => this.shiftActive(-1)}
                 >
                   ‹
@@ -770,63 +782,63 @@ const y = class y extends A {
                 <button
                   type="button"
                   class="mmt-nav-btn"
-                  aria-label=${a("التالي", "Next")}
+                  aria-label=${t("التالي", "Next")}
                   @click=${() => this.shiftActive(1)}
                 >
                   ›
                 </button>
-              </div>` : c}
+              </div>` : nothing}
         </div>
 
-        ${o !== "neutral" ? m`<span class=${h({ "mmt-badge": !0, [`is-${o}`]: !0 })}>
-              ${this.statusLabel(o)}
-            </span>` : c}
+        ${status !== "neutral" ? html`<span class=${classMap({ "mmt-badge": !0, [`is-${status}`]: !0 })}>
+              ${this.statusLabel(status)}
+            </span>` : nothing}
 
-        ${e.services.length ? m`<ul class="mmt-services">
-              ${e.services.map((s) => m`<li>${s}</li>`)}
-            </ul>` : m`<p class="mmt-hint">${a("لا توجد خدمات محددة.", "No services listed.")}</p>`}
+        ${milestone.services.length ? html`<ul class="mmt-services">
+              ${milestone.services.map((s) => html`<li>${s}</li>`)}
+            </ul>` : html`<p class="mmt-hint">${t("لا توجد خدمات محددة.", "No services listed.")}</p>`}
 
-        ${e.note ? m`<p class="mmt-note">${e.note}</p>` : c}
+        ${milestone.note ? html`<p class="mmt-note">${milestone.note}</p>` : nothing}
 
-        ${e.link ? m`<a
+        ${milestone.link ? html`<a
               class="fs-btn fs-tap"
-              href=${e.link}
+              href=${milestone.link}
               target="_blank"
               rel="noopener noreferrer"
             >
-              ${a("اطلب قطع هذه المرحلة", "Order parts for this service")}
-            </a>` : c}
+              ${t("اطلب قطع هذه المرحلة", "Order parts for this service")}
+            </a>` : nothing}
       </div>
     `;
   }
-  renderProducts(e) {
-    return T(this.config || {}, "mmt_", {
-      ready: !!e
+  renderProducts(active) {
+    return renderCommerceOutcome(this.config || {}, "mmt_", {
+      ready: !!active
     });
   }
   render() {
-    const e = this.config || {}, r = B(e, "mmt_"), o = this.milestones, i = d(e.mmt_title) || a("جدول الصيانة حسب المسافة", "Mileage maintenance timeline"), n = d(e.mmt_desc) || a(
+    const c = this.config || {}, theme = readSectionTheme(c, "mmt_"), milestones = this.milestones, title = localizedString(c.mmt_title) || t("جدول الصيانة حسب المسافة", "Mileage maintenance timeline"), desc = localizedString(c.mmt_desc) || t(
       "أدخل عداد سيارتك الحالي ثم اختر المرحلة لمعرفة الخدمات والقطع المطلوبة.",
       "Enter your current mileage, then pick a milestone to see services and parts."
-    ), s = d(e.mmt_unit_label) || a("كم", "km"), f = F(e.mmt_layout, "horizontal"), g = this.active, b = Y(o, this.currentKm), u = z(e);
-    return m`
+    ), unitLabel = localizedString(c.mmt_unit_label) || t("كم", "km"), layout = getRadioValue(c.mmt_layout, "horizontal"), active = this.active, progress = progressPercent(milestones, this.currentKm), odometerOn = showOdometer(c);
+    return html`
       <section
         class="fs-section"
-        style=${w(j(r))}
-        aria-label=${i}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title}
       >
         <div class="fs-container">
           <div class="mmt-shell">
             <div class="fs-hero">
-              <p class="fs-eyebrow">${a("خطة الصيانة", "Service plan")}</p>
-              ${i ? m`<h2 class="fs-title">${i}</h2>` : c}
-              ${n ? m`<p class="fs-desc">${n}</p>` : c}
+              <p class="fs-eyebrow">${t("خطة الصيانة", "Service plan")}</p>
+              ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+              ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
             </div>
 
             <div class="mmt-card">
-              ${u ? m`<div class="mmt-odometer">
+              ${odometerOn ? html`<div class="mmt-odometer">
                     <label class="mmt-odometer__label" for="mmt-km">
-                      ${J(e, "mmt_odometer_label", "عداد المسافة الحالي", "Current mileage")}
+                      ${label(c, "mmt_odometer_label", "عداد المسافة الحالي", "Current mileage")}
                     </label>
                     <div class="mmt-odometer__row">
                       <input
@@ -835,62 +847,62 @@ const y = class y extends A {
                         type="text"
                         inputmode="numeric"
                         .value=${this.currentKmInput}
-                        placeholder=${a("مثال: 24500", "e.g. 24500")}
-                        @input=${(l) => this.onOdometerInput(l.target.value)}
+                        placeholder=${t("مثال: 24500", "e.g. 24500")}
+                        @input=${(e) => this.onOdometerInput(e.target.value)}
                       />
-                      <span class="mmt-odometer__unit">${s}</span>
+                      <span class="mmt-odometer__unit">${unitLabel}</span>
                     </div>
                     <p class="mmt-hint">
-                      ${a(
+                      ${t(
       "سنظلّل المراحل السابقة ونقترح الأقرب لعدادك.",
       "Past services are marked and the nearest milestone is selected."
     )}
                     </p>
-                  </div>` : c}
+                  </div>` : nothing}
 
-              ${u && this.currentKm != null ? m`<div class="mmt-legend" aria-hidden="true">
-                    <span><i class="is-done"></i>${a("تمت", "Done")}</span>
-                    <span><i class="is-due"></i>${a("مستحقة", "Due")}</span>
-                    <span><i class="is-upcoming"></i>${a("قادمة", "Upcoming")}</span>
-                  </div>` : c}
+              ${odometerOn && this.currentKm != null ? html`<div class="mmt-legend" aria-hidden="true">
+                    <span><i class="is-done"></i>${t("تمت", "Done")}</span>
+                    <span><i class="is-due"></i>${t("مستحقة", "Due")}</span>
+                    <span><i class="is-upcoming"></i>${t("قادمة", "Upcoming")}</span>
+                  </div>` : nothing}
 
               <div
-                class=${h({
+                class=${classMap({
       "mmt-layout": !0,
-      "mmt-layout--vertical": f === "vertical"
+      "mmt-layout--vertical": layout === "vertical"
     })}
               >
                 <div class="mmt-track-wrap">
                   <div
                     class="mmt-progress"
-                    style=${w({ "--mmt-progress": `${b}%` })}
+                    style=${styleMap({ "--mmt-progress": `${progress}%` })}
                     aria-hidden="true"
                   >
                     <div class="mmt-progress__fill"></div>
                   </div>
-                  <div class="mmt-track" role="tablist" aria-label=${i}>
-                    ${o.map((l, I) => {
-      const k = (g == null ? void 0 : g.id) === l.id, v = this.statusOf(l);
-      return m`
+                  <div class="mmt-track" role="tablist" aria-label=${title}>
+                    ${milestones.map((m, i) => {
+      const isActive = (active == null ? void 0 : active.id) === m.id, status = this.statusOf(m);
+      return html`
                         <div class="mmt-item" role="presentation">
                           <button
                             type="button"
-                            class=${h({
+                            class=${classMap({
         "mmt-node": !0,
-        "is-active": k,
-        "is-done": v === "done",
-        "is-due": v === "due",
-        "is-upcoming": v === "upcoming"
+        "is-active": isActive,
+        "is-done": status === "done",
+        "is-due": status === "due",
+        "is-upcoming": status === "upcoming"
       })}
                             role="tab"
-                            aria-selected=${k ? "true" : "false"}
-                            @click=${() => this.select(l.id)}
+                            aria-selected=${isActive ? "true" : "false"}
+                            @click=${() => this.select(m.id)}
                           >
-                            <span class="mmt-node__pin">${Q(l, I)}</span>
+                            <span class="mmt-node__pin">${pinLabel(m, i)}</span>
                             <span class="mmt-node__meta">
-                              <span class="mmt-node__km">${x(l.km, s)}</span>
-                              ${l.title ? m`<span class="mmt-node__title">${l.title}</span>` : c}
-                              ${v !== "neutral" ? m`<span class="mmt-node__status">${this.statusLabel(v)}</span>` : c}
+                              <span class="mmt-node__km">${formatKm(m.km, unitLabel)}</span>
+                              ${m.title ? html`<span class="mmt-node__title">${m.title}</span>` : nothing}
+                              ${status !== "neutral" ? html`<span class="mmt-node__status">${this.statusLabel(status)}</span>` : nothing}
                             </span>
                           </button>
                         </div>
@@ -899,32 +911,32 @@ const y = class y extends A {
                   </div>
                 </div>
 
-                ${this.renderPanel(g, o)}
+                ${this.renderPanel(active, milestones)}
               </div>
             </div>
 
-            ${this.renderProducts(g)}
+            ${this.renderProducts(active)}
           </div>
         </div>
       </section>
     `;
   }
 };
-y.styles = [P, U];
-let p = y;
-_([
-  L({ type: Object })
-], p.prototype, "config");
-_([
-  S()
-], p.prototype, "activeId");
-_([
-  S()
-], p.prototype, "currentKmInput");
-D(
-  p
+__name(_MileageMaintenanceTimeline, "MileageMaintenanceTimeline"), _MileageMaintenanceTimeline.styles = [sharedSectionCss, componentStyles];
+let MileageMaintenanceTimeline = _MileageMaintenanceTimeline;
+__decorateClass([
+  property({ type: Object })
+], MileageMaintenanceTimeline.prototype, "config");
+__decorateClass([
+  state()
+], MileageMaintenanceTimeline.prototype, "activeId");
+__decorateClass([
+  state()
+], MileageMaintenanceTimeline.prototype, "currentKmInput");
+bindSallaRegistration(
+  MileageMaintenanceTimeline
 );
-typeof p < "u" && p.registerSallaComponent("salla-mileage-maintenance-timeline");
+typeof MileageMaintenanceTimeline < "u" && MileageMaintenanceTimeline.registerSallaComponent("salla-mileage-maintenance-timeline");
 export {
-  p as default
+  MileageMaintenanceTimeline as default
 };

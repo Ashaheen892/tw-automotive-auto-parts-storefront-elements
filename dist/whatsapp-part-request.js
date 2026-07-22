@@ -1,9 +1,11 @@
-import { css as $, LitElement as x, html as h, nothing as f } from "lit";
-import { property as y, state as w } from "lit/decorators.js";
-import { styleMap as _ } from "lit/directives/style-map.js";
-import { l as c, t, s as L, r as S, d as v, a as N, b as k } from "./registerSalla-Dct4KN_E.js";
-import { o as C } from "./whatsapp-GI8N2VNC.js";
-const q = $`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, html, nothing } from "lit";
+import { property, state } from "lit/decorators.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { l as localizedString, t, s as sharedSectionCss, r as readSectionTheme, d as isTruthy, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { o as openWhatsApp } from "./whatsapp-C3glLfzz.js";
+const componentStyles = css`
   .wpr-card {
     width: 100%;
     display: grid;
@@ -99,26 +101,28 @@ const q = $`
     color: var(--muted-color, #64748b);
   }
 `;
-function n(r, e, s, l) {
-  return c(r[e]) || t(s, l);
+function label(config, key, ar, en) {
+  return localizedString(config[key]) || t(ar, en);
 }
-function j(r) {
+__name(label, "label");
+function buildRequestMessage(input) {
   return [
-    r.prefix,
-    r.name ? `${r.nameLabel}: ${r.name}` : "",
-    r.phone ? `${r.phoneLabel}: ${r.phone}` : "",
-    r.vehicle ? `${r.vehicleLabel}: ${r.vehicle}` : "",
-    r.part ? `${r.partLabel}: ${r.part}` : "",
-    r.note ? `${r.noteLabel}: ${r.note}` : ""
+    input.prefix,
+    input.name ? `${input.nameLabel}: ${input.name}` : "",
+    input.phone ? `${input.phoneLabel}: ${input.phone}` : "",
+    input.vehicle ? `${input.vehicleLabel}: ${input.vehicle}` : "",
+    input.part ? `${input.partLabel}: ${input.part}` : "",
+    input.note ? `${input.noteLabel}: ${input.note}` : ""
   ].filter(Boolean).join(`
 `);
 }
-var z = Object.defineProperty, d = (r, e, s, l) => {
-  for (var i = void 0, p = r.length - 1, m; p >= 0; p--)
-    (m = r[p]) && (i = m(e, s, i) || i);
-  return i && z(e, s, i), i;
-};
-const b = class b extends x {
+__name(buildRequestMessage, "buildRequestMessage");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _WhatsappPartRequest = class _WhatsappPartRequest extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.name = "", this.phone = "", this.vehicle = "", this.partName = "", this.note = "", this.boundLangHandler = () => this.requestUpdate();
   }
@@ -129,10 +133,10 @@ const b = class b extends x {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
   submit() {
-    const e = this.config || {}, s = c(e.wpr_whatsapp_phone) || String(e.wpr_whatsapp_phone ?? "").trim();
-    if (!s) return;
-    const l = j({
-      prefix: c(e.wpr_message_prefix) || t("طلب قطعة من المتجر:", "Store part request:"),
+    const c = this.config || {}, storePhone = localizedString(c.wpr_whatsapp_phone) || String(c.wpr_whatsapp_phone ?? "").trim();
+    if (!storePhone) return;
+    const message = buildRequestMessage({
+      prefix: localizedString(c.wpr_message_prefix) || t("طلب قطعة من المتجر:", "Store part request:"),
       name: this.name,
       phone: this.phone,
       vehicle: this.vehicle,
@@ -144,105 +148,105 @@ const b = class b extends x {
       partLabel: t("القطعة", "Part"),
       noteLabel: t("ملاحظات", "Notes")
     });
-    C(s, l);
+    openWhatsApp(storePhone, message);
   }
   render() {
-    const e = this.config || {}, s = S(e, "wpr_"), l = c(e.wpr_title) || t("اطلب قطعتك عبر واتساب", "Request your part on WhatsApp"), i = c(e.wpr_desc) || t(
+    const c = this.config || {}, theme = readSectionTheme(c, "wpr_"), title = localizedString(c.wpr_title) || t("اطلب قطعتك عبر واتساب", "Request your part on WhatsApp"), desc = localizedString(c.wpr_desc) || t(
       "اكتب بيانات السيارة والقطعة المطلوبة وسنرسل الطلب للمتجر مباشرة.",
       "Enter your vehicle and part details and we will send the request to the store."
-    ), p = c(e.wpr_whatsapp_phone) || String(e.wpr_whatsapp_phone ?? "").trim(), m = v(e.wpr_show_vehicle, !0), u = v(e.wpr_show_note, !0), g = !!(p && (this.partName.trim() || this.note.trim() || this.vehicle.trim()));
-    return h`
+    ), storePhone = localizedString(c.wpr_whatsapp_phone) || String(c.wpr_whatsapp_phone ?? "").trim(), showVehicle = isTruthy(c.wpr_show_vehicle, !0), showNote = isTruthy(c.wpr_show_note, !0), canSend = !!(storePhone && (this.partName.trim() || this.note.trim() || this.vehicle.trim()));
+    return html`
       <section
         class="fs-section"
-        style=${_(N(s))}
-        aria-label=${l}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title}
       >
         <div class="fs-container">
           <div class="wpr-card">
             <p class="fs-eyebrow">${t("طلب سريع", "Quick request")}</p>
-            <h2 class="fs-title">${l}</h2>
-            <p class="fs-desc">${i}</p>
+            <h2 class="fs-title">${title}</h2>
+            <p class="fs-desc">${desc}</p>
 
-            ${p ? h`
+            ${storePhone ? html`
                   <div class="wpr-form">
                     <div class="wpr-row">
                       <div class="wpr-field">
-                        <label class="wpr-label" for="wpr-name">${n(e, "wpr_name_label", "الاسم", "Name")}</label>
+                        <label class="wpr-label" for="wpr-name">${label(c, "wpr_name_label", "الاسم", "Name")}</label>
                         <input
                           id="wpr-name"
                           class="wpr-input"
                           .value=${this.name}
-                          @input=${(o) => {
-      this.name = o.target.value;
+                          @input=${(e) => {
+      this.name = e.target.value;
     }}
                         />
                       </div>
                       <div class="wpr-field">
-                        <label class="wpr-label" for="wpr-phone">${n(e, "wpr_phone_label", "جوالك", "Your phone")}</label>
+                        <label class="wpr-label" for="wpr-phone">${label(c, "wpr_phone_label", "جوالك", "Your phone")}</label>
                         <input
                           id="wpr-phone"
                           class="wpr-input"
                           type="tel"
                           .value=${this.phone}
-                          @input=${(o) => {
-      this.phone = o.target.value;
+                          @input=${(e) => {
+      this.phone = e.target.value;
     }}
                         />
                       </div>
                     </div>
 
-                    ${m ? h`<div class="wpr-field">
+                    ${showVehicle ? html`<div class="wpr-field">
                           <label class="wpr-label" for="wpr-vehicle"
-                            >${n(e, "wpr_vehicle_label", "السيارة (ماركة / موديل / سنة)", "Vehicle (brand / model / year)")}</label
+                            >${label(c, "wpr_vehicle_label", "السيارة (ماركة / موديل / سنة)", "Vehicle (brand / model / year)")}</label
                           >
                           <input
                             id="wpr-vehicle"
                             class="wpr-input"
                             .value=${this.vehicle}
                             placeholder=${t("مثال: تويوتا كامري 2022", "e.g. Toyota Camry 2022")}
-                            @input=${(o) => {
-      this.vehicle = o.target.value;
+                            @input=${(e) => {
+      this.vehicle = e.target.value;
     }}
                           />
-                        </div>` : f}
+                        </div>` : nothing}
 
                     <div class="wpr-field">
-                      <label class="wpr-label" for="wpr-part">${n(e, "wpr_part_label", "القطعة المطلوبة", "Requested part")}</label>
+                      <label class="wpr-label" for="wpr-part">${label(c, "wpr_part_label", "القطعة المطلوبة", "Requested part")}</label>
                       <input
                         id="wpr-part"
                         class="wpr-input"
                         .value=${this.partName}
                         placeholder=${t("مثال: مراية يمين", "e.g. Right side mirror")}
-                        @input=${(o) => {
-      this.partName = o.target.value;
+                        @input=${(e) => {
+      this.partName = e.target.value;
     }}
                       />
                     </div>
 
-                    ${u ? h`<div class="wpr-field">
-                          <label class="wpr-label" for="wpr-note">${n(e, "wpr_note_label", "ملاحظات", "Notes")}</label>
+                    ${showNote ? html`<div class="wpr-field">
+                          <label class="wpr-label" for="wpr-note">${label(c, "wpr_note_label", "ملاحظات", "Notes")}</label>
                           <textarea
                             id="wpr-note"
                             class="wpr-textarea"
                             .value=${this.note}
-                            @input=${(o) => {
-      this.note = o.target.value;
+                            @input=${(e) => {
+      this.note = e.target.value;
     }}
                           ></textarea>
-                        </div>` : f}
+                        </div>` : nothing}
 
                     <div class="wpr-actions">
                       <button
                         type="button"
                         class="fs-btn fs-tap wpr-btn-wa"
-                        ?disabled=${!g}
+                        ?disabled=${!canSend}
                         @click=${() => this.submit()}
                       >
-                        ${n(e, "wpr_send_label", "إرسال عبر واتساب", "Send via WhatsApp")}
+                        ${label(c, "wpr_send_label", "إرسال عبر واتساب", "Send via WhatsApp")}
                       </button>
                     </div>
                   </div>
-                ` : h`<p class="wpr-hint">
+                ` : html`<p class="wpr-hint">
                   ${t(
       "أضف رقم واتساب المتجر من إعدادات العنصر.",
       "Add the store WhatsApp number in the component settings."
@@ -254,30 +258,30 @@ const b = class b extends x {
     `;
   }
 };
-b.styles = [L, q];
-let a = b;
-d([
-  y({ type: Object })
-], a.prototype, "config");
-d([
-  w()
-], a.prototype, "name");
-d([
-  w()
-], a.prototype, "phone");
-d([
-  w()
-], a.prototype, "vehicle");
-d([
-  w()
-], a.prototype, "partName");
-d([
-  w()
-], a.prototype, "note");
-k(
-  a
+__name(_WhatsappPartRequest, "WhatsappPartRequest"), _WhatsappPartRequest.styles = [sharedSectionCss, componentStyles];
+let WhatsappPartRequest = _WhatsappPartRequest;
+__decorateClass([
+  property({ type: Object })
+], WhatsappPartRequest.prototype, "config");
+__decorateClass([
+  state()
+], WhatsappPartRequest.prototype, "name");
+__decorateClass([
+  state()
+], WhatsappPartRequest.prototype, "phone");
+__decorateClass([
+  state()
+], WhatsappPartRequest.prototype, "vehicle");
+__decorateClass([
+  state()
+], WhatsappPartRequest.prototype, "partName");
+__decorateClass([
+  state()
+], WhatsappPartRequest.prototype, "note");
+bindSallaRegistration(
+  WhatsappPartRequest
 );
-typeof a < "u" && a.registerSallaComponent("salla-whatsapp-part-request");
+typeof WhatsappPartRequest < "u" && WhatsappPartRequest.registerSallaComponent("salla-whatsapp-part-request");
 export {
-  a as default
+  WhatsappPartRequest as default
 };

@@ -1,10 +1,12 @@
-import { css as y, LitElement as _, html as t, nothing as o } from "lit";
-import { property as w } from "lit/decorators.js";
-import { classMap as C } from "lit/directives/class-map.js";
-import { styleMap as m } from "lit/directives/style-map.js";
-import { n as L, l as v, j as S, f as M, e as z, t as s, g as $, s as E, i as b, r as R, p as j, a as B, b as O } from "./registerSalla-Dct4KN_E.js";
-import { r as I } from "./commerceOutcome-B3T0_-WJ.js";
-const P = y`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, html, nothing } from "lit";
+import { property } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, l as localizedString, j as clamp, f as toNumber, e as extractLink, t, g as getRadioValue, s as sharedSectionCss, i as isExternalUrl, r as readSectionTheme, p as prefersReducedMotion, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .vhm-legend {
     display: flex;
     flex-wrap: wrap;
@@ -156,64 +158,71 @@ const P = y`
     }
   }
 `;
-function D(a) {
-  return $(a, "circles").toLowerCase() === "bars" ? "bars" : "circles";
+function resolveDisplay(value) {
+  return getRadioValue(value, "circles").toLowerCase() === "bars" ? "bars" : "circles";
 }
-function T(a, e) {
-  const r = $(a, "").toLowerCase();
-  return r === "excellent" || r === "good" || r === "check" || r === "service" ? r : e >= 85 ? "excellent" : e >= 70 ? "good" : e >= 45 ? "check" : "service";
+__name(resolveDisplay, "resolveDisplay");
+function resolveStatus(raw, value) {
+  const fromConfig = getRadioValue(raw, "").toLowerCase();
+  return fromConfig === "excellent" || fromConfig === "good" || fromConfig === "check" || fromConfig === "service" ? fromConfig : value >= 85 ? "excellent" : value >= 70 ? "good" : value >= 45 ? "check" : "service";
 }
-function f(a) {
-  const e = {
+__name(resolveStatus, "resolveStatus");
+function statusLabel(status) {
+  const map = {
     excellent: ["ممتاز", "Excellent"],
     good: ["جيد", "Good"],
     check: ["يحتاج فحص", "Needs check"],
     service: ["صيانة مطلوبة", "Service needed"]
-  }, [r, c] = e[a];
-  return s(r, c);
+  }, [ar, en] = map[status];
+  return t(ar, en);
 }
-function u(a) {
+__name(statusLabel, "statusLabel");
+function statusColor(status) {
   return {
     excellent: "#16a34a",
     good: "#2563eb",
     check: "#ea580c",
     service: "#dc2626"
-  }[a];
+  }[status];
 }
-function U(a) {
-  const e = L(a).map((r, c) => {
-    const n = v(r.name) || v(r.title), i = S(M(r.value, 0), 0, 100);
+__name(statusColor, "statusColor");
+function parseMeters(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => {
+    const name = localizedString(row.name) || localizedString(row.title), value = clamp(toNumber(row.value, 0), 0, 100);
     return {
-      id: String(r.id ?? "").trim() || `meter-${c + 1}`,
-      name: n,
-      value: i,
-      status: T(r.status, i),
-      icon: String(r.icon ?? "").trim(),
-      note: v(r.note),
-      link: z(r.link)
+      id: String(row.id ?? "").trim() || `meter-${i + 1}`,
+      name,
+      value,
+      status: resolveStatus(row.status, value),
+      icon: String(row.icon ?? "").trim(),
+      note: localizedString(row.note),
+      link: extractLink(row.link)
     };
-  }).filter((r) => r.name);
-  return e.length ? e : G();
+  }).filter((m) => m.name);
+  return parsed.length ? parsed : defaultMeters();
 }
-function G() {
+__name(parseMeters, "parseMeters");
+function defaultMeters() {
   return [
-    { id: "battery", name: s("البطارية", "Battery"), value: 78, status: "good", icon: "🔋", note: s("فحص دوري كل 6 أشهر.", "Check every 6 months."), link: "" },
-    { id: "tires", name: s("الإطارات", "Tires"), value: 62, status: "check", icon: "🛞", note: s("تآكل متوسط — راجع الضغط.", "Moderate wear — check pressure."), link: "" },
-    { id: "maintenance", name: s("الصيانة", "Maintenance"), value: 55, status: "check", icon: "🔧", note: s("اقترب موعد تغيير الزيت.", "Oil change due soon."), link: "" },
-    { id: "brakes", name: s("الفرامل", "Brakes"), value: 88, status: "excellent", icon: "🛑", note: s("أداء جيد.", "Good performance."), link: "" },
-    { id: "trip", name: s("جاهزية السفر", "Trip readiness"), value: 72, status: "good", icon: "🚗", note: s("جاهزة لرحلة قصيرة.", "Ready for a short trip."), link: "" }
+    { id: "battery", name: t("البطارية", "Battery"), value: 78, status: "good", icon: "🔋", note: t("فحص دوري كل 6 أشهر.", "Check every 6 months."), link: "" },
+    { id: "tires", name: t("الإطارات", "Tires"), value: 62, status: "check", icon: "🛞", note: t("تآكل متوسط — راجع الضغط.", "Moderate wear — check pressure."), link: "" },
+    { id: "maintenance", name: t("الصيانة", "Maintenance"), value: 55, status: "check", icon: "🔧", note: t("اقترب موعد تغيير الزيت.", "Oil change due soon."), link: "" },
+    { id: "brakes", name: t("الفرامل", "Brakes"), value: 88, status: "excellent", icon: "🛑", note: t("أداء جيد.", "Good performance."), link: "" },
+    { id: "trip", name: t("جاهزية السفر", "Trip readiness"), value: 72, status: "good", icon: "🚗", note: t("جاهزة لرحلة قصيرة.", "Ready for a short trip."), link: "" }
   ];
 }
-function k(a, e = 42) {
-  const r = 2 * Math.PI * e;
-  return r - a / 100 * r;
+__name(defaultMeters, "defaultMeters");
+function circleDashOffset(value, radius = 42) {
+  const circumference = 2 * Math.PI * radius;
+  return circumference - value / 100 * circumference;
 }
-var N = Object.defineProperty, q = (a, e, r, c) => {
-  for (var n = void 0, i = a.length - 1, l; i >= 0; i--)
-    (l = a[i]) && (n = l(e, r, n) || n);
-  return n && N(e, r, n), n;
-};
-const h = 42, g = class g extends _ {
+__name(circleDashOffset, "circleDashOffset");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const CIRCLE_RADIUS = 42, _VehicleHealthMeter = class _VehicleHealthMeter extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.boundLangHandler = () => this.requestUpdate();
   }
@@ -224,110 +233,110 @@ const h = 42, g = class g extends _ {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
   get meters() {
-    var e;
-    return U((e = this.config) == null ? void 0 : e.vhm_meters);
+    var _a;
+    return parseMeters((_a = this.config) == null ? void 0 : _a.vhm_meters);
   }
   renderLegend() {
-    return t`
+    return html`
       <div class="vhm-legend" aria-hidden="true">
         ${["excellent", "good", "check", "service"].map(
-      (r) => t`<span><i style=${m({ background: u(r) })}></i>${f(r)}</span>`
+      (s) => html`<span><i style=${styleMap({ background: statusColor(s) })}></i>${statusLabel(s)}</span>`
     )}
       </div>
     `;
   }
-  renderCircle(e, r) {
-    const c = u(e.status), n = k(r ? e.value : 0, h), i = 2 * Math.PI * h;
-    return t`
+  renderCircle(meter, animate) {
+    const color = statusColor(meter.status), offset = circleDashOffset(animate ? meter.value : 0, CIRCLE_RADIUS), circumference = 2 * Math.PI * CIRCLE_RADIUS;
+    return html`
       <div class="vhm-circle" aria-hidden="true">
         <svg viewBox="0 0 100 100" role="presentation">
-          <circle class="vhm-circle__track" cx="50" cy="50" r=${h} />
+          <circle class="vhm-circle__track" cx="50" cy="50" r=${CIRCLE_RADIUS} />
           <circle
             class="vhm-circle__fill"
             cx="50"
             cy="50"
-            r=${h}
-            stroke=${c}
-            stroke-dasharray=${i}
-            stroke-dashoffset=${n}
+            r=${CIRCLE_RADIUS}
+            stroke=${color}
+            stroke-dasharray=${circumference}
+            stroke-dashoffset=${offset}
           />
         </svg>
-        <span class="vhm-circle__value">${e.value}%</span>
+        <span class="vhm-circle__value">${meter.value}%</span>
       </div>
     `;
   }
-  renderBar(e) {
-    const r = u(e.status);
-    return t`
+  renderBar(meter) {
+    const color = statusColor(meter.status);
+    return html`
       <div class="vhm-bar-head">
-        <p class="vhm-name">${e.icon ? t`${e.icon} ` : o}${e.name}</p>
-        <span class="vhm-status" style=${m({ color: r })}>${f(e.status)}</span>
+        <p class="vhm-name">${meter.icon ? html`${meter.icon} ` : nothing}${meter.name}</p>
+        <span class="vhm-status" style=${styleMap({ color })}>${statusLabel(meter.status)}</span>
       </div>
-      <div class="vhm-bar-track" role="progressbar" aria-valuenow=${e.value} aria-valuemin="0" aria-valuemax="100">
-        <div class="vhm-bar-fill" style=${m({ width: `${e.value}%`, background: r })}></div>
+      <div class="vhm-bar-track" role="progressbar" aria-valuenow=${meter.value} aria-valuemin="0" aria-valuemax="100">
+        <div class="vhm-bar-fill" style=${styleMap({ width: `${meter.value}%`, background: color })}></div>
       </div>
-      ${e.note ? t`<p class="vhm-note">${e.note}</p>` : o}
-      ${e.link ? t`<a
+      ${meter.note ? html`<p class="vhm-note">${meter.note}</p>` : nothing}
+      ${meter.link ? html`<a
             class="vhm-link"
-            href=${e.link}
+            href=${meter.link}
             target="_blank"
-            rel=${b(e.link) ? "noopener noreferrer" : o}
+            rel=${isExternalUrl(meter.link) ? "noopener noreferrer" : nothing}
           >
-            ${s("المزيد", "Learn more")}
-          </a>` : o}
+            ${t("المزيد", "Learn more")}
+          </a>` : nothing}
     `;
   }
-  renderMeterCard(e, r, c) {
-    const n = u(e.status);
-    return r === "bars" ? t`<article class="vhm-meter vhm-meter--bar">${this.renderBar(e)}</article>` : t`
+  renderMeterCard(meter, display, animate) {
+    const color = statusColor(meter.status);
+    return display === "bars" ? html`<article class="vhm-meter vhm-meter--bar">${this.renderBar(meter)}</article>` : html`
       <article class="vhm-meter">
-        ${this.renderCircle(e, c)}
-        <p class="vhm-name">${e.icon ? t`${e.icon} ` : o}${e.name}</p>
-        <p class="vhm-status" style=${m({ color: n })}>${f(e.status)}</p>
-        ${e.note ? t`<p class="vhm-note">${e.note}</p>` : o}
-        ${e.link ? t`<a
+        ${this.renderCircle(meter, animate)}
+        <p class="vhm-name">${meter.icon ? html`${meter.icon} ` : nothing}${meter.name}</p>
+        <p class="vhm-status" style=${styleMap({ color })}>${statusLabel(meter.status)}</p>
+        ${meter.note ? html`<p class="vhm-note">${meter.note}</p>` : nothing}
+        ${meter.link ? html`<a
               class="vhm-link"
-              href=${e.link}
+              href=${meter.link}
               target="_blank"
-              rel=${b(e.link) ? "noopener noreferrer" : o}
+              rel=${isExternalUrl(meter.link) ? "noopener noreferrer" : nothing}
             >
-              ${s("المزيد", "Learn more")}
-            </a>` : o}
+              ${t("المزيد", "Learn more")}
+            </a>` : nothing}
       </article>
     `;
   }
   render() {
-    const e = this.config || {}, r = R(e, "vhm_"), c = !j(), n = this.meters, i = D(e.vhm_display), l = v(e.vhm_title), p = v(e.vhm_desc);
-    return t`
+    const c = this.config || {}, theme = readSectionTheme(c, "vhm_"), animate = !prefersReducedMotion(), meters = this.meters, display = resolveDisplay(c.vhm_display), title = localizedString(c.vhm_title), desc = localizedString(c.vhm_desc);
+    return html`
       <section
         class="fs-section"
-        style=${m(B(r))}
-        aria-label=${l || s("مؤشر صحة السيارة", "Vehicle health meter")}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title || t("مؤشر صحة السيارة", "Vehicle health meter")}
       >
         <div class="fs-container">
-          ${l || p ? t`<div class="fs-hero">
-                ${l ? t`<h2 class="fs-title">${l}</h2>` : o}
-                ${p ? t`<p class="fs-desc">${p}</p>` : o}
-              </div>` : o}
+          ${title || desc ? html`<div class="fs-hero">
+                ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+                ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+              </div>` : nothing}
 
           ${this.renderLegend()}
 
-          <div class=${C({ "vhm-grid": !0, "vhm-grid--bars": i === "bars" })}>
-            ${n.map((x) => this.renderMeterCard(x, i, c))}
+          <div class=${classMap({ "vhm-grid": !0, "vhm-grid--bars": display === "bars" })}>
+            ${meters.map((meter) => this.renderMeterCard(meter, display, animate))}
           </div>
-          ${I(e, "vhm_", { ready: n.length > 0 })}
+          ${renderCommerceOutcome(c, "vhm_", { ready: meters.length > 0 })}
         </div>
       </section>
     `;
   }
 };
-g.styles = [E, P];
-let d = g;
-q([
-  w({ type: Object })
-], d.prototype, "config");
-O(d);
-typeof d < "u" && d.registerSallaComponent("salla-vehicle-health-meter");
+__name(_VehicleHealthMeter, "VehicleHealthMeter"), _VehicleHealthMeter.styles = [sharedSectionCss, componentStyles];
+let VehicleHealthMeter = _VehicleHealthMeter;
+__decorateClass([
+  property({ type: Object })
+], VehicleHealthMeter.prototype, "config");
+bindSallaRegistration(VehicleHealthMeter);
+typeof VehicleHealthMeter < "u" && VehicleHealthMeter.registerSallaComponent("salla-vehicle-health-meter");
 export {
-  d as default
+  VehicleHealthMeter as default
 };

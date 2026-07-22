@@ -1,10 +1,12 @@
-import { css as I, LitElement as E, svg as L, nothing as p, html as a } from "lit";
-import { property as M, state as P } from "lit/decorators.js";
-import { classMap as g } from "lit/directives/class-map.js";
-import { styleMap as v } from "lit/directives/style-map.js";
-import { n as R, l as m, c as y, e as T, j as x, f as _, k as $, d as w, g as j, t as s, s as H, r as B, p as D, a as O, b as Y } from "./registerSalla-Dct4KN_E.js";
-import { r as U } from "./commerceOutcome-B3T0_-WJ.js";
-const q = I`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, svg, nothing, html } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, l as localizedString, c as extractImageUrl, e as extractLink, j as clamp, f as toNumber, k as itemIdFromLabel, d as isTruthy, g as getRadioValue, t, s as sharedSectionCss, r as readSectionTheme, p as prefersReducedMotion, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .icpm-shell {
     display: grid;
     gap: 1.15rem;
@@ -527,7 +529,7 @@ const q = I`
       transition: none !important;
     }
   }
-`, N = [
+`, DEFAULT_PARTS_META = [
   {
     ar: "المحرك",
     en: "Engine",
@@ -606,59 +608,64 @@ const q = I`
     icon: "07"
   }
 ];
-function V() {
-  return N.map((o, e) => {
-    const t = s(o.ar, o.en);
+function defaultParts() {
+  return DEFAULT_PARTS_META.map((p, i) => {
+    const name = t(p.ar, p.en);
     return {
-      id: $(t, "") || `default-${e + 1}`,
-      name: t,
-      x: o.x,
-      y: o.y,
-      title: t,
-      desc: s(o.dar, o.den),
-      icon: o.icon,
+      id: itemIdFromLabel(name, "") || `default-${i + 1}`,
+      name,
+      x: p.x,
+      y: p.y,
+      title: name,
+      desc: t(p.dar, p.den),
+      icon: p.icon,
       link: "",
       image: "",
-      tip: s(o.tipAr, o.tipEn)
+      tip: t(p.tipAr, p.tipEn)
     };
   });
 }
-function F(o) {
-  const e = R(o).map((t, i) => {
-    const r = m(t.name), n = m(t.title) || r;
-    if (!r && !n) return null;
-    const l = n || r;
+__name(defaultParts, "defaultParts");
+function parseParts(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => {
+    const name = localizedString(row.name), title = localizedString(row.title) || name;
+    if (!name && !title) return null;
+    const label2 = title || name;
     return {
-      id: String(t.id ?? "").trim() || $(l, "") || `part-${i + 1}`,
-      name: r || n,
-      x: x(_(t.x, 50), 0, 100),
-      y: x(_(t.y, 50), 0, 100),
-      title: l,
-      desc: m(t.desc),
-      icon: String(t.icon ?? "").trim() || String(i + 1).padStart(2, "0"),
-      link: T(t.link),
-      image: y(t.image),
-      tip: m(t.tip)
+      id: String(row.id ?? "").trim() || itemIdFromLabel(label2, "") || `part-${i + 1}`,
+      name: name || title,
+      x: clamp(toNumber(row.x, 50), 0, 100),
+      y: clamp(toNumber(row.y, 50), 0, 100),
+      title: label2,
+      desc: localizedString(row.desc),
+      icon: String(row.icon ?? "").trim() || String(i + 1).padStart(2, "0"),
+      link: extractLink(row.link),
+      image: extractImageUrl(row.image),
+      tip: localizedString(row.tip)
     };
-  }).filter((t) => !!t);
-  return e.length ? e : V();
+  }).filter((p) => !!p);
+  return parsed.length ? parsed : defaultParts();
 }
-function W(o) {
-  return j(o.icpm_detail_mode, "inline") === "sheet" ? "sheet" : "inline";
+__name(parseParts, "parseParts");
+function resolveDetailMode(config) {
+  return getRadioValue(config.icpm_detail_mode, "inline") === "sheet" ? "sheet" : "inline";
 }
-function G(o) {
-  return w(o.icpm_show_legend, !0);
+__name(resolveDetailMode, "resolveDetailMode");
+function showLegend(config) {
+  return isTruthy(config.icpm_show_legend, !0);
 }
-function J(o) {
-  var e;
-  return ((e = o[0]) == null ? void 0 : e.id) ?? "";
+__name(showLegend, "showLegend");
+function defaultPartId(parts) {
+  var _a;
+  return ((_a = parts[0]) == null ? void 0 : _a.id) ?? "";
 }
-var K = Object.defineProperty, k = (o, e, t, i) => {
-  for (var r = void 0, n = o.length - 1, l; n >= 0; n--)
-    (l = o[n]) && (r = l(e, t, r) || r);
-  return r && K(e, t, r), r;
-};
-const f = class f extends E {
+__name(defaultPartId, "defaultPartId");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _InteractiveCarPartsMap = class _InteractiveCarPartsMap extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.activeId = "", this.boundLangHandler = () => this.requestUpdate();
   }
@@ -668,39 +675,39 @@ const f = class f extends E {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
-  willUpdate(e) {
-    e.has("config") && (this.activeId = J(this.parts));
+  willUpdate(changed) {
+    changed.has("config") && (this.activeId = defaultPartId(this.parts));
   }
   get parts() {
-    var e;
-    return F((e = this.config) == null ? void 0 : e.icpm_parts);
+    var _a;
+    return parseParts((_a = this.config) == null ? void 0 : _a.icpm_parts);
   }
-  resolveActive(e) {
-    return !e.length || this.activeId === "__none__" ? null : e.find((t) => t.id === this.activeId) ?? e[0] ?? null;
+  resolveActive(parts) {
+    return !parts.length || this.activeId === "__none__" ? null : parts.find((p) => p.id === this.activeId) ?? parts[0] ?? null;
   }
-  activeIndex(e, t) {
-    return t ? e.findIndex((i) => i.id === t.id) : -1;
+  activeIndex(parts, active) {
+    return active ? parts.findIndex((p) => p.id === active.id) : -1;
   }
-  selectPart(e) {
-    this.activeId = e, this.updateComplete.then(() => {
-      var i;
-      const t = (i = this.renderRoot) == null ? void 0 : i.querySelector(
+  selectPart(id) {
+    this.activeId = id, this.updateComplete.then(() => {
+      var _a;
+      const activeChip = (_a = this.renderRoot) == null ? void 0 : _a.querySelector(
         ".icpm-legend__item.is-active"
       );
-      t == null || t.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+      activeChip == null || activeChip.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
     });
   }
-  shiftActive(e, t) {
-    if (!e.length) return;
-    const i = this.resolveActive(e), n = (Math.max(0, this.activeIndex(e, i)) + t + e.length) % e.length;
-    this.activeId = e[n].id;
+  shiftActive(parts, delta) {
+    if (!parts.length) return;
+    const active = this.resolveActive(parts), next = (Math.max(0, this.activeIndex(parts, active)) + delta + parts.length) % parts.length;
+    this.activeId = parts[next].id;
   }
-  pinLabel(e, t) {
-    const i = String(e.icon || "").trim();
-    return i && i.length <= 3 ? i : String(t + 1).padStart(2, "0");
+  pinLabel(part, index) {
+    const raw = String(part.icon || "").trim();
+    return raw && raw.length <= 3 ? raw : String(index + 1).padStart(2, "0");
   }
   renderSilhouette() {
-    return L`
+    return svg`
       <svg class="icpm-silhouette" viewBox="0 0 640 280" aria-hidden="true" focusable="false">
         <path
           fill="currentColor"
@@ -718,176 +725,176 @@ const f = class f extends E {
       </svg>
     `;
   }
-  renderHotspot(e, t, i, r) {
-    const n = r === e.id;
-    return a`
+  renderHotspot(part, index, pulse, activeId) {
+    const active = activeId === part.id;
+    return html`
       <button
         type="button"
-        class=${g({ "icpm-hotspot": !0, "is-active": n })}
-        style=${v({ "--dot-x": `${e.x}%`, "--dot-y": `${e.y}%` })}
-        aria-pressed=${n ? "true" : "false"}
-        aria-label=${e.name}
-        title=${e.name}
-        @click=${() => this.selectPart(e.id)}
+        class=${classMap({ "icpm-hotspot": !0, "is-active": active })}
+        style=${styleMap({ "--dot-x": `${part.x}%`, "--dot-y": `${part.y}%` })}
+        aria-pressed=${active ? "true" : "false"}
+        aria-label=${part.name}
+        title=${part.name}
+        @click=${() => this.selectPart(part.id)}
       >
         <span class="icpm-hotspot__pin">
-          ${i && !n ? a`<span class="icpm-hotspot__pulse" aria-hidden="true"></span>` : p}
-          ${this.pinLabel(e, t)}
+          ${pulse && !active ? html`<span class="icpm-hotspot__pulse" aria-hidden="true"></span>` : nothing}
+          ${this.pinLabel(part, index)}
         </span>
-        <span class="icpm-hotspot__label">${e.name}</span>
+        <span class="icpm-hotspot__label">${part.name}</span>
       </button>
     `;
   }
-  renderLegend(e, t) {
-    return G(this.config || {}) ? a`
-      <div class="icpm-legend" role="list" aria-label=${s("أنظمة السيارة", "Vehicle systems")}>
-        ${e.map(
-      (i, r) => a`
+  renderLegend(parts, active) {
+    return showLegend(this.config || {}) ? html`
+      <div class="icpm-legend" role="list" aria-label=${t("أنظمة السيارة", "Vehicle systems")}>
+        ${parts.map(
+      (part, index) => html`
             <button
               type="button"
               role="listitem"
-              class=${g({ "icpm-legend__item": !0, "is-active": (t == null ? void 0 : t.id) === i.id })}
-              aria-pressed=${(t == null ? void 0 : t.id) === i.id ? "true" : "false"}
-              @click=${() => this.selectPart(i.id)}
+              class=${classMap({ "icpm-legend__item": !0, "is-active": (active == null ? void 0 : active.id) === part.id })}
+              aria-pressed=${(active == null ? void 0 : active.id) === part.id ? "true" : "false"}
+              @click=${() => this.selectPart(part.id)}
             >
-              <span class="icpm-legend__num">${this.pinLabel(i, r)}</span>
-              <span>${i.name}</span>
+              <span class="icpm-legend__num">${this.pinLabel(part, index)}</span>
+              <span>${part.name}</span>
             </button>
           `
     )}
       </div>
-    ` : p;
+    ` : nothing;
   }
-  renderDetail(e, t, i) {
-    if (!e)
-      return a`<div class="icpm-panel icpm-panel--empty" role="region">
-        <p>${s("اضغط على نقطة في الخريطة أو اختر نظامًا من القائمة.", "Tap a hotspot or pick a system from the list.")}</p>
+  renderDetail(part, mode, parts) {
+    if (!part)
+      return html`<div class="icpm-panel icpm-panel--empty" role="region">
+        <p>${t("اضغط على نقطة في الخريطة أو اختر نظامًا من القائمة.", "Tap a hotspot or pick a system from the list.")}</p>
       </div>`;
-    const r = this.activeIndex(i, e);
-    return a`
+    const idx = this.activeIndex(parts, part);
+    return html`
       <div class="icpm-panel" role="region" aria-live="polite">
-        ${t === "sheet" ? a`<button
+        ${mode === "sheet" ? html`<button
               type="button"
               class="fs-btn fs-btn--ghost fs-tap"
-              aria-label=${s("إغلاق", "Close")}
+              aria-label=${t("إغلاق", "Close")}
               @click=${() => this.activeId = "__none__"}
             >
-              ${s("إغلاق", "Close")}
-            </button>` : p}
+              ${t("إغلاق", "Close")}
+            </button>` : nothing}
 
         <div class="icpm-panel__head">
           <div>
             <p class="icpm-panel__kicker">
-              ${s("نظام مختار", "Selected system")}
-              ${r >= 0 ? ` · ${r + 1}/${i.length}` : ""}
+              ${t("نظام مختار", "Selected system")}
+              ${idx >= 0 ? ` · ${idx + 1}/${parts.length}` : ""}
             </p>
-            <h3 class="icpm-panel__title">${e.title || e.name}</h3>
+            <h3 class="icpm-panel__title">${part.title || part.name}</h3>
           </div>
-          ${i.length > 1 ? a`<div class="icpm-panel__nav" dir="ltr">
+          ${parts.length > 1 ? html`<div class="icpm-panel__nav" dir="ltr">
                 <button
                   type="button"
                   class="icpm-nav-btn"
-                  aria-label=${s("السابق", "Previous")}
-                  @click=${() => this.shiftActive(i, -1)}
+                  aria-label=${t("السابق", "Previous")}
+                  @click=${() => this.shiftActive(parts, -1)}
                 >
                   ‹
                 </button>
                 <button
                   type="button"
                   class="icpm-nav-btn"
-                  aria-label=${s("التالي", "Next")}
-                  @click=${() => this.shiftActive(i, 1)}
+                  aria-label=${t("التالي", "Next")}
+                  @click=${() => this.shiftActive(parts, 1)}
                 >
                   ›
                 </button>
-              </div>` : p}
+              </div>` : nothing}
         </div>
 
-        ${e.image ? a`<img class="icpm-panel__img" src=${e.image} alt="" loading="lazy" />` : p}
-        ${e.desc ? a`<p class="icpm-panel__desc">${e.desc}</p>` : p}
-        ${e.tip ? a`<div class="icpm-tip">
-              <span class="icpm-tip__label">${s("نصيحة صيانة", "Maintenance tip")}</span>
-              <p class="icpm-tip__text">${e.tip}</p>
-            </div>` : p}
-        ${e.link ? a`<a class="fs-btn fs-tap" href=${e.link} target="_blank" rel="noopener noreferrer">
-              ${s("تصفّح قطع هذا النظام", "Browse this system")}
-            </a>` : p}
+        ${part.image ? html`<img class="icpm-panel__img" src=${part.image} alt="" loading="lazy" />` : nothing}
+        ${part.desc ? html`<p class="icpm-panel__desc">${part.desc}</p>` : nothing}
+        ${part.tip ? html`<div class="icpm-tip">
+              <span class="icpm-tip__label">${t("نصيحة صيانة", "Maintenance tip")}</span>
+              <p class="icpm-tip__text">${part.tip}</p>
+            </div>` : nothing}
+        ${part.link ? html`<a class="fs-btn fs-tap" href=${part.link} target="_blank" rel="noopener noreferrer">
+              ${t("تصفّح قطع هذا النظام", "Browse this system")}
+            </a>` : nothing}
       </div>
     `;
   }
-  renderProducts(e) {
-    return U(this.config || {}, "icpm_", {
-      ready: !!e
+  renderProducts(active) {
+    return renderCommerceOutcome(this.config || {}, "icpm_", {
+      ready: !!active
     });
   }
   render() {
-    const e = this.config || {}, t = B(e, "icpm_"), i = !D(), r = this.parts, n = y(e.icpm_car_image), l = m(e.icpm_title) || s("خريطة أجزاء السيارة", "Car parts map"), b = m(e.icpm_desc) || s(
+    const c = this.config || {}, theme = readSectionTheme(c, "icpm_"), animate = !prefersReducedMotion(), parts = this.parts, carImage = extractImageUrl(c.icpm_car_image), title = localizedString(c.icpm_title) || t("خريطة أجزاء السيارة", "Car parts map"), desc = localizedString(c.icpm_desc) || t(
       "استكشف أنظمة السيارة بالنقاط أو القائمة، ثم اعرض القطع المناسبة لكل نظام.",
       "Explore vehicle systems via hotspots or the list, then see matching parts."
-    ), h = W(e), z = w(e.icpm_pulse, !0) && i, c = this.resolveActive(r), A = h === "sheet" && !!c, u = this.activeIndex(r, c);
-    return r.length ? a`
+    ), detailMode = resolveDetailMode(c), pulse = isTruthy(c.icpm_pulse, !0) && animate, active = this.resolveActive(parts), sheetOpen = detailMode === "sheet" && !!active, activeIdx = this.activeIndex(parts, active);
+    return parts.length ? html`
       <section
         class="fs-section"
-        style=${v(O(t))}
-        aria-label=${l}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title}
       >
         <div class="fs-container">
           <div class="icpm-shell">
             <div class="fs-hero">
-              <p class="fs-eyebrow">${s("استكشف بالخريطة", "Explore by map")}</p>
-              ${l ? a`<h2 class="fs-title">${l}</h2>` : p}
-              ${b ? a`<p class="fs-desc">${b}</p>` : p}
-              ${u >= 0 ? a`<p class="fs-hero__meta">
-                    ${s("النظام الحالي", "Current system")}: ${c == null ? void 0 : c.name}
-                    · ${u + 1}/${r.length}
-                  </p>` : p}
+              <p class="fs-eyebrow">${t("استكشف بالخريطة", "Explore by map")}</p>
+              ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+              ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+              ${activeIdx >= 0 ? html`<p class="fs-hero__meta">
+                    ${t("النظام الحالي", "Current system")}: ${active == null ? void 0 : active.name}
+                    · ${activeIdx + 1}/${parts.length}
+                  </p>` : nothing}
             </div>
 
-            <div class=${g({ "icpm-layout": !0, "icpm-layout--sheet": h === "sheet" })}>
+            <div class=${classMap({ "icpm-layout": !0, "icpm-layout--sheet": detailMode === "sheet" })}>
               <div class="icpm-stage-card">
                 <div class="icpm-stage">
-                  ${n ? a`<img class="icpm-stage__img" src=${n} alt="" loading="lazy" />` : a`
+                  ${carImage ? html`<img class="icpm-stage__img" src=${carImage} alt="" loading="lazy" />` : html`
                         ${this.renderSilhouette()}
                         <div class="icpm-stage__missing" role="img">
-                          <p>${s("أضف صورة السيارة من الإعدادات", "Add a car image in settings")}</p>
+                          <p>${t("أضف صورة السيارة من الإعدادات", "Add a car image in settings")}</p>
                         </div>
                       `}
-                  ${r.map((S, C) => this.renderHotspot(S, C, z, (c == null ? void 0 : c.id) ?? ""))}
+                  ${parts.map((part, i) => this.renderHotspot(part, i, pulse, (active == null ? void 0 : active.id) ?? ""))}
                 </div>
-                ${this.renderLegend(r, c)}
+                ${this.renderLegend(parts, active)}
               </div>
 
-              ${h === "sheet" ? a`
-                    ${A ? a`<button
+              ${detailMode === "sheet" ? html`
+                    ${sheetOpen ? html`<button
                           class="icpm-sheet-backdrop"
-                          aria-label=${s("إغلاق", "Close")}
+                          aria-label=${t("إغلاق", "Close")}
                           @click=${() => this.activeId = "__none__"}
-                        ></button>` : p}
-                    ${this.renderDetail(c, h, r)}
-                  ` : this.renderDetail(c, h, r)}
+                        ></button>` : nothing}
+                    ${this.renderDetail(active, detailMode, parts)}
+                  ` : this.renderDetail(active, detailMode, parts)}
             </div>
 
-            ${this.renderProducts(c)}
+            ${this.renderProducts(active)}
           </div>
         </div>
       </section>
-    ` : a`<div class="fs-empty" role="status">
-        ${s("أضف أجزاء السيارة من إعدادات العنصر.", "Add car parts in the element settings.")}
+    ` : html`<div class="fs-empty" role="status">
+        ${t("أضف أجزاء السيارة من إعدادات العنصر.", "Add car parts in the element settings.")}
       </div>`;
   }
 };
-f.styles = [H, q];
-let d = f;
-k([
-  M({ type: Object })
-], d.prototype, "config");
-k([
-  P()
-], d.prototype, "activeId");
-Y(
-  d
+__name(_InteractiveCarPartsMap, "InteractiveCarPartsMap"), _InteractiveCarPartsMap.styles = [sharedSectionCss, componentStyles];
+let InteractiveCarPartsMap = _InteractiveCarPartsMap;
+__decorateClass([
+  property({ type: Object })
+], InteractiveCarPartsMap.prototype, "config");
+__decorateClass([
+  state()
+], InteractiveCarPartsMap.prototype, "activeId");
+bindSallaRegistration(
+  InteractiveCarPartsMap
 );
-typeof d < "u" && d.registerSallaComponent("salla-interactive-car-parts-map");
+typeof InteractiveCarPartsMap < "u" && InteractiveCarPartsMap.registerSallaComponent("salla-interactive-car-parts-map");
 export {
-  d as default
+  InteractiveCarPartsMap as default
 };

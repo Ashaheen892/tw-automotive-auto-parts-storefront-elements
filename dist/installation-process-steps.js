@@ -1,10 +1,12 @@
-import { css as I, LitElement as S, nothing as o, html as r } from "lit";
-import { property as T, state as U } from "lit/decorators.js";
-import { classMap as b } from "lit/directives/class-map.js";
-import { styleMap as _ } from "lit/directives/style-map.js";
-import { n as z, l, f as L, e as x, c as A, h as C, t as i, s as M, d as P, p as j, i as B, r as E, a as H, b as O } from "./registerSalla-Dct4KN_E.js";
-import { r as R } from "./commerceOutcome-B3T0_-WJ.js";
-const N = I`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, nothing, html } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, l as localizedString, f as toNumber, e as extractLink, c as extractImageUrl, h as sortByOrder, t, s as sharedSectionCss, d as isTruthy, p as prefersReducedMotion, i as isExternalUrl, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .ips-shell {
     display: grid;
     gap: 1.15rem;
@@ -257,88 +259,91 @@ const N = I`
     }
   }
 `;
-function y(c) {
-  const e = z(c).map((t, a) => {
-    const n = l(t.title);
+function parseSteps(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => {
+    const title = localizedString(row.title);
     return {
-      id: String(t.id ?? "").trim() || `step-${a + 1}`,
-      title: n,
-      desc: l(t.desc) || l(t.description),
-      duration: l(t.duration),
-      image: A(t.image),
-      videoUrl: x(t.video_url) || x(t.video),
-      order: L(t.order, a + 1)
+      id: String(row.id ?? "").trim() || `step-${i + 1}`,
+      title,
+      desc: localizedString(row.desc) || localizedString(row.description),
+      duration: localizedString(row.duration),
+      image: extractImageUrl(row.image),
+      videoUrl: extractLink(row.video_url) || extractLink(row.video),
+      order: toNumber(row.order, i + 1)
     };
-  }).filter((t) => t.title), s = C(e, "order");
-  return s.length ? s : F();
+  }).filter((step) => step.title), sorted = sortByOrder(parsed, "order");
+  return sorted.length ? sorted : defaultSteps();
 }
-function F() {
+__name(parseSteps, "parseSteps");
+function defaultSteps() {
   return [
     {
       id: "inspect",
-      title: i("فحص السيارة", "Vehicle inspection"),
-      desc: i("فحص شامل قبل البدء للتأكد من سلامة القطعة والمركبة.", "Full check before starting to confirm part and vehicle condition."),
-      duration: i("15–20 د", "15–20 min"),
+      title: t("فحص السيارة", "Vehicle inspection"),
+      desc: t("فحص شامل قبل البدء للتأكد من سلامة القطعة والمركبة.", "Full check before starting to confirm part and vehicle condition."),
+      duration: t("15–20 د", "15–20 min"),
       image: "",
       videoUrl: "",
       order: 1
     },
     {
       id: "identify",
-      title: i("تحديد القطعة", "Identify the part"),
-      desc: i("مطابقة رقم القطعة مع دليل قطع السيارة.", "Match part number with vehicle catalog."),
-      duration: i("10 د", "10 min"),
+      title: t("تحديد القطعة", "Identify the part"),
+      desc: t("مطابقة رقم القطعة مع دليل قطع السيارة.", "Match part number with vehicle catalog."),
+      duration: t("10 د", "10 min"),
       image: "",
       videoUrl: "",
       order: 2
     },
     {
       id: "remove",
-      title: i("فك الجزء القديم", "Remove old component"),
-      desc: i("فك آمن مع اتباع تعليمات المصنع.", "Safe removal following manufacturer guidance."),
-      duration: i("30–45 د", "30–45 min"),
+      title: t("فك الجزء القديم", "Remove old component"),
+      desc: t("فك آمن مع اتباع تعليمات المصنع.", "Safe removal following manufacturer guidance."),
+      duration: t("30–45 د", "30–45 min"),
       image: "",
       videoUrl: "",
       order: 3
     },
     {
       id: "install",
-      title: i("التركيب", "Installation"),
-      desc: i("تركيب القطعة الجديدة وضبط عزم الربط.", "Install new part and torque to spec."),
-      duration: i("45–60 د", "45–60 min"),
+      title: t("التركيب", "Installation"),
+      desc: t("تركيب القطعة الجديدة وضبط عزم الربط.", "Install new part and torque to spec."),
+      duration: t("45–60 د", "45–60 min"),
       image: "",
       videoUrl: "",
       order: 4
     },
     {
       id: "test",
-      title: i("الاختبار", "Testing"),
-      desc: i("اختبار تشغيلي وقيادة قصيرة عند الحاجة.", "Functional test and short road test if needed."),
-      duration: i("15 د", "15 min"),
+      title: t("الاختبار", "Testing"),
+      desc: t("اختبار تشغيلي وقيادة قصيرة عند الحاجة.", "Functional test and short road test if needed."),
+      duration: t("15 د", "15 min"),
       image: "",
       videoUrl: "",
       order: 5
     },
     {
       id: "handover",
-      title: i("التسليم", "Handover"),
-      desc: i("شرح للعميل وتوثيق الضمان.", "Customer briefing and warranty documentation."),
-      duration: i("10 د", "10 min"),
+      title: t("التسليم", "Handover"),
+      desc: t("شرح للعميل وتوثيق الضمان.", "Customer briefing and warranty documentation."),
+      duration: t("10 د", "10 min"),
       image: "",
       videoUrl: "",
       order: 6
     }
   ];
 }
-function q(c, e) {
-  return e <= 1 ? 100 : Math.round(c / (e - 1) * 100);
+__name(defaultSteps, "defaultSteps");
+function progressPercent(activeIndex, total) {
+  return total <= 1 ? 100 : Math.round(activeIndex / (total - 1) * 100);
 }
-var D = Object.defineProperty, $ = (c, e, s, t) => {
-  for (var a = void 0, n = c.length - 1, p; n >= 0; n--)
-    (p = c[n]) && (a = p(e, s, a) || a);
-  return a && D(e, s, a), a;
-};
-const V = 6e3, h = class h extends S {
+__name(progressPercent, "progressPercent");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const AUTOPLAY_MS = 6e3, _InstallationProcessSteps = class _InstallationProcessSteps extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.activeIndex = 0, this.autoplayTimer = null, this.boundLangHandler = () => this.requestUpdate();
   }
@@ -348,30 +353,30 @@ const V = 6e3, h = class h extends S {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), this.clearAutoplay(), super.disconnectedCallback();
   }
-  willUpdate(e) {
-    var s;
-    if (e.has("config")) {
-      const t = y((s = this.config) == null ? void 0 : s.ips_steps);
-      this.activeIndex >= t.length && (this.activeIndex = 0), this.syncAutoplay();
+  willUpdate(changed) {
+    var _a;
+    if (changed.has("config")) {
+      const steps = parseSteps((_a = this.config) == null ? void 0 : _a.ips_steps);
+      this.activeIndex >= steps.length && (this.activeIndex = 0), this.syncAutoplay();
     }
   }
   get steps() {
-    var e;
-    return y((e = this.config) == null ? void 0 : e.ips_steps);
+    var _a;
+    return parseSteps((_a = this.config) == null ? void 0 : _a.ips_steps);
   }
   clearAutoplay() {
     this.autoplayTimer && (clearInterval(this.autoplayTimer), this.autoplayTimer = null);
   }
   syncAutoplay() {
     this.clearAutoplay();
-    const e = this.config || {};
-    !P(e.ips_autoplay, !1) || j() || this.steps.length < 2 || (this.autoplayTimer = setInterval(() => {
-      const t = this.steps.length;
-      this.activeIndex = (this.activeIndex + 1) % t;
-    }, V));
+    const c = this.config || {};
+    !isTruthy(c.ips_autoplay, !1) || prefersReducedMotion() || this.steps.length < 2 || (this.autoplayTimer = setInterval(() => {
+      const total = this.steps.length;
+      this.activeIndex = (this.activeIndex + 1) % total;
+    }, AUTOPLAY_MS));
   }
-  goTo(e) {
-    this.activeIndex = e, this.syncAutoplay();
+  goTo(index) {
+    this.activeIndex = index, this.syncAutoplay();
   }
   goPrev() {
     this.goTo(Math.max(0, this.activeIndex - 1));
@@ -379,92 +384,92 @@ const V = 6e3, h = class h extends S {
   goNext() {
     this.goTo(Math.min(this.steps.length - 1, this.activeIndex + 1));
   }
-  renderStepButton(e, s) {
-    const t = s === this.activeIndex;
-    return r`
+  renderStepButton(step, index) {
+    const active = index === this.activeIndex;
+    return html`
       <button
         type="button"
-        class=${b({ "ips-step-btn": !0, "is-active": t })}
-        aria-current=${t ? "step" : o}
-        @click=${() => this.goTo(s)}
+        class=${classMap({ "ips-step-btn": !0, "is-active": active })}
+        aria-current=${active ? "step" : nothing}
+        @click=${() => this.goTo(index)}
       >
-        <span class="ips-step-btn__num">${i("خطوة", "Step")} ${s + 1}</span>
-        <span class="ips-step-btn__title">${e.title}</span>
-        ${e.duration ? r`<span class="ips-step-btn__dur">${e.duration}</span>` : o}
+        <span class="ips-step-btn__num">${t("خطوة", "Step")} ${index + 1}</span>
+        <span class="ips-step-btn__title">${step.title}</span>
+        ${step.duration ? html`<span class="ips-step-btn__dur">${step.duration}</span>` : nothing}
       </button>
     `;
   }
-  renderDetail(e, s, t) {
-    const a = !!e.image;
-    return r`
+  renderDetail(step, index, total) {
+    const hasMedia = !!step.image;
+    return html`
       <div
-        class=${b({
+        class=${classMap({
       "ips-detail": !0,
-      "ips-detail--split": a,
-      "ips-detail--text-only": !a
+      "ips-detail--split": hasMedia,
+      "ips-detail--text-only": !hasMedia
     })}
         aria-live="polite"
       >
-        <div class="ips-detail__media" aria-hidden=${a ? "false" : "true"}>
-          ${e.image ? r`<img src=${e.image} alt="" loading="lazy" decoding="async" />` : r`<div class="ips-detail__placeholder">
-                <span class="ips-detail__placeholder-num">${s + 1}</span>
-                <span>${i("مرحلة الخدمة", "Service stage")}</span>
+        <div class="ips-detail__media" aria-hidden=${hasMedia ? "false" : "true"}>
+          ${step.image ? html`<img src=${step.image} alt="" loading="lazy" decoding="async" />` : html`<div class="ips-detail__placeholder">
+                <span class="ips-detail__placeholder-num">${index + 1}</span>
+                <span>${t("مرحلة الخدمة", "Service stage")}</span>
               </div>`}
         </div>
 
         <div class="ips-detail__copy">
           <p class="ips-detail__meta">
             <span class="ips-detail__step-pill"
-              >${i("الخطوة", "Step")} ${s + 1} / ${t}</span
+              >${t("الخطوة", "Step")} ${index + 1} / ${total}</span
             >
-            ${e.duration ? r`<span class="ips-detail__dur">${e.duration}</span>` : o}
+            ${step.duration ? html`<span class="ips-detail__dur">${step.duration}</span>` : nothing}
           </p>
-          <h3 class="ips-detail__title">${e.title}</h3>
-          ${e.desc ? r`<p class="ips-detail__desc">${e.desc}</p>` : o}
-          ${e.videoUrl ? r`<a
+          <h3 class="ips-detail__title">${step.title}</h3>
+          ${step.desc ? html`<p class="ips-detail__desc">${step.desc}</p>` : nothing}
+          ${step.videoUrl ? html`<a
                 class="ips-detail__video"
-                href=${e.videoUrl}
+                href=${step.videoUrl}
                 target="_blank"
-                rel=${B(e.videoUrl) ? "noopener noreferrer" : o}
+                rel=${isExternalUrl(step.videoUrl) ? "noopener noreferrer" : nothing}
               >
-                ${i("شاهد فيديو التركيب", "Watch install video")}
-              </a>` : o}
+                ${t("شاهد فيديو التركيب", "Watch install video")}
+              </a>` : nothing}
         </div>
       </div>
     `;
   }
   render() {
-    var v, f;
-    const e = this.config || {}, s = E(e, "ips_"), t = this.steps, a = t[this.activeIndex] ?? t[0], n = l(e.ips_title), p = l(e.ips_desc), w = l((v = this.config) == null ? void 0 : v.ips_prev_label) || i("السابق", "Previous"), k = l((f = this.config) == null ? void 0 : f.ips_next_label) || i("التالي", "Next"), u = q(this.activeIndex, t.length);
-    return t.length ? r`
+    var _a, _b;
+    const c = this.config || {}, theme = readSectionTheme(c, "ips_"), steps = this.steps, active = steps[this.activeIndex] ?? steps[0], title = localizedString(c.ips_title), desc = localizedString(c.ips_desc), prevLabel = localizedString((_a = this.config) == null ? void 0 : _a.ips_prev_label) || t("السابق", "Previous"), nextLabel = localizedString((_b = this.config) == null ? void 0 : _b.ips_next_label) || t("التالي", "Next"), pct = progressPercent(this.activeIndex, steps.length);
+    return steps.length ? html`
       <section
         class="fs-section"
-        style=${_(H(s))}
-        aria-label=${n || i("خطوات التركيب الاحترافي", "Professional installation steps")}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title || t("خطوات التركيب الاحترافي", "Professional installation steps")}
       >
         <div class="fs-container">
-          ${n || p ? r`<div class="fs-hero">
-                ${n ? r`<h2 class="fs-title">${n}</h2>` : o}
-                ${p ? r`<p class="fs-desc">${p}</p>` : o}
-              </div>` : o}
+          ${title || desc ? html`<div class="fs-hero">
+                ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+                ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+              </div>` : nothing}
 
           <div class="ips-shell">
             <div class="ips-progress fs-progress">
-              <div class="fs-progress__bar" aria-hidden="true"><span style=${_({ width: `${u}%` })}></span></div>
+              <div class="fs-progress__bar" aria-hidden="true"><span style=${styleMap({ width: `${pct}%` })}></span></div>
               <span class="fs-progress__label">
-                ${i("التقدم", "Progress")}: ${u}%
+                ${t("التقدم", "Progress")}: ${pct}%
               </span>
             </div>
 
-            <div class="ips-track" role="tablist" aria-label=${i("خطوات العملية", "Process steps")}>
-              ${t.map((m, g) => this.renderStepButton(m, g))}
+            <div class="ips-track" role="tablist" aria-label=${t("خطوات العملية", "Process steps")}>
+              ${steps.map((step, i) => this.renderStepButton(step, i))}
             </div>
 
             <div class="ips-vertical" role="tablist">
-              ${t.map((m, g) => this.renderStepButton(m, g))}
+              ${steps.map((step, i) => this.renderStepButton(step, i))}
             </div>
 
-            ${a ? this.renderDetail(a, this.activeIndex, t.length) : o}
+            ${active ? this.renderDetail(active, this.activeIndex, steps.length) : nothing}
 
             <div class="ips-nav">
               <button
@@ -473,36 +478,36 @@ const V = 6e3, h = class h extends S {
                 ?disabled=${this.activeIndex === 0}
                 @click=${() => this.goPrev()}
               >
-                ${w}
+                ${prevLabel}
               </button>
               <button
                 type="button"
                 class="fs-btn fs-tap"
-                ?disabled=${this.activeIndex >= t.length - 1}
+                ?disabled=${this.activeIndex >= steps.length - 1}
                 @click=${() => this.goNext()}
               >
-                ${k}
+                ${nextLabel}
               </button>
             </div>
           </div>
-          ${R(e, "ips_", { ready: !!a })}
+          ${renderCommerceOutcome(c, "ips_", { ready: !!active })}
         </div>
       </section>
-    ` : r`<div class="fs-empty" role="status">
-        ${i("أضف خطوات التركيب من إعدادات العنصر", "Add installation steps in element settings")}
+    ` : html`<div class="fs-empty" role="status">
+        ${t("أضف خطوات التركيب من إعدادات العنصر", "Add installation steps in element settings")}
       </div>`;
   }
 };
-h.styles = [M, N];
-let d = h;
-$([
-  T({ type: Object })
-], d.prototype, "config");
-$([
-  U()
-], d.prototype, "activeIndex");
-O(d);
-typeof d < "u" && d.registerSallaComponent("salla-installation-process-steps");
+__name(_InstallationProcessSteps, "InstallationProcessSteps"), _InstallationProcessSteps.styles = [sharedSectionCss, componentStyles];
+let InstallationProcessSteps = _InstallationProcessSteps;
+__decorateClass([
+  property({ type: Object })
+], InstallationProcessSteps.prototype, "config");
+__decorateClass([
+  state()
+], InstallationProcessSteps.prototype, "activeIndex");
+bindSallaRegistration(InstallationProcessSteps);
+typeof InstallationProcessSteps < "u" && InstallationProcessSteps.registerSallaComponent("salla-installation-process-steps");
 export {
-  d as default
+  InstallationProcessSteps as default
 };

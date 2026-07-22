@@ -1,10 +1,12 @@
-import { css as I, LitElement as w, html as c, nothing as p } from "lit";
-import { property as L, state as b } from "lit/decorators.js";
-import { classMap as B } from "lit/directives/class-map.js";
-import { styleMap as _ } from "lit/directives/style-map.js";
-import { n as v, l as o, e as R, t, s as S, i as q, r as z, a as C, b as Q } from "./registerSalla-Dct4KN_E.js";
-import { r as O } from "./commerceOutcome-B3T0_-WJ.js";
-const W = I`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, html, nothing } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, l as localizedString, e as extractLink, t, s as sharedSectionCss, i as isExternalUrl, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .vnc-shell {
     width: 100%;
   }
@@ -129,45 +131,49 @@ const W = I`
     justify-content: center;
   }
 `;
-function M(r) {
-  const e = o(r, "");
-  return e ? e.split(/\r?\n/).map((n) => n.trim()).filter(Boolean) : [];
+function splitLines(raw) {
+  const text = localizedString(raw, "");
+  return text ? text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean) : [];
 }
-function T(r) {
-  return Array.isArray(r) ? v(r).map((n) => ({
-    label: o(n.option_label) || o(n.label),
-    resultId: String(n.result_id ?? n.resultId ?? "").trim()
-  })).filter((n) => n.label && n.resultId) : M(r).map((n) => {
-    const [i, s] = n.split("|").map((a) => a.trim());
-    return !i || !s ? null : { label: i, resultId: s };
-  }).filter((n) => !!n);
+__name(splitLines, "splitLines");
+function parseOptions(raw) {
+  return Array.isArray(raw) ? normalizeCollection(raw).map((row) => ({
+    label: localizedString(row.option_label) || localizedString(row.label),
+    resultId: String(row.result_id ?? row.resultId ?? "").trim()
+  })).filter((opt) => opt.label && opt.resultId) : splitLines(raw).map((line) => {
+    const [label, resultId] = line.split("|").map((part) => part.trim());
+    return !label || !resultId ? null : { label, resultId };
+  }).filter((opt) => !!opt);
 }
-function U(r) {
-  const e = v(r).map((n, i) => {
-    const s = o(n.text) || o(n.question), a = T(n.options);
+__name(parseOptions, "parseOptions");
+function parseQuestions(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => {
+    const text = localizedString(row.text) || localizedString(row.question), options = parseOptions(row.options);
     return {
-      id: String(n.id ?? "").trim() || `q-${i + 1}`,
-      text: s,
-      options: a
+      id: String(row.id ?? "").trim() || `q-${i + 1}`,
+      text,
+      options
     };
-  }).filter((n) => n.text && n.options.length);
-  return e.length ? e : E();
+  }).filter((q) => q.text && q.options.length);
+  return parsed.length ? parsed : defaultQuestions();
 }
-function A(r) {
-  const e = v(r).map((n, i) => {
-    const s = o(n.title);
+__name(parseQuestions, "parseQuestions");
+function parseResults(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => {
+    const title = localizedString(row.title);
     return {
-      id: String(n.code ?? n.id ?? "").trim() || `result-${i + 1}`,
-      title: s,
-      desc: o(n.desc) || o(n.description),
-      link: R(n.link),
-      ctaLabel: o(n.cta_label),
-      icon: String(n.icon ?? "").trim()
+      id: String(row.code ?? row.id ?? "").trim() || `result-${i + 1}`,
+      title,
+      desc: localizedString(row.desc) || localizedString(row.description),
+      link: extractLink(row.link),
+      ctaLabel: localizedString(row.cta_label),
+      icon: String(row.icon ?? "").trim()
     };
-  }).filter((n) => n.title);
-  return e.length ? e : N();
+  }).filter((r) => r.title);
+  return parsed.length ? parsed : defaultResults();
 }
-function E() {
+__name(parseResults, "parseResults");
+function defaultQuestions() {
   return [
     {
       id: "vehicle-type",
@@ -219,7 +225,8 @@ function E() {
     }
   ];
 }
-function N() {
+__name(defaultQuestions, "defaultQuestions");
+function defaultResults() {
   return [
     {
       id: "brakes",
@@ -287,38 +294,43 @@ function N() {
     }
   ];
 }
-function P(r, e) {
-  const n = /* @__PURE__ */ new Map();
-  for (const i of e) {
-    const s = r[i.id];
-    if (!s) continue;
-    const a = i.options.find((l) => l.label === s);
-    a && n.set(a.resultId, (n.get(a.resultId) ?? 0) + 1);
+__name(defaultResults, "defaultResults");
+function scoreResults(answers, questions) {
+  const scores = /* @__PURE__ */ new Map();
+  for (const question of questions) {
+    const selectedLabel = answers[question.id];
+    if (!selectedLabel) continue;
+    const option = question.options.find((opt) => opt.label === selectedLabel);
+    option && scores.set(option.resultId, (scores.get(option.resultId) ?? 0) + 1);
   }
-  return n;
+  return scores;
 }
-function j(r, e) {
-  if (!e.length) return null;
-  if (!r.size) return e[0] ?? null;
-  const n = [...r.entries()].sort((i, s) => s[1] - i[1]);
-  for (const [i] of n) {
-    const s = e.find((a) => a.id === i);
-    if (s) return s;
+__name(scoreResults, "scoreResults");
+function topResult(scores, results) {
+  if (!results.length) return null;
+  if (!scores.size) return results[0] ?? null;
+  const ranked = [...scores.entries()].sort((a, b) => b[1] - a[1]);
+  for (const [id] of ranked) {
+    const match = results.find((r) => r.id === id);
+    if (match) return match;
   }
-  return e[0] ?? null;
+  return results[0] ?? null;
 }
-function H(r, e, n) {
-  return j(P(r, e), n);
+__name(topResult, "topResult");
+function computeTopResult(answers, questions, results) {
+  return topResult(scoreResults(answers, questions), results);
 }
-function Y(r, e) {
-  return e <= 0 ? 0 : e === 1 ? 100 : Math.round(r / (e - 1) * 100);
+__name(computeTopResult, "computeTopResult");
+function progressPercent(stepIndex, total) {
+  return total <= 0 ? 0 : total === 1 ? 100 : Math.round(stepIndex / (total - 1) * 100);
 }
-var F = Object.defineProperty, f = (r, e, n, i) => {
-  for (var s = void 0, a = r.length - 1, l; a >= 0; a--)
-    (l = r[a]) && (s = l(e, n, s) || s);
-  return s && F(e, n, s), s;
-};
-const m = class m extends w {
+__name(progressPercent, "progressPercent");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _VehicleNeedsChecker = class _VehicleNeedsChecker extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.stepIndex = 0, this.answers = {}, this.finished = !1, this.boundLangHandler = () => this.requestUpdate();
   }
@@ -328,32 +340,32 @@ const m = class m extends w {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
-  willUpdate(e) {
-    e.has("config") && this.resetQuiz();
+  willUpdate(changed) {
+    changed.has("config") && this.resetQuiz();
   }
   get questions() {
-    var e;
-    return U((e = this.config) == null ? void 0 : e.vnc_questions);
+    var _a;
+    return parseQuestions((_a = this.config) == null ? void 0 : _a.vnc_questions);
   }
   get results() {
-    var e;
-    return A((e = this.config) == null ? void 0 : e.vnc_results);
+    var _a;
+    return parseResults((_a = this.config) == null ? void 0 : _a.vnc_results);
   }
   get currentQuestion() {
     return this.questions[this.stepIndex] ?? null;
   }
   get topResult() {
-    return H(this.answers, this.questions, this.results);
+    return computeTopResult(this.answers, this.questions, this.results);
   }
   resetQuiz() {
     this.stepIndex = 0, this.answers = {}, this.finished = !1;
   }
-  selectOption(e, n) {
-    this.answers = { ...this.answers, [e]: n };
+  selectOption(questionId, label) {
+    this.answers = { ...this.answers, [questionId]: label };
   }
   goNext() {
-    const e = this.currentQuestion;
-    if (!(!e || !this.answers[e.id])) {
+    const question = this.currentQuestion;
+    if (!(!question || !this.answers[question.id])) {
       if (this.stepIndex >= this.questions.length - 1) {
         this.finished = !0;
         return;
@@ -368,24 +380,24 @@ const m = class m extends w {
     }
     this.stepIndex = Math.max(0, this.stepIndex - 1);
   }
-  renderQuestion(e) {
-    const n = this.answers[e.id] ?? "";
-    return c`
+  renderQuestion(question) {
+    const selected = this.answers[question.id] ?? "";
+    return html`
       <div class="vnc-step">
         <p class="vnc-step__meta">${t("السؤال", "Question")} ${this.stepIndex + 1} / ${this.questions.length}</p>
-        <h3 class="vnc-step__question">${e.text}</h3>
-        <div class="vnc-options" role="radiogroup" aria-label=${e.text}>
-          ${e.options.map(
-      (i) => c`
+        <h3 class="vnc-step__question">${question.text}</h3>
+        <div class="vnc-options" role="radiogroup" aria-label=${question.text}>
+          ${question.options.map(
+      (opt) => html`
               <button
                 type="button"
-                class=${B({ "vnc-option": !0, "is-selected": n === i.label })}
+                class=${classMap({ "vnc-option": !0, "is-selected": selected === opt.label })}
                 role="radio"
-                aria-checked=${n === i.label ? "true" : "false"}
-                @click=${() => this.selectOption(e.id, i.label)}
+                aria-checked=${selected === opt.label ? "true" : "false"}
+                @click=${() => this.selectOption(question.id, opt.label)}
               >
                 <span class="vnc-option__dot" aria-hidden="true"></span>
-                <span>${i.label}</span>
+                <span>${opt.label}</span>
               </button>
             `
     )}
@@ -393,74 +405,74 @@ const m = class m extends w {
       </div>
     `;
   }
-  renderResult(e) {
-    var l, h, u;
-    const n = this.config || {}, i = o((l = this.config) == null ? void 0 : l.vnc_result_title) || t("نتيجة التقييم", "Your result") + (e.title ? `: ${e.title}` : ""), s = o((h = this.config) == null ? void 0 : h.vnc_reset) || t("إعادة الاختبار", "Retake quiz"), a = e.ctaLabel || o((u = this.config) == null ? void 0 : u.vnc_cta) || t("اعرف ما تحتاجه سيارتي", "Find what my car needs");
-    return c`
+  renderResult(result) {
+    var _a, _b, _c;
+    const c = this.config || {}, resultTitle = localizedString((_a = this.config) == null ? void 0 : _a.vnc_result_title) || t("نتيجة التقييم", "Your result") + (result.title ? `: ${result.title}` : ""), resetLabel = localizedString((_b = this.config) == null ? void 0 : _b.vnc_reset) || t("إعادة الاختبار", "Retake quiz"), ctaLabel = result.ctaLabel || localizedString((_c = this.config) == null ? void 0 : _c.vnc_cta) || t("اعرف ما تحتاجه سيارتي", "Find what my car needs");
+    return html`
       <div class="vnc-result" aria-live="polite">
-        ${e.icon ? c`<div class="vnc-result__icon" aria-hidden="true">${e.icon}</div>` : p}
-        <h3 class="vnc-result__title">${i}</h3>
-        ${e.desc ? c`<p class="vnc-result__desc">${e.desc}</p>` : p}
+        ${result.icon ? html`<div class="vnc-result__icon" aria-hidden="true">${result.icon}</div>` : nothing}
+        <h3 class="vnc-result__title">${resultTitle}</h3>
+        ${result.desc ? html`<p class="vnc-result__desc">${result.desc}</p>` : nothing}
         <div class="vnc-result__actions">
-          ${e.link ? c`<a
+          ${result.link ? html`<a
                 class="fs-btn fs-tap"
-                href=${e.link}
+                href=${result.link}
                 target="_blank"
-                rel=${q(e.link) ? "noopener noreferrer" : p}
+                rel=${isExternalUrl(result.link) ? "noopener noreferrer" : nothing}
               >
-                ${a}
-              </a>` : c`<span class="fs-btn fs-tap" style="pointer-events:none;opacity:0.85">${a}</span>`}
+                ${ctaLabel}
+              </a>` : html`<span class="fs-btn fs-tap" style="pointer-events:none;opacity:0.85">${ctaLabel}</span>`}
           <button type="button" class="fs-btn fs-btn--ghost fs-tap" @click=${() => this.resetQuiz()}>
-            ${s}
+            ${resetLabel}
           </button>
         </div>
-        ${O(n, "vnc_", { ready: !!e })}
+        ${renderCommerceOutcome(c, "vnc_", { ready: !!result })}
       </div>
     `;
   }
   render() {
-    var x, k, y;
-    const e = this.config || {}, n = z(e, "vnc_"), i = this.questions, s = o(e.vnc_title), a = o(e.vnc_desc), l = o((x = this.config) == null ? void 0 : x.vnc_next) || t("التالي", "Next"), h = o((k = this.config) == null ? void 0 : k.vnc_back) || t("السابق", "Back"), u = this.currentQuestion, g = this.finished ? 100 : Y(this.stepIndex, i.length), $ = u ? !!this.answers[u.id] : !1;
-    return c`
+    var _a, _b, _c;
+    const c = this.config || {}, theme = readSectionTheme(c, "vnc_"), questions = this.questions, title = localizedString(c.vnc_title), desc = localizedString(c.vnc_desc), nextLabel = localizedString((_a = this.config) == null ? void 0 : _a.vnc_next) || t("التالي", "Next"), backLabel = localizedString((_b = this.config) == null ? void 0 : _b.vnc_back) || t("السابق", "Back"), question = this.currentQuestion, pct = this.finished ? 100 : progressPercent(this.stepIndex, questions.length), canNext = question ? !!this.answers[question.id] : !1;
+    return html`
       <section
         class="fs-section"
-        style=${_(C(n))}
-        aria-label=${s || t("مقياس احتياجات سيارتك", "Vehicle needs checker")}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title || t("مقياس احتياجات سيارتك", "Vehicle needs checker")}
       >
         <div class="fs-container">
-          ${s || a ? c`<div class="fs-hero">
-                ${s ? c`<h2 class="fs-title">${s}</h2>` : p}
-                ${a ? c`<p class="fs-desc">${a}</p>` : p}
-              </div>` : p}
+          ${title || desc ? html`<div class="fs-hero">
+                ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+                ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+              </div>` : nothing}
 
           <div class="vnc-shell">
             <div class="vnc-progress">
               <div class="fs-progress__bar" aria-hidden="true">
-                <span style=${_({ width: `${g}%` })}></span>
+                <span style=${styleMap({ width: `${pct}%` })}></span>
               </div>
               <p class="vnc-step__meta" style="margin-top:0.45rem;text-align:center;">
-                ${this.finished ? t("النتيجة", "Result") + ` · ${g}%` : t("التقدم", "Progress") + `: ${g}%`}
+                ${this.finished ? t("النتيجة", "Result") + ` · ${pct}%` : t("التقدم", "Progress") + `: ${pct}%`}
               </p>
             </div>
 
-            ${this.finished && this.topResult ? this.renderResult(this.topResult) : u ? this.renderQuestion(u) : p}
+            ${this.finished && this.topResult ? this.renderResult(this.topResult) : question ? this.renderQuestion(question) : nothing}
 
-            ${this.finished ? p : c`<div class="vnc-nav">
+            ${this.finished ? nothing : html`<div class="vnc-nav">
                   <button
                     type="button"
                     class="fs-btn fs-btn--ghost fs-tap"
                     ?disabled=${this.stepIndex === 0}
                     @click=${() => this.goBack()}
                   >
-                    ${h}
+                    ${backLabel}
                   </button>
                   <button
                     type="button"
                     class="fs-btn fs-tap"
-                    ?disabled=${!$}
+                    ?disabled=${!canNext}
                     @click=${() => this.goNext()}
                   >
-                    ${this.stepIndex >= i.length - 1 ? o((y = this.config) == null ? void 0 : y.vnc_cta) || t("اعرف ما تحتاجه سيارتي", "Find what my car needs") : l}
+                    ${this.stepIndex >= questions.length - 1 ? localizedString((_c = this.config) == null ? void 0 : _c.vnc_cta) || t("اعرف ما تحتاجه سيارتي", "Find what my car needs") : nextLabel}
                   </button>
                 </div>`}
           </div>
@@ -469,22 +481,22 @@ const m = class m extends w {
     `;
   }
 };
-m.styles = [S, W];
-let d = m;
-f([
-  L({ type: Object })
-], d.prototype, "config");
-f([
-  b()
-], d.prototype, "stepIndex");
-f([
-  b()
-], d.prototype, "answers");
-f([
-  b()
-], d.prototype, "finished");
-Q(d);
-typeof d < "u" && d.registerSallaComponent("salla-vehicle-needs-checker");
+__name(_VehicleNeedsChecker, "VehicleNeedsChecker"), _VehicleNeedsChecker.styles = [sharedSectionCss, componentStyles];
+let VehicleNeedsChecker = _VehicleNeedsChecker;
+__decorateClass([
+  property({ type: Object })
+], VehicleNeedsChecker.prototype, "config");
+__decorateClass([
+  state()
+], VehicleNeedsChecker.prototype, "stepIndex");
+__decorateClass([
+  state()
+], VehicleNeedsChecker.prototype, "answers");
+__decorateClass([
+  state()
+], VehicleNeedsChecker.prototype, "finished");
+bindSallaRegistration(VehicleNeedsChecker);
+typeof VehicleNeedsChecker < "u" && VehicleNeedsChecker.registerSallaComponent("salla-vehicle-needs-checker");
 export {
-  d as default
+  VehicleNeedsChecker as default
 };

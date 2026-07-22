@@ -1,10 +1,12 @@
-import { css as y, LitElement as x, html as c, nothing as l } from "lit";
-import { property as _, state as k } from "lit/decorators.js";
-import { classMap as f } from "lit/directives/class-map.js";
-import { styleMap as w } from "lit/directives/style-map.js";
-import { n as $, l as g, e as u, t as s, g as U, s as S, i as m, r as z, a as C, b as L } from "./registerSalla-Dct4KN_E.js";
-import { r as I } from "./commerceOutcome-B3T0_-WJ.js";
-const M = y`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, html, nothing } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, l as localizedString, e as extractLink, t, g as getRadioValue, s as sharedSectionCss, i as isExternalUrl, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .csdg-layout {
     display: grid;
     gap: 1rem;
@@ -389,150 +391,158 @@ const M = y`
       transition: none !important;
     }
   }
-`, R = ["low", "medium", "high", "critical"];
-function W(o) {
-  const e = U(o, "medium").toLowerCase();
-  return R.includes(e) ? e : "medium";
+`, SEVERITIES = ["low", "medium", "high", "critical"];
+function normalizeSeverity(value) {
+  const raw = getRadioValue(value, "medium").toLowerCase();
+  return SEVERITIES.includes(raw) ? raw : "medium";
 }
-function E(o) {
-  return Array.isArray(o) ? o.map((r) => g(r) || String(r ?? "").trim()).filter(Boolean) : (g(o) || String(o ?? "")).split(/\r?\n/).map((r) => r.trim()).filter(Boolean);
+__name(normalizeSeverity, "normalizeSeverity");
+function parseCauses(raw) {
+  return Array.isArray(raw) ? raw.map((line) => localizedString(line) || String(line ?? "").trim()).filter(Boolean) : (localizedString(raw) || String(raw ?? "")).split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
 }
-function b(o) {
-  const e = $(o).map((r, i) => {
-    const a = g(r.name);
+__name(parseCauses, "parseCauses");
+function parseCases(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => {
+    const name = localizedString(row.name);
     return {
-      id: String(r.id ?? "").trim() || `case-${i + 1}`,
-      name: a,
-      icon: String(r.icon ?? "").trim(),
-      description: g(r.description),
-      causes: E(r.causes),
-      severity: W(r.severity),
-      advice: g(r.advice),
-      audioUrl: u(r.audio_url) || u(r.audio),
-      videoUrl: u(r.video_url) || u(r.video),
-      link: u(r.link)
+      id: String(row.id ?? "").trim() || `case-${i + 1}`,
+      name,
+      icon: String(row.icon ?? "").trim(),
+      description: localizedString(row.description),
+      causes: parseCauses(row.causes),
+      severity: normalizeSeverity(row.severity),
+      advice: localizedString(row.advice),
+      audioUrl: extractLink(row.audio_url) || extractLink(row.audio),
+      videoUrl: extractLink(row.video_url) || extractLink(row.video),
+      link: extractLink(row.link)
     };
-  }).filter((r) => r.name);
-  return e.length ? e : P();
+  }).filter((item) => item.name);
+  return parsed.length ? parsed : defaultCases();
 }
-function P() {
+__name(parseCases, "parseCases");
+function defaultCases() {
   return [
     {
       id: "rattle",
-      name: s("طقطقة / رنين", "Rattling"),
+      name: t("طقطقة / رنين", "Rattling"),
       icon: "🔊",
-      description: s("أصوات طقطقة من المحرك أو تحت السيارة أثناء القيادة.", "Knocking or rattling from engine or undercarriage while driving."),
+      description: t("أصوات طقطقة من المحرك أو تحت السيارة أثناء القيادة.", "Knocking or rattling from engine or undercarriage while driving."),
       causes: [
-        s("مسامير أو clips مفكوكة", "Loose bolts or clips"),
-        s("تآكل في العادم أو الحماية السفلية", "Exhaust or heat shield wear"),
-        s("احتمال تلف في المحرك", "Possible internal engine wear")
+        t("مسامير أو clips مفكوكة", "Loose bolts or clips"),
+        t("تآكل في العادم أو الحماية السفلية", "Exhaust or heat shield wear"),
+        t("احتمال تلف في المحرك", "Possible internal engine wear")
       ],
       severity: "medium",
-      advice: s("افحص السيارة في ورشة موثوقة قبل استمرار القيادة لمسافات طويلة.", "Have a trusted workshop inspect before long drives."),
+      advice: t("افحص السيارة في ورشة موثوقة قبل استمرار القيادة لمسافات طويلة.", "Have a trusted workshop inspect before long drives."),
       audioUrl: "",
       videoUrl: "",
       link: ""
     },
     {
       id: "brake-squeal",
-      name: s("صرير الفرامل", "Brake squeal"),
+      name: t("صرير الفرامل", "Brake squeal"),
       icon: "🛑",
-      description: s("صوت صرير عند الضغط على الفرامل.", "Squealing when pressing the brake pedal."),
+      description: t("صوت صرير عند الضغط على الفرامل.", "Squealing when pressing the brake pedal."),
       causes: [
-        s("تآكل تيل الفرامل", "Worn brake pads"),
-        s("غبار أو زيت على الأقراص", "Dust or oil on rotors"),
-        s("تيل فرامل منخفض الجودة", "Low-quality brake pads")
+        t("تآكل تيل الفرامل", "Worn brake pads"),
+        t("غبار أو زيت على الأقراص", "Dust or oil on rotors"),
+        t("تيل فرامل منخفض الجودة", "Low-quality brake pads")
       ],
       severity: "high",
-      advice: s("لا تؤجل فحص الفرامل — السلامة أولًا.", "Do not delay brake inspection — safety first."),
+      advice: t("لا تؤجل فحص الفرامل — السلامة أولًا.", "Do not delay brake inspection — safety first."),
       audioUrl: "",
       videoUrl: "",
       link: ""
     },
     {
       id: "vibration",
-      name: s("اهتزاز أثناء القيادة", "Vibration while driving"),
+      name: t("اهتزاز أثناء القيادة", "Vibration while driving"),
       icon: "📳",
-      description: s("اهتزاز في المقود أو جسم السيارة بسرعات معينة.", "Steering wheel or body vibration at certain speeds."),
+      description: t("اهتزاز في المقود أو جسم السيارة بسرعات معينة.", "Steering wheel or body vibration at certain speeds."),
       causes: [
-        s("توازن الإطارات", "Tire balance"),
-        s("تآكل في الأذرع أو الكفرات", "Worn suspension or bushings"),
-        s("أقراص فرامل مشوهة", "Warped brake rotors")
+        t("توازن الإطارات", "Tire balance"),
+        t("تآكل في الأذرع أو الكفرات", "Worn suspension or bushings"),
+        t("أقراص فرامل مشوهة", "Warped brake rotors")
       ],
       severity: "medium",
-      advice: s("ابدأ بفحص ضغط الإطارات والتوازن.", "Start with tire pressure and balance check."),
+      advice: t("ابدأ بفحص ضغط الإطارات والتوازن.", "Start with tire pressure and balance check."),
       audioUrl: "",
       videoUrl: "",
       link: ""
     },
     {
       id: "startup",
-      name: s("صوت عند التشغيل", "Startup noise"),
+      name: t("صوت عند التشغيل", "Startup noise"),
       icon: "🔑",
-      description: s("صوت غير طبيعي عند تشغيل المحرك.", "Unusual noise when starting the engine."),
+      description: t("صوت غير طبيعي عند تشغيل المحرك.", "Unusual noise when starting the engine."),
       causes: [
-        s("بطارية ضعيفة", "Weak battery"),
-        s("سير المحرك أو البكرة", "Serpentine belt or pulley"),
-        s("زيت منخفض أو كثافة غير مناسبة", "Low or wrong oil viscosity")
+        t("بطارية ضعيفة", "Weak battery"),
+        t("سير المحرك أو البكرة", "Serpentine belt or pulley"),
+        t("زيت منخفض أو كثافة غير مناسبة", "Low or wrong oil viscosity")
       ],
       severity: "medium",
-      advice: s("سجّل الصوت وشاركه مع الفني لتشخيص أسرع.", "Record the sound and share with your mechanic."),
+      advice: t("سجّل الصوت وشاركه مع الفني لتشخيص أسرع.", "Record the sound and share with your mechanic."),
       audioUrl: "",
       videoUrl: "",
       link: ""
     },
     {
       id: "tire",
-      name: s("ضجيج الإطارات", "Tire noise"),
+      name: t("ضجيج الإطارات", "Tire noise"),
       icon: "🛞",
-      description: s("همهمة أو صوت طنين مستمر من الإطارات.", "Humming or droning from tires."),
+      description: t("همهمة أو صوت طنين مستمر من الإطارات.", "Humming or droning from tires."),
       causes: [
-        s("تآكل غير متساوٍ", "Uneven tread wear"),
-        s("تآكل رولمان البلي", "Wheel bearing wear"),
-        s("إطارات شتوية على أسفلت جاف", "Winter tires on dry pavement")
+        t("تآكل غير متساوٍ", "Uneven tread wear"),
+        t("تآكل رولمان البلي", "Wheel bearing wear"),
+        t("إطارات شتوية على أسفلت جاف", "Winter tires on dry pavement")
       ],
       severity: "low",
-      advice: s("دوّر الإطارات وافحص المحاذاة دوريًا.", "Rotate tires and check alignment regularly."),
+      advice: t("دوّر الإطارات وافحص المحاذاة دوريًا.", "Rotate tires and check alignment regularly."),
       audioUrl: "",
       videoUrl: "",
       link: ""
     }
   ];
 }
-function A(o) {
-  const e = {
+__name(defaultCases, "defaultCases");
+function severityLabel(level) {
+  const map = {
     low: { ar: "منخفض", en: "Low" },
     medium: { ar: "متوسط", en: "Medium" },
     high: { ar: "مرتفع", en: "High" },
     critical: { ar: "حرج", en: "Critical" }
   };
-  return s(e[o].ar, e[o].en);
+  return t(map[level].ar, map[level].en);
 }
-function q(o) {
-  return /youtube\.com|youtu\.be/i.test(o);
+__name(severityLabel, "severityLabel");
+function isYoutubeUrl(url) {
+  return /youtube\.com|youtu\.be/i.test(url);
 }
-function B(o) {
+__name(isYoutubeUrl, "isYoutubeUrl");
+function youtubeEmbedUrl(url) {
   try {
-    const e = new URL(o, window.location.origin);
-    if (e.hostname.includes("youtu.be")) {
-      const i = e.pathname.replace("/", "");
-      return i ? `https://www.youtube.com/embed/${i}` : "";
+    const parsed = new URL(url, window.location.origin);
+    if (parsed.hostname.includes("youtu.be")) {
+      const id2 = parsed.pathname.replace("/", "");
+      return id2 ? `https://www.youtube.com/embed/${id2}` : "";
     }
-    const r = e.searchParams.get("v");
-    return r ? `https://www.youtube.com/embed/${r}` : "";
+    const id = parsed.searchParams.get("v");
+    return id ? `https://www.youtube.com/embed/${id}` : "";
   } catch {
     return "";
   }
 }
-function H(o) {
-  return /\.(mp3|wav|ogg|m4a)(\?|$)/i.test(o);
+__name(youtubeEmbedUrl, "youtubeEmbedUrl");
+function isAudioUrl(url) {
+  return /\.(mp3|wav|ogg|m4a)(\?|$)/i.test(url);
 }
-var j = Object.defineProperty, v = (o, e, r, i) => {
-  for (var a = void 0, d = o.length - 1, n; d >= 0; d--)
-    (n = o[d]) && (a = n(e, r, a) || a);
-  return a && j(e, r, a), a;
-};
-const h = class h extends x {
+__name(isAudioUrl, "isAudioUrl");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _CarSoundDiagnosticGuide = class _CarSoundDiagnosticGuide extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.selectedId = "", this.boundLangHandler = () => this.requestUpdate();
   }
@@ -542,213 +552,213 @@ const h = class h extends x {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
-  willUpdate(e) {
-    var r, i;
-    if (e.has("config")) {
-      const a = b((r = this.config) == null ? void 0 : r.csdg_cases);
-      a.some((d) => d.id === this.selectedId) || (this.selectedId = ((i = a[0]) == null ? void 0 : i.id) ?? "");
+  willUpdate(changed) {
+    var _a, _b;
+    if (changed.has("config")) {
+      const cases = parseCases((_a = this.config) == null ? void 0 : _a.csdg_cases);
+      cases.some((item) => item.id === this.selectedId) || (this.selectedId = ((_b = cases[0]) == null ? void 0 : _b.id) ?? "");
     }
   }
   get cases() {
-    var e;
-    return b((e = this.config) == null ? void 0 : e.csdg_cases);
+    var _a;
+    return parseCases((_a = this.config) == null ? void 0 : _a.csdg_cases);
   }
   get selected() {
-    return this.cases.find((e) => e.id === this.selectedId) ?? this.cases[0] ?? null;
+    return this.cases.find((item) => item.id === this.selectedId) ?? this.cases[0] ?? null;
   }
-  renderMedia(e) {
-    const r = [];
-    if (e.audioUrl && H(e.audioUrl) ? r.push(c`
-        <audio controls preload="none" src=${e.audioUrl} aria-label=${s("عينة صوت", "Sound sample")}>
-          ${s("متصفحك لا يدعم تشغيل الصوت", "Your browser does not support audio playback")}
+  renderMedia(item) {
+    const blocks = [];
+    if (item.audioUrl && isAudioUrl(item.audioUrl) ? blocks.push(html`
+        <audio controls preload="none" src=${item.audioUrl} aria-label=${t("عينة صوت", "Sound sample")}>
+          ${t("متصفحك لا يدعم تشغيل الصوت", "Your browser does not support audio playback")}
         </audio>
-      `) : e.audioUrl && r.push(c`
+      `) : item.audioUrl && blocks.push(html`
         <a
           class="csdg-media__link"
-          href=${e.audioUrl}
+          href=${item.audioUrl}
           target="_blank"
-          rel=${m(e.audioUrl) ? "noopener noreferrer" : l}
+          rel=${isExternalUrl(item.audioUrl) ? "noopener noreferrer" : nothing}
         >
-          ${s("استمع للعينة", "Listen to sample")}
+          ${t("استمع للعينة", "Listen to sample")}
         </a>
-      `), e.videoUrl)
-      if (q(e.videoUrl)) {
-        const i = B(e.videoUrl);
-        i && r.push(c`
+      `), item.videoUrl)
+      if (isYoutubeUrl(item.videoUrl)) {
+        const embed = youtubeEmbedUrl(item.videoUrl);
+        embed && blocks.push(html`
             <iframe
-              src=${i}
-              title=${e.name}
+              src=${embed}
+              title=${item.name}
               loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowfullscreen
             ></iframe>
           `);
       } else
-        r.push(c`
+        blocks.push(html`
           <a
             class="csdg-media__link"
-            href=${e.videoUrl}
+            href=${item.videoUrl}
             target="_blank"
-            rel=${m(e.videoUrl) ? "noopener noreferrer" : l}
+            rel=${isExternalUrl(item.videoUrl) ? "noopener noreferrer" : nothing}
           >
-            ${s("شاهد الفيديو", "Watch video")}
+            ${t("شاهد الفيديو", "Watch video")}
           </a>
         `);
-    return r.length ? c`<div class="csdg-block">
-      <p class="csdg-block__label">${s("عينات صوت وفيديو", "Sound & video samples")}</p>
-      <div class="csdg-media">${r}</div>
-    </div>` : l;
+    return blocks.length ? html`<div class="csdg-block">
+      <p class="csdg-block__label">${t("عينات صوت وفيديو", "Sound & video samples")}</p>
+      <div class="csdg-media">${blocks}</div>
+    </div>` : nothing;
   }
-  selectCase(e) {
-    this.selectedId !== e && (this.selectedId = e, typeof window < "u" && window.matchMedia("(max-width: 959px)").matches && this.updateComplete.then(() => {
-      var i;
-      const r = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      (i = this.renderRoot.querySelector(".csdg-panel")) == null || i.scrollIntoView({ behavior: r ? "auto" : "smooth", block: "nearest" });
+  selectCase(id) {
+    this.selectedId !== id && (this.selectedId = id, typeof window < "u" && window.matchMedia("(max-width: 959px)").matches && this.updateComplete.then(() => {
+      var _a;
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      (_a = this.renderRoot.querySelector(".csdg-panel")) == null || _a.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "nearest" });
     }));
   }
   onPickerKeydown(e) {
-    const r = this.cases;
-    if (r.length < 2) return;
-    const i = e.key === "ArrowDown" || e.key === "ArrowRight" ? 1 : e.key === "ArrowUp" || e.key === "ArrowLeft" ? -1 : 0;
-    if (!i) return;
+    const cases = this.cases;
+    if (cases.length < 2) return;
+    const delta = e.key === "ArrowDown" || e.key === "ArrowRight" ? 1 : e.key === "ArrowUp" || e.key === "ArrowLeft" ? -1 : 0;
+    if (!delta) return;
     e.preventDefault();
-    const d = (r.findIndex((n) => {
-      var t;
-      return n.id === ((t = this.selected) == null ? void 0 : t.id);
-    }) + i + r.length) % r.length;
-    this.selectedId = r[d].id, this.updateComplete.then(() => {
-      const n = this.renderRoot.querySelector(".csdg-case.is-selected");
-      n == null || n.focus();
+    const next = (cases.findIndex((item) => {
+      var _a;
+      return item.id === ((_a = this.selected) == null ? void 0 : _a.id);
+    }) + delta + cases.length) % cases.length;
+    this.selectedId = cases[next].id, this.updateComplete.then(() => {
+      const btn = this.renderRoot.querySelector(".csdg-case.is-selected");
+      btn == null || btn.focus();
     });
   }
-  renderPanel(e) {
-    var a, d;
-    const r = g((a = this.config) == null ? void 0 : a.csdg_causes_label) || s("الأسباب المحتملة", "Possible causes"), i = g((d = this.config) == null ? void 0 : d.csdg_advice_label) || s("نصيحة الفني", "Mechanic advice");
-    return c`
+  renderPanel(item) {
+    var _a, _b;
+    const causesLabel = localizedString((_a = this.config) == null ? void 0 : _a.csdg_causes_label) || t("الأسباب المحتملة", "Possible causes"), adviceLabel = localizedString((_b = this.config) == null ? void 0 : _b.csdg_advice_label) || t("نصيحة الفني", "Mechanic advice");
+    return html`
       <div class="csdg-panel" aria-live="polite">
         <div class="csdg-panel__head">
           <div class="csdg-panel__heading">
-            <p class="csdg-panel__kicker">${s("التشخيص", "Diagnosis")}</p>
-            <h3 class="csdg-panel__title">${e.name}</h3>
+            <p class="csdg-panel__kicker">${t("التشخيص", "Diagnosis")}</p>
+            <h3 class="csdg-panel__title">${item.name}</h3>
           </div>
-          <span class=${f({ "csdg-severity": !0, [`csdg-severity--${e.severity}`]: !0 })}>
+          <span class=${classMap({ "csdg-severity": !0, [`csdg-severity--${item.severity}`]: !0 })}>
             <span class="csdg-severity__dot" aria-hidden="true"></span>
-            ${s("الخطورة:", "Severity:")} ${A(e.severity)}
+            ${t("الخطورة:", "Severity:")} ${severityLabel(item.severity)}
           </span>
         </div>
 
-        ${e.description ? c`<p class="csdg-panel__desc">${e.description}</p>` : l}
+        ${item.description ? html`<p class="csdg-panel__desc">${item.description}</p>` : nothing}
 
-        ${e.causes.length ? c`<div class="csdg-block">
-              <p class="csdg-block__label">${r}</p>
+        ${item.causes.length ? html`<div class="csdg-block">
+              <p class="csdg-block__label">${causesLabel}</p>
               <ul class="csdg-causes">
-                ${e.causes.map(
-      (n, t) => c`<li>
-                    <span class="csdg-causes__num" aria-hidden="true">${t + 1}</span>
-                    <span>${n}</span>
+                ${item.causes.map(
+      (cause, i) => html`<li>
+                    <span class="csdg-causes__num" aria-hidden="true">${i + 1}</span>
+                    <span>${cause}</span>
                   </li>`
     )}
               </ul>
-            </div>` : l}
+            </div>` : nothing}
 
-        ${e.advice ? c`<div class="csdg-alert" role="note">
+        ${item.advice ? html`<div class="csdg-alert" role="note">
               <span class="csdg-alert__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
                 </svg>
               </span>
               <span class="csdg-alert__body">
-                <strong>${i}</strong>
-                <span>${e.advice}</span>
+                <strong>${adviceLabel}</strong>
+                <span>${item.advice}</span>
               </span>
-            </div>` : l}
+            </div>` : nothing}
 
-        ${this.renderMedia(e)}
+        ${this.renderMedia(item)}
 
-        ${e.link ? c`<div class="csdg-actions">
+        ${item.link ? html`<div class="csdg-actions">
               <a
                 class="fs-btn fs-tap"
-                href=${e.link}
+                href=${item.link}
                 target="_blank"
-                rel=${m(e.link) ? "noopener noreferrer" : l}
+                rel=${isExternalUrl(item.link) ? "noopener noreferrer" : nothing}
               >
-                ${s("احجز فحصًا", "Book inspection")}
+                ${t("احجز فحصًا", "Book inspection")}
               </a>
-            </div>` : l}
+            </div>` : nothing}
       </div>
     `;
   }
   render() {
-    const e = this.config || {}, r = z(e, "csdg_"), i = this.cases, a = this.selected, d = g(e.csdg_title), n = g(e.csdg_desc);
-    return i.length ? c`
+    const c = this.config || {}, theme = readSectionTheme(c, "csdg_"), cases = this.cases, selected = this.selected, title = localizedString(c.csdg_title), desc = localizedString(c.csdg_desc);
+    return cases.length ? html`
       <section
         class="fs-section"
-        style=${w(C(r))}
-        aria-label=${d || s("دليل تشخيص أصوات السيارة", "Car sound diagnostic guide")}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title || t("دليل تشخيص أصوات السيارة", "Car sound diagnostic guide")}
       >
         <div class="fs-container">
-          ${d || n ? c`<div class="fs-hero">
-                <p class="fs-eyebrow">${s("شخّص قبل الشراء", "Diagnose before you buy")}</p>
-                ${d ? c`<h2 class="fs-title">${d}</h2>` : l}
-                ${n ? c`<p class="fs-desc">${n}</p>` : l}
-              </div>` : l}
+          ${title || desc ? html`<div class="fs-hero">
+                <p class="fs-eyebrow">${t("شخّص قبل الشراء", "Diagnose before you buy")}</p>
+                ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+                ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+              </div>` : nothing}
 
           <div class="csdg-layout">
             <div class="csdg-picker-card">
               <div class="csdg-picker__head">
-                <p class="csdg-picker__title">${s("ما الصوت الذي تسمعه؟", "What sound do you hear?")}</p>
-                <span class="csdg-picker__count">${i.length}</span>
+                <p class="csdg-picker__title">${t("ما الصوت الذي تسمعه؟", "What sound do you hear?")}</p>
+                <span class="csdg-picker__count">${cases.length}</span>
               </div>
               <div
                 class="csdg-picker"
                 role="listbox"
-                aria-label=${s("اختر العرض", "Choose symptom")}
-                @keydown=${(t) => this.onPickerKeydown(t)}
+                aria-label=${t("اختر العرض", "Choose symptom")}
+                @keydown=${(e) => this.onPickerKeydown(e)}
               >
-                ${i.map(
-      (t) => c`
+                ${cases.map(
+      (item) => html`
                     <button
                       type="button"
-                      class=${f({ "csdg-case": !0, "is-selected": t.id === (a == null ? void 0 : a.id) })}
+                      class=${classMap({ "csdg-case": !0, "is-selected": item.id === (selected == null ? void 0 : selected.id) })}
                       role="option"
-                      aria-selected=${t.id === (a == null ? void 0 : a.id) ? "true" : "false"}
-                      tabindex=${t.id === (a == null ? void 0 : a.id) ? "0" : "-1"}
-                      @click=${() => this.selectCase(t.id)}
+                      aria-selected=${item.id === (selected == null ? void 0 : selected.id) ? "true" : "false"}
+                      tabindex=${item.id === (selected == null ? void 0 : selected.id) ? "0" : "-1"}
+                      @click=${() => this.selectCase(item.id)}
                     >
-                      ${t.icon ? c`<span class="csdg-case__icon ${t.icon.startsWith("sicon-") ? t.icon : ""}" aria-hidden="true">
-                            ${t.icon.startsWith("sicon-") ? "" : t.icon}
-                          </span>` : l}
+                      ${item.icon ? html`<span class="csdg-case__icon ${item.icon.startsWith("sicon-") ? item.icon : ""}" aria-hidden="true">
+                            ${item.icon.startsWith("sicon-") ? "" : item.icon}
+                          </span>` : nothing}
                       <span class="csdg-case__body">
-                        <span class="csdg-case__name">${t.name}</span>
-                        ${t.description ? c`<span class="csdg-case__desc">${t.description}</span>` : l}
+                        <span class="csdg-case__name">${item.name}</span>
+                        ${item.description ? html`<span class="csdg-case__desc">${item.description}</span>` : nothing}
                       </span>
-                      <span class=${f({ "csdg-case__dot": !0, [`csdg-case__dot--${t.severity}`]: !0 })} aria-hidden="true"></span>
+                      <span class=${classMap({ "csdg-case__dot": !0, [`csdg-case__dot--${item.severity}`]: !0 })} aria-hidden="true"></span>
                     </button>
                   `
     )}
               </div>
             </div>
 
-            ${a ? this.renderPanel(a) : l}
+            ${selected ? this.renderPanel(selected) : nothing}
           </div>
-          ${I(e, "csdg_", { ready: !!a })}
+          ${renderCommerceOutcome(c, "csdg_", { ready: !!selected })}
         </div>
       </section>
-    ` : c`<div class="fs-empty" role="status">
-        ${s("أضف حالات الأصوات من إعدادات العنصر", "Add sound cases in element settings")}
+    ` : html`<div class="fs-empty" role="status">
+        ${t("أضف حالات الأصوات من إعدادات العنصر", "Add sound cases in element settings")}
       </div>`;
   }
 };
-h.styles = [S, M];
-let p = h;
-v([
-  _({ type: Object })
-], p.prototype, "config");
-v([
-  k()
-], p.prototype, "selectedId");
-L(p);
-typeof p < "u" && p.registerSallaComponent("salla-car-sound-diagnostic-guide");
+__name(_CarSoundDiagnosticGuide, "CarSoundDiagnosticGuide"), _CarSoundDiagnosticGuide.styles = [sharedSectionCss, componentStyles];
+let CarSoundDiagnosticGuide = _CarSoundDiagnosticGuide;
+__decorateClass([
+  property({ type: Object })
+], CarSoundDiagnosticGuide.prototype, "config");
+__decorateClass([
+  state()
+], CarSoundDiagnosticGuide.prototype, "selectedId");
+bindSallaRegistration(CarSoundDiagnosticGuide);
+typeof CarSoundDiagnosticGuide < "u" && CarSoundDiagnosticGuide.registerSallaComponent("salla-car-sound-diagnostic-guide");
 export {
-  p as default
+  CarSoundDiagnosticGuide as default
 };

@@ -1,10 +1,12 @@
-import { css as g, html as n, LitElement as f, nothing as b } from "lit";
-import { property as u } from "lit/decorators.js";
-import { classMap as v } from "lit/directives/class-map.js";
-import { styleMap as x } from "lit/directives/style-map.js";
-import { l as i, s as y, r as k, t as s, a as _, b as $ } from "./registerSalla-Dct4KN_E.js";
-import { b as C } from "./whatsapp-GI8N2VNC.js";
-const L = g`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, html, LitElement, nothing } from "lit";
+import { property } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { l as localizedString, s as sharedSectionCss, r as readSectionTheme, t, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { b as buildWhatsAppUrl } from "./whatsapp-C3glLfzz.js";
+const componentStyles = css`
   .wcb-shell {
     display: grid;
     gap: 1rem;
@@ -152,26 +154,29 @@ const L = g`
     }
   }
 `;
-function w(t) {
-  return i(t.wcb_whatsapp_phone) || String(t.wcb_whatsapp_phone ?? "").trim();
+function resolveStorePhone(config) {
+  return localizedString(config.wcb_whatsapp_phone) || String(config.wcb_whatsapp_phone ?? "").trim();
 }
-function S(t) {
-  return i(t.wcb_message) || i(t.wcb_prefill) || "";
+__name(resolveStorePhone, "resolveStorePhone");
+function resolvePrefillMessage(config) {
+  return localizedString(config.wcb_message) || localizedString(config.wcb_prefill) || "";
 }
-function z(t) {
-  const e = w(t);
-  return e ? C(e, S(t)) : "";
+__name(resolvePrefillMessage, "resolvePrefillMessage");
+function resolveWhatsAppHref(config) {
+  const phone = resolveStorePhone(config);
+  return phone ? buildWhatsAppUrl(phone, resolvePrefillMessage(config)) : "";
 }
-var M = Object.defineProperty, A = (t, e, c, l) => {
-  for (var r = void 0, a = t.length - 1, d; a >= 0; a--)
-    (d = t[a]) && (r = d(e, c, r) || r);
-  return r && M(e, c, r), r;
-};
-const m = n`<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+__name(resolveWhatsAppHref, "resolveWhatsAppHref");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const waIcon = html`<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
   <path
     d="M12.04 2c-5.5 0-9.96 4.43-9.96 9.9 0 1.75.46 3.45 1.34 4.95L2 22l5.3-1.38a10 10 0 0 0 4.74 1.2h.01c5.5 0 9.96-4.43 9.96-9.9C22.01 6.43 17.54 2 12.04 2Zm5.8 14.2c-.24.68-1.4 1.25-1.93 1.33-.5.07-1.12.1-1.81-.11-.41-.13-.95-.31-1.63-.6-2.87-1.24-4.74-4.13-4.88-4.32-.14-.19-1.15-1.53-1.15-2.92 0-1.39.73-2.07.99-2.35.26-.28.56-.35.75-.35h.54c.17 0 .4-.06.62.48.24.58.8 2 .87 2.14.07.14.12.31.02.5-.1.19-.15.31-.3.48-.15.17-.31.37-.44.5-.15.14-.3.3-.13.58.17.28.75 1.23 1.61 2 .1.9 1.95 1.86 2.26 1.99.31.13.49.11.67-.07.18-.17.77-.9.98-1.2.2-.31.41-.25.69-.15.28.1 1.78.84 2.08.99.3.15.5.22.57.34.08.13.08.73-.16 1.41Z"
   />
-</svg>`, p = class p extends f {
+</svg>`, _WhatsappContactBanner = class _WhatsappContactBanner extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.boundLangHandler = () => this.requestUpdate();
   }
@@ -182,15 +187,15 @@ const m = n`<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
   render() {
-    const e = this.config || {}, c = k(e, "wcb_", {}), l = i(e.wcb_title) || s("لا تعرف أي قطعة تناسب سيارتك؟", "Don't know which part fits your car?"), r = i(e.wcb_desc) || s(
+    const c = this.config || {}, theme = readSectionTheme(c, "wcb_", {}), title = localizedString(c.wcb_title) || t("لا تعرف أي قطعة تناسب سيارتك؟", "Don't know which part fits your car?"), desc = localizedString(c.wcb_desc) || t(
       "فريقنا الفني جاهز لمساعدتك في اختيار القطعة الصحيحة بناءً على رقم الهيكل (VIN) لضمان التوافق التام.",
       "Our technical team can help you pick the right part using the VIN for full compatibility."
-    ), a = i(e.wcb_cta_label) || s("تواصل عبر واتساب", "Contact via WhatsApp"), d = w(e), h = z(e);
-    return n`
+    ), ctaLabel = localizedString(c.wcb_cta_label) || t("تواصل عبر واتساب", "Contact via WhatsApp"), phone = resolveStorePhone(c), href = resolveWhatsAppHref(c);
+    return html`
       <section
         class="fs-section"
-        style=${x(_(c))}
-        aria-label=${l || s("تواصل معنا", "Contact us")}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title || t("تواصل معنا", "Contact us")}
       >
         <div class="fs-container">
           <div class="wcb-shell">
@@ -202,32 +207,32 @@ const m = n`<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               </svg>
 
               <div class="wcb-copy">
-                ${l ? n`<h2 class="wcb-title">${l}</h2>` : b}
-                ${r ? n`<p class="wcb-desc">${r}</p>` : b}
+                ${title ? html`<h2 class="wcb-title">${title}</h2>` : nothing}
+                ${desc ? html`<p class="wcb-desc">${desc}</p>` : nothing}
               </div>
 
               <div class="wcb-actions">
-                ${h ? n`<a
+                ${href ? html`<a
                       class="wcb-btn"
-                      href=${h}
+                      href=${href}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      ${m}
-                      <span>${a}</span>
-                    </a>` : n`<span
-                      class=${v({ "wcb-btn": !0, "wcb-btn--disabled": !0 })}
+                      ${waIcon}
+                      <span>${ctaLabel}</span>
+                    </a>` : html`<span
+                      class=${classMap({ "wcb-btn": !0, "wcb-btn--disabled": !0 })}
                       role="link"
                       aria-disabled="true"
                     >
-                      ${m}
-                      <span>${a}</span>
+                      ${waIcon}
+                      <span>${ctaLabel}</span>
                     </span>`}
               </div>
             </div>
 
-            ${d ? b : n`<p class="wcb-hint">
-                  ${s(
+            ${phone ? nothing : html`<p class="wcb-hint">
+                  ${t(
       "أضف رقم واتساب المتجر من إعدادات العنصر.",
       "Add the store WhatsApp number in the component settings."
     )}
@@ -238,15 +243,15 @@ const m = n`<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     `;
   }
 };
-p.styles = [y, L];
-let o = p;
-A([
-  u({ type: Object })
-], o.prototype, "config");
-$(
-  o
+__name(_WhatsappContactBanner, "WhatsappContactBanner"), _WhatsappContactBanner.styles = [sharedSectionCss, componentStyles];
+let WhatsappContactBanner = _WhatsappContactBanner;
+__decorateClass([
+  property({ type: Object })
+], WhatsappContactBanner.prototype, "config");
+bindSallaRegistration(
+  WhatsappContactBanner
 );
-typeof o < "u" && o.registerSallaComponent("salla-whatsapp-contact-banner");
+typeof WhatsappContactBanner < "u" && WhatsappContactBanner.registerSallaComponent("salla-whatsapp-contact-banner");
 export {
-  o as default
+  WhatsappContactBanner as default
 };

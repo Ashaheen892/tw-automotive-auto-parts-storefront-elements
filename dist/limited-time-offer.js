@@ -1,10 +1,12 @@
-import { css as S, LitElement as M, nothing as s, html as i } from "lit";
-import { property as C, state as x } from "lit/decorators.js";
-import { classMap as U } from "lit/directives/class-map.js";
-import { styleMap as z } from "lit/directives/style-map.js";
-import { l as m, c as w, e as b, d as y, s as I, t as d, r as L, i as E, a as j, b as A } from "./registerSalla-Dct4KN_E.js";
-import { r as D } from "./commerceOutcome-B3T0_-WJ.js";
-const O = S`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, nothing, html } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { l as localizedString, c as extractImageUrl, e as extractLink, d as isTruthy, s as sharedSectionCss, t, r as readSectionTheme, i as isExternalUrl, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .lto-shell {
     display: grid;
     gap: 1.15rem;
@@ -228,36 +230,42 @@ const O = S`
       transform: none;
     }
   }
-`, H = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1400&q=80";
-function _(e) {
-  const t = m(e).trim();
-  if (!t) return null;
-  const r = new Date(t);
-  return Number.isFinite(r.getTime()) ? r : null;
+`, DEFAULT_IMAGE = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1400&q=80";
+function parseEndsAt(raw) {
+  const str = localizedString(raw).trim();
+  if (!str) return null;
+  const parsed = new Date(str);
+  return Number.isFinite(parsed.getTime()) ? parsed : null;
 }
-function P(e, t = /* @__PURE__ */ new Date()) {
-  const r = Math.max(0, e.getTime() - t.getTime()), a = Math.floor(r / 1e3), o = Math.floor(a / 86400), n = Math.floor(a % 86400 / 3600), c = Math.floor(a % 3600 / 60), f = a % 60;
-  return { days: o, hours: n, minutes: c, seconds: f, totalMs: r };
+__name(parseEndsAt, "parseEndsAt");
+function getCountdown(target, now = /* @__PURE__ */ new Date()) {
+  const totalMs = Math.max(0, target.getTime() - now.getTime()), totalSec = Math.floor(totalMs / 1e3), days = Math.floor(totalSec / 86400), hours = Math.floor(totalSec % 86400 / 3600), minutes = Math.floor(totalSec % 3600 / 60), seconds = totalSec % 60;
+  return { days, hours, minutes, seconds, totalMs };
 }
-function G(e) {
-  return w(e.lto_image) || w(e.lto_media) || H;
+__name(getCountdown, "getCountdown");
+function resolveOfferImage(config) {
+  return extractImageUrl(config.lto_image) || extractImageUrl(config.lto_media) || DEFAULT_IMAGE;
 }
-function q(e) {
-  return b(e.lto_cta_link) || b(e.lto_link);
+__name(resolveOfferImage, "resolveOfferImage");
+function resolveCtaLink(config) {
+  return extractLink(config.lto_cta_link) || extractLink(config.lto_link);
 }
-function h(e, t, r = !0) {
-  return y(e[t], r);
+__name(resolveCtaLink, "resolveCtaLink");
+function showTimerUnit(config, key, fallback = !0) {
+  return isTruthy(config[key], fallback);
 }
-function F(e) {
-  const t = String(e.lto_image_side || e.lto_media_side || "end").toLowerCase();
-  return t === "start" || t === "left" || t === "begin";
+__name(showTimerUnit, "showTimerUnit");
+function imageOnStart(config) {
+  const raw = String(config.lto_image_side || config.lto_media_side || "end").toLowerCase();
+  return raw === "start" || raw === "left" || raw === "begin";
 }
-var N = Object.defineProperty, g = (e, t, r, a) => {
-  for (var o = void 0, n = e.length - 1, c; n >= 0; n--)
-    (c = e[n]) && (o = c(t, r, o) || o);
-  return o && N(t, r, o), o;
-};
-const u = class u extends M {
+__name(imageOnStart, "imageOnStart");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _LimitedTimeOffer = class _LimitedTimeOffer extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.countdown = {
       days: 0,
@@ -273,108 +281,108 @@ const u = class u extends M {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), this.clearTimer(), super.disconnectedCallback();
   }
-  willUpdate(t) {
-    t.has("config") && this.syncTimer();
+  willUpdate(changed) {
+    changed.has("config") && this.syncTimer();
   }
   clearTimer() {
     this.timerId != null && (clearInterval(this.timerId), this.timerId = null);
   }
   syncTimer() {
-    var a;
+    var _a;
     this.clearTimer();
-    const t = _((a = this.config) == null ? void 0 : a.lto_ends_at);
-    if (!t) {
+    const endsAt = parseEndsAt((_a = this.config) == null ? void 0 : _a.lto_ends_at);
+    if (!endsAt) {
       this.ended = !1, this.countdown = { days: 0, hours: 0, minutes: 0, seconds: 0, totalMs: 0 };
       return;
     }
-    const r = () => {
-      const o = P(t);
-      this.countdown = o, this.ended = o.totalMs <= 0, this.ended && this.clearTimer();
-    };
-    r(), this.ended || (this.timerId = setInterval(r, 1e3));
+    const tick = /* @__PURE__ */ __name(() => {
+      const parts = getCountdown(endsAt);
+      this.countdown = parts, this.ended = parts.totalMs <= 0, this.ended && this.clearTimer();
+    }, "tick");
+    tick(), this.ended || (this.timerId = setInterval(tick, 1e3));
   }
-  renderTimerUnit(t, r, a, o) {
-    return o ? i`
+  renderTimerUnit(value, labelAr, labelEn, show) {
+    return show ? html`
       <div class="lto-timer__unit" role="listitem">
-        <span class="lto-timer__value" aria-hidden="true">${String(t).padStart(2, "0")}</span>
-        <span class="lto-timer__label">${d(r, a)}</span>
+        <span class="lto-timer__value" aria-hidden="true">${String(value).padStart(2, "0")}</span>
+        <span class="lto-timer__label">${t(labelAr, labelEn)}</span>
       </div>
-    ` : s;
+    ` : nothing;
   }
   renderProducts() {
-    return D(this.config || {}, "lto_", { ready: !0 });
+    return renderCommerceOutcome(this.config || {}, "lto_", { ready: !0 });
   }
   render() {
-    const t = this.config || {}, r = L(t, "lto_"), a = m(t.lto_eyebrow) || d("عرض موسم 2026", "Season 2026 offer"), o = m(t.lto_title) || d("امنح سيارتك الأداء الذي تستحقه", "Give your car the performance it deserves"), n = m(t.lto_desc) || d(
+    const c = this.config || {}, theme = readSectionTheme(c, "lto_"), eyebrow = localizedString(c.lto_eyebrow) || t("عرض موسم 2026", "Season 2026 offer"), title = localizedString(c.lto_title) || t("امنح سيارتك الأداء الذي تستحقه", "Give your car the performance it deserves"), desc = localizedString(c.lto_desc) || t(
       "احصل على مجموعة غسيل وتلميع وحماية كاملة بسعر خاص لفترة محدودة. منتجات عالمية تحافظ على طلاء سيارتك.",
       "Get a complete wash, polish, and protection package at a special limited-time price."
-    ), c = G(t), f = m(t.lto_cta_label) || d("عرض الآن", "View now"), p = q(t), k = y(t.lto_show_cta, !0) && !!p, $ = !!_(t.lto_ends_at), T = F(t), v = p ? E(p) : !1;
-    return i`
+    ), image = resolveOfferImage(c), ctaLabel = localizedString(c.lto_cta_label) || t("عرض الآن", "View now"), ctaLink = resolveCtaLink(c), showCta = isTruthy(c.lto_show_cta, !0) && !!ctaLink, hasEndsAt = !!parseEndsAt(c.lto_ends_at), mediaStart = imageOnStart(c), external = ctaLink ? isExternalUrl(ctaLink) : !1;
+    return html`
       <section
         class="fs-section"
-        style=${z(j(r))}
-        aria-label=${o}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title}
       >
         <div class="fs-container">
           <div class="lto-shell">
             <div
-              class=${U({
+              class=${classMap({
       "lto-panel": !0,
-      "lto-panel--image-start": T
+      "lto-panel--image-start": mediaStart
     })}
             >
               <div class="lto-copy">
-                ${a ? i`<p class="lto-eyebrow">${a}</p>` : s}
-                ${o ? i`<h2 class="lto-title">${o}</h2>` : s}
-                ${n ? i`<p class="lto-desc">${n}</p>` : s}
+                ${eyebrow ? html`<p class="lto-eyebrow">${eyebrow}</p>` : nothing}
+                ${title ? html`<h2 class="lto-title">${title}</h2>` : nothing}
+                ${desc ? html`<p class="lto-desc">${desc}</p>` : nothing}
 
-                ${$ ? this.ended ? i`<p class="lto-ended" role="status">
-                        ${d("انتهى العرض", "Offer ended")}
-                      </p>` : i`<div
+                ${hasEndsAt ? this.ended ? html`<p class="lto-ended" role="status">
+                        ${t("انتهى العرض", "Offer ended")}
+                      </p>` : html`<div
                         class="lto-timer"
                         role="timer"
-                        aria-label=${d("العد التنازلي للعرض", "Offer countdown")}
+                        aria-label=${t("العد التنازلي للعرض", "Offer countdown")}
                       >
                         ${this.renderTimerUnit(
       this.countdown.days,
       "يوم",
       "Days",
-      h(t, "lto_show_days")
+      showTimerUnit(c, "lto_show_days")
     )}
                         ${this.renderTimerUnit(
       this.countdown.hours,
       "ساعة",
       "Hours",
-      h(t, "lto_show_hours")
+      showTimerUnit(c, "lto_show_hours")
     )}
                         ${this.renderTimerUnit(
       this.countdown.minutes,
       "دقيقة",
       "Minutes",
-      h(t, "lto_show_minutes")
+      showTimerUnit(c, "lto_show_minutes")
     )}
                         ${this.renderTimerUnit(
       this.countdown.seconds,
       "ثانية",
       "Seconds",
-      h(t, "lto_show_seconds")
+      showTimerUnit(c, "lto_show_seconds")
     )}
-                      </div>` : s}
+                      </div>` : nothing}
 
-                ${k ? i`<div class="lto-actions">
+                ${showCta ? html`<div class="lto-actions">
                       <a
                         class="lto-cta"
-                        href=${p}
-                        target=${v ? "_blank" : s}
-                        rel=${v ? "noopener noreferrer" : s}
+                        href=${ctaLink}
+                        target=${external ? "_blank" : nothing}
+                        rel=${external ? "noopener noreferrer" : nothing}
                       >
-                        ${f}
+                        ${ctaLabel}
                       </a>
-                    </div>` : s}
+                    </div>` : nothing}
               </div>
 
               <div class="lto-media" aria-hidden=${"false"}>
-                ${i`<img src=${c} alt="" loading="lazy" decoding="async" />`}
+                ${html`<img src=${image} alt="" loading="lazy" decoding="async" />`}
               </div>
             </div>
 
@@ -385,21 +393,21 @@ const u = class u extends M {
     `;
   }
 };
-u.styles = [I, O];
-let l = u;
-g([
-  C({ type: Object })
-], l.prototype, "config");
-g([
-  x()
-], l.prototype, "countdown");
-g([
-  x()
-], l.prototype, "ended");
-A(
-  l
+__name(_LimitedTimeOffer, "LimitedTimeOffer"), _LimitedTimeOffer.styles = [sharedSectionCss, componentStyles];
+let LimitedTimeOffer = _LimitedTimeOffer;
+__decorateClass([
+  property({ type: Object })
+], LimitedTimeOffer.prototype, "config");
+__decorateClass([
+  state()
+], LimitedTimeOffer.prototype, "countdown");
+__decorateClass([
+  state()
+], LimitedTimeOffer.prototype, "ended");
+bindSallaRegistration(
+  LimitedTimeOffer
 );
-typeof l < "u" && l.registerSallaComponent("salla-limited-time-offer");
+typeof LimitedTimeOffer < "u" && LimitedTimeOffer.registerSallaComponent("salla-limited-time-offer");
 export {
-  l as default
+  LimitedTimeOffer as default
 };

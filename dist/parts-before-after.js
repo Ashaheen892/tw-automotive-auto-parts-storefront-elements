@@ -1,10 +1,12 @@
-import { css as k, LitElement as E, html as o, nothing as b } from "lit";
-import { property as C, state as y } from "lit/decorators.js";
-import { classMap as R } from "lit/directives/class-map.js";
-import { styleMap as f } from "lit/directives/style-map.js";
-import { n as S, c as g, l, t as p, s as z, j as M, r as U, a as j, b as q } from "./registerSalla-Dct4KN_E.js";
-import { r as F } from "./commerceOutcome-B3T0_-WJ.js";
-const O = k`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, html, nothing } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, c as extractImageUrl, l as localizedString, t, s as sharedSectionCss, j as clamp, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .pba-shell {
     display: grid;
     gap: 1rem;
@@ -184,53 +186,56 @@ const O = k`
       transition: none !important;
     }
   }
-`, $ = "https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=1000&q=80", _ = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80", B = "https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f?auto=format&fit=crop&w=1000&q=80", T = "https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=1000&q=80";
-function H(c) {
-  const e = S(c).map((t, a) => ({
-    id: String(t.id ?? "").trim() || `pair-${a + 1}`,
-    title: l(t.title),
-    beforeImage: g(t.before_image),
-    afterImage: g(t.after_image)
-  })).filter((t) => t.title || t.beforeImage || t.afterImage);
-  return e.length ? e.map((t, a) => {
-    const i = x()[a % 2];
+`, BEFORE = "https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=1000&q=80", AFTER = "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80", BEFORE2 = "https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f?auto=format&fit=crop&w=1000&q=80", AFTER2 = "https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=1000&q=80";
+function parsePairs(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => ({
+    id: String(row.id ?? "").trim() || `pair-${i + 1}`,
+    title: localizedString(row.title),
+    beforeImage: extractImageUrl(row.before_image),
+    afterImage: extractImageUrl(row.after_image)
+  })).filter((p) => p.title || p.beforeImage || p.afterImage);
+  return parsed.length ? parsed.map((p, i) => {
+    const d = defaultPairs()[i % 2];
     return {
-      ...t,
-      beforeImage: t.beforeImage || i.beforeImage,
-      afterImage: t.afterImage || i.afterImage,
-      title: t.title || i.title
+      ...p,
+      beforeImage: p.beforeImage || d.beforeImage,
+      afterImage: p.afterImage || d.afterImage,
+      title: p.title || d.title
     };
-  }) : x();
+  }) : defaultPairs();
 }
-function w() {
-  return { before: $, after: _ };
+__name(parsePairs, "parsePairs");
+function defaultSingleImages() {
+  return { before: BEFORE, after: AFTER };
 }
-function x() {
+__name(defaultSingleImages, "defaultSingleImages");
+function defaultPairs() {
   return [
     {
       id: "detailing",
-      title: p("تفصيل داخلي", "Interior detailing"),
-      beforeImage: $,
-      afterImage: _
+      title: t("تفصيل داخلي", "Interior detailing"),
+      beforeImage: BEFORE,
+      afterImage: AFTER
     },
     {
       id: "engine",
-      title: p("صيانة المحرك", "Engine service"),
-      beforeImage: B,
-      afterImage: T
+      title: t("صيانة المحرك", "Engine service"),
+      beforeImage: BEFORE2,
+      afterImage: AFTER2
     }
   ];
 }
-var A = Object.defineProperty, h = (c, e, t, a) => {
-  for (var i = void 0, r = c.length - 1, s; r >= 0; r--)
-    (s = c[r]) && (i = s(e, t, i) || i);
-  return i && A(e, t, i), i;
-};
-const m = class m extends E {
+__name(defaultPairs, "defaultPairs");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _PartsBeforeAfter = class _PartsBeforeAfter extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.activePair = 0, this.position = 50, this.dragging = !1, this.boundLangHandler = () => this.requestUpdate(), this.onPointerDown = (e) => {
-      var t, a;
-      this.dragging = !0, (a = (t = e.target) == null ? void 0 : t.setPointerCapture) == null || a.call(t, e.pointerId), document.addEventListener("pointermove", this.onPointerMove), document.addEventListener("pointerup", this.onPointerUp), this.updatePosition(e);
+      var _a, _b;
+      this.dragging = !0, (_b = (_a = e.target) == null ? void 0 : _a.setPointerCapture) == null || _b.call(_a, e.pointerId), document.addEventListener("pointermove", this.onPointerMove), document.addEventListener("pointerup", this.onPointerUp), this.updatePosition(e);
     }, this.onPointerMove = (e) => {
       this.dragging && this.updatePosition(e);
     }, this.onPointerUp = () => {
@@ -245,56 +250,56 @@ const m = class m extends E {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), document.removeEventListener("pointermove", this.onPointerMove), document.removeEventListener("pointerup", this.onPointerUp), super.disconnectedCallback();
   }
-  willUpdate(e) {
-    if (e.has("config")) {
-      const t = this.pairs;
-      this.activePair >= t.length && (this.activePair = 0);
+  willUpdate(changed) {
+    if (changed.has("config")) {
+      const pairs = this.pairs;
+      this.activePair >= pairs.length && (this.activePair = 0);
     }
   }
   get pairs() {
-    var e;
-    return H((e = this.config) == null ? void 0 : e.pba_items);
+    var _a;
+    return parsePairs((_a = this.config) == null ? void 0 : _a.pba_items);
   }
   get singleBefore() {
-    var e;
-    return g((e = this.config) == null ? void 0 : e.pba_before_image) || w().before;
+    var _a;
+    return extractImageUrl((_a = this.config) == null ? void 0 : _a.pba_before_image) || defaultSingleImages().before;
   }
   get singleAfter() {
-    var e;
-    return g((e = this.config) == null ? void 0 : e.pba_after_image) || w().after;
+    var _a;
+    return extractImageUrl((_a = this.config) == null ? void 0 : _a.pba_after_image) || defaultSingleImages().after;
   }
   get beforeLabel() {
-    var e;
-    return l((e = this.config) == null ? void 0 : e.pba_before_label) || p("قبل", "BEFORE");
+    var _a;
+    return localizedString((_a = this.config) == null ? void 0 : _a.pba_before_label) || t("قبل", "BEFORE");
   }
   get afterLabel() {
-    var e;
-    return l((e = this.config) == null ? void 0 : e.pba_after_label) || p("بعد", "AFTER");
+    var _a;
+    return localizedString((_a = this.config) == null ? void 0 : _a.pba_after_label) || t("بعد", "AFTER");
   }
-  selectPair(e) {
-    this.activePair = e, this.position = 50;
+  selectPair(index) {
+    this.activePair = index, this.position = 50;
   }
   updatePosition(e) {
-    const t = this.renderRoot.querySelector(".pba-viewport");
-    if (!t) return;
-    const a = t.getBoundingClientRect(), i = e.clientX - a.left;
-    this.position = M(i / a.width * 100, 0, 100);
+    const viewport = this.renderRoot.querySelector(".pba-viewport");
+    if (!viewport) return;
+    const rect = viewport.getBoundingClientRect(), x = e.clientX - rect.left;
+    this.position = clamp(x / rect.width * 100, 0, 100);
   }
-  renderViewport(e, t) {
-    const a = this.position, i = e ? o`<img src=${e} alt=${this.beforeLabel} loading="lazy" decoding="async" />` : o`<div class="pba-placeholder">${this.beforeLabel}</div>`, r = t ? o`<img src=${t} alt=${this.afterLabel} loading="lazy" decoding="async" />` : o`<div class="pba-placeholder">${this.afterLabel}</div>`;
-    return o`
+  renderViewport(beforeImg, afterImg) {
+    const pos = this.position, beforeContent = beforeImg ? html`<img src=${beforeImg} alt=${this.beforeLabel} loading="lazy" decoding="async" />` : html`<div class="pba-placeholder">${this.beforeLabel}</div>`, afterContent = afterImg ? html`<img src=${afterImg} alt=${this.afterLabel} loading="lazy" decoding="async" />` : html`<div class="pba-placeholder">${this.afterLabel}</div>`;
+    return html`
       <div
         class="pba-viewport"
         @pointerdown=${this.onPointerDown}
       >
-        <div class="pba-viewport__layer">${i}</div>
+        <div class="pba-viewport__layer">${beforeContent}</div>
         <div
           class="pba-viewport__after"
-          style=${f({ clipPath: `inset(0 0 0 ${a}%)` })}
-        >${r}</div>
+          style=${styleMap({ clipPath: `inset(0 0 0 ${pos}%)` })}
+        >${afterContent}</div>
         <div
           class="pba-handle"
-          style=${f({ left: `${a}%` })}
+          style=${styleMap({ left: `${pos}%` })}
           aria-hidden="true"
         ></div>
         <div class="pba-labels">
@@ -307,64 +312,64 @@ const m = class m extends E {
         class="pba-range"
         min="0"
         max="100"
-        .value=${String(a)}
-        aria-label=${p("تحريك المقارنة", "Move comparison")}
+        .value=${String(pos)}
+        aria-label=${t("تحريك المقارنة", "Move comparison")}
         @input=${this.onRangeInput}
       />
     `;
   }
   render() {
-    var u, v;
-    const e = this.config || {}, t = U(e, "pba_"), a = l(e.pba_title), i = l(e.pba_desc), r = this.pairs, s = r.length > 0, P = s ? ((u = r[this.activePair]) == null ? void 0 : u.beforeImage) ?? "" : this.singleBefore, I = s ? ((v = r[this.activePair]) == null ? void 0 : v.afterImage) ?? "" : this.singleAfter;
-    return o`
+    var _a, _b;
+    const c = this.config || {}, theme = readSectionTheme(c, "pba_"), title = localizedString(c.pba_title), desc = localizedString(c.pba_desc), pairs = this.pairs, hasPairs = pairs.length > 0, beforeImg = hasPairs ? ((_a = pairs[this.activePair]) == null ? void 0 : _a.beforeImage) ?? "" : this.singleBefore, afterImg = hasPairs ? ((_b = pairs[this.activePair]) == null ? void 0 : _b.afterImage) ?? "" : this.singleAfter;
+    return html`
       <section
         class="fs-section"
-        style=${f(j(t))}
-        aria-label=${a || p("مقارنة قبل وبعد", "Before & after comparison")}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title || t("مقارنة قبل وبعد", "Before & after comparison")}
       >
         <div class="fs-container">
-          ${a || i ? o`<div class="fs-hero">
-                ${a ? o`<h2 class="fs-title">${a}</h2>` : b}
-                ${i ? o`<p class="fs-desc">${i}</p>` : b}
-              </div>` : b}
+          ${title || desc ? html`<div class="fs-hero">
+                ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+                ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+              </div>` : nothing}
 
           <div class="pba-shell">
-            ${s && r.length > 1 ? o`<div class="pba-tabs" role="tablist">
-                  ${r.map(
-      (L, d) => o`
+            ${hasPairs && pairs.length > 1 ? html`<div class="pba-tabs" role="tablist">
+                  ${pairs.map(
+      (pair, i) => html`
                       <button
                         type="button"
-                        class=${R({ "pba-tab": !0, "is-active": d === this.activePair })}
+                        class=${classMap({ "pba-tab": !0, "is-active": i === this.activePair })}
                         role="tab"
-                        aria-selected=${d === this.activePair ? "true" : "false"}
-                        @click=${() => this.selectPair(d)}
-                      >${L.title || `${d + 1}`}</button>
+                        aria-selected=${i === this.activePair ? "true" : "false"}
+                        @click=${() => this.selectPair(i)}
+                      >${pair.title || `${i + 1}`}</button>
                     `
     )}
-                </div>` : b}
+                </div>` : nothing}
 
-            ${this.renderViewport(P, I)}
+            ${this.renderViewport(beforeImg, afterImg)}
           </div>
 
-          ${F(e, "pba_", { ready: !0 })}
+          ${renderCommerceOutcome(c, "pba_", { ready: !0 })}
         </div>
       </section>
     `;
   }
 };
-m.styles = [z, O];
-let n = m;
-h([
-  C({ type: Object })
-], n.prototype, "config");
-h([
-  y()
-], n.prototype, "activePair");
-h([
-  y()
-], n.prototype, "position");
-q(n);
-typeof n < "u" && n.registerSallaComponent("salla-parts-before-after");
+__name(_PartsBeforeAfter, "PartsBeforeAfter"), _PartsBeforeAfter.styles = [sharedSectionCss, componentStyles];
+let PartsBeforeAfter = _PartsBeforeAfter;
+__decorateClass([
+  property({ type: Object })
+], PartsBeforeAfter.prototype, "config");
+__decorateClass([
+  state()
+], PartsBeforeAfter.prototype, "activePair");
+__decorateClass([
+  state()
+], PartsBeforeAfter.prototype, "position");
+bindSallaRegistration(PartsBeforeAfter);
+typeof PartsBeforeAfter < "u" && PartsBeforeAfter.registerSallaComponent("salla-parts-before-after");
 export {
-  n as default
+  PartsBeforeAfter as default
 };

@@ -1,10 +1,12 @@
-import { css as $, LitElement as x, nothing as d, html as l } from "lit";
-import { property as w } from "lit/decorators.js";
-import { classMap as m } from "lit/directives/class-map.js";
-import { styleMap as g } from "lit/directives/style-map.js";
-import { n as y, l as s, d as _, t as a, g as k, s as C, r as S, a as L, b as q } from "./registerSalla-Dct4KN_E.js";
-import { r as E } from "./commerceOutcome-B3T0_-WJ.js";
-const z = $`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, nothing, html } from "lit";
+import { property } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, l as localizedString, d as isTruthy, t, g as getRadioValue, s as sharedSectionCss, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .pct-shell {
     border-radius: var(--section-radius, 20px);
     border: 1px solid var(--border-color, #d9e2ec);
@@ -206,14 +208,14 @@ const z = $`
       transition: none !important;
     }
   }
-`, b = [
+`, CRITERIA_KEYS = [
   "quality",
   "lifespan",
   "warranty",
   "performance",
   "price",
   "usage"
-], h = {
+], DEFAULT_LABELS = {
   quality: { ar: "الجودة", en: "Quality" },
   lifespan: { ar: "العمر الافتراضي", en: "Lifespan" },
   warranty: { ar: "الضمان", en: "Warranty" },
@@ -221,110 +223,115 @@ const z = $`
   price: { ar: "السعر", en: "Price" },
   usage: { ar: "الاستخدام المناسب", en: "Best usage" }
 };
-function M(i) {
-  return k(i, "table").toLowerCase() === "cards" ? "cards" : "table";
+function resolveLayout(value) {
+  return getRadioValue(value, "table").toLowerCase() === "cards" ? "cards" : "table";
 }
-function R(i) {
-  const r = y(i).map((e, t) => {
-    const c = s(e.name);
+__name(resolveLayout, "resolveLayout");
+function parseTypes(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => {
+    const name = localizedString(row.name);
     return {
-      id: String(e.id ?? "").trim() || `type-${t + 1}`,
-      name: c,
-      badge: s(e.badge),
-      quality: s(e.quality),
-      lifespan: s(e.lifespan),
-      warranty: s(e.warranty),
-      performance: s(e.performance),
-      price: s(e.price),
-      usage: s(e.usage),
-      highlight: _(e.highlight, !1),
-      color: String(e.color ?? "").trim()
+      id: String(row.id ?? "").trim() || `type-${i + 1}`,
+      name,
+      badge: localizedString(row.badge),
+      quality: localizedString(row.quality),
+      lifespan: localizedString(row.lifespan),
+      warranty: localizedString(row.warranty),
+      performance: localizedString(row.performance),
+      price: localizedString(row.price),
+      usage: localizedString(row.usage),
+      highlight: isTruthy(row.highlight, !1),
+      color: String(row.color ?? "").trim()
     };
-  }).filter((e) => e.name);
-  return r.length ? r : H();
+  }).filter((item) => item.name);
+  return parsed.length ? parsed : defaultTypes();
 }
-function H() {
+__name(parseTypes, "parseTypes");
+function defaultTypes() {
   return [
     {
       id: "oem",
-      name: a("أصلي", "OEM / Original"),
-      badge: a("موصى به", "Recommended"),
-      quality: a("عالية جدًا", "Very high"),
-      lifespan: a("طويل", "Long"),
-      warranty: a("12–24 شهر", "12–24 months"),
-      performance: a("مطابق للمصنع", "Factory match"),
-      price: a("$$$", "$$$"),
-      usage: a("سيارات جديدة والصيانة الدورية", "New cars & scheduled service"),
+      name: t("أصلي", "OEM / Original"),
+      badge: t("موصى به", "Recommended"),
+      quality: t("عالية جدًا", "Very high"),
+      lifespan: t("طويل", "Long"),
+      warranty: t("12–24 شهر", "12–24 months"),
+      performance: t("مطابق للمصنع", "Factory match"),
+      price: t("$$$", "$$$"),
+      usage: t("سيارات جديدة والصيانة الدورية", "New cars & scheduled service"),
       highlight: !0,
       color: "#ea580c"
     },
     {
       id: "premium-alt",
-      name: a("بديل عالي الجودة", "Premium aftermarket"),
-      badge: a("قيمة ممتازة", "Great value"),
-      quality: a("عالية", "High"),
-      lifespan: a("طويل", "Long"),
-      warranty: a("12 شهر", "12 months"),
-      performance: a("قريب من الأصلي", "Near OEM"),
-      price: a("$$", "$$"),
-      usage: a("استبدال يومي بجودة موثوقة", "Daily replacement with trusted quality"),
+      name: t("بديل عالي الجودة", "Premium aftermarket"),
+      badge: t("قيمة ممتازة", "Great value"),
+      quality: t("عالية", "High"),
+      lifespan: t("طويل", "Long"),
+      warranty: t("12 شهر", "12 months"),
+      performance: t("قريب من الأصلي", "Near OEM"),
+      price: t("$$", "$$"),
+      usage: t("استبدال يومي بجودة موثوقة", "Daily replacement with trusted quality"),
       highlight: !1,
       color: "#2563eb"
     },
     {
       id: "commercial",
-      name: a("تجاري", "Commercial"),
-      badge: a("اقتصادي", "Budget"),
-      quality: a("متوسطة", "Medium"),
-      lifespan: a("متوسط", "Medium"),
-      warranty: a("3–6 أشهر", "3–6 months"),
-      performance: a("كافٍ للاستخدام العادي", "Adequate for normal use"),
-      price: a("$", "$"),
-      usage: a("سيارات قديمة أو استخدام محدود", "Older cars or limited use"),
+      name: t("تجاري", "Commercial"),
+      badge: t("اقتصادي", "Budget"),
+      quality: t("متوسطة", "Medium"),
+      lifespan: t("متوسط", "Medium"),
+      warranty: t("3–6 أشهر", "3–6 months"),
+      performance: t("كافٍ للاستخدام العادي", "Adequate for normal use"),
+      price: t("$", "$"),
+      usage: t("سيارات قديمة أو استخدام محدود", "Older cars or limited use"),
       highlight: !1,
       color: "#64748b"
     },
     {
       id: "refurb",
-      name: a("مجدد", "Refurbished"),
-      badge: a("إعادة تأهيل", "Refurb"),
-      quality: a("متغيرة", "Varies"),
-      lifespan: a("قصير–متوسط", "Short–medium"),
-      warranty: a("3–12 شهر", "3–12 months"),
-      performance: a("يعتمد على حالة القطعة", "Depends on unit condition"),
-      price: a("$–$$", "$–$$"),
-      usage: a("عند توفر ميزانية محدودة", "When budget is tight"),
+      name: t("مجدد", "Refurbished"),
+      badge: t("إعادة تأهيل", "Refurb"),
+      quality: t("متغيرة", "Varies"),
+      lifespan: t("قصير–متوسط", "Short–medium"),
+      warranty: t("3–12 شهر", "3–12 months"),
+      performance: t("يعتمد على حالة القطعة", "Depends on unit condition"),
+      price: t("$–$$", "$–$$"),
+      usage: t("عند توفر ميزانية محدودة", "When budget is tight"),
       highlight: !1,
       color: "#7c3aed"
     }
   ];
 }
-function O(i) {
-  const r = y(i).map((e) => {
-    const t = String(e.key ?? e.criteria ?? "").trim(), c = s(e.label) || s(e.name);
-    return { key: t, label: c };
-  }).filter((e) => b.includes(e.key) && !!e.label);
-  if (r.length) {
-    const e = new Map(r.map((t) => [t.key, t.label]));
-    return b.map((t) => ({
-      key: t,
-      label: e.get(t) || a(h[t].ar, h[t].en)
+__name(defaultTypes, "defaultTypes");
+function parseCriteriaRows(raw) {
+  const overrides = normalizeCollection(raw).map((row) => {
+    const key = String(row.key ?? row.criteria ?? "").trim(), label = localizedString(row.label) || localizedString(row.name);
+    return { key, label };
+  }).filter((row) => CRITERIA_KEYS.includes(row.key) && !!row.label);
+  if (overrides.length) {
+    const map = new Map(overrides.map((r) => [r.key, r.label]));
+    return CRITERIA_KEYS.map((key) => ({
+      key,
+      label: map.get(key) || t(DEFAULT_LABELS[key].ar, DEFAULT_LABELS[key].en)
     }));
   }
-  return b.map((e) => ({
-    key: e,
-    label: a(h[e].ar, h[e].en)
+  return CRITERIA_KEYS.map((key) => ({
+    key,
+    label: t(DEFAULT_LABELS[key].ar, DEFAULT_LABELS[key].en)
   }));
 }
-function v(i, r) {
-  return i[r] || "—";
+__name(parseCriteriaRows, "parseCriteriaRows");
+function getCellValue(type, key) {
+  return type[key] || "—";
 }
-var T = Object.defineProperty, A = (i, r, e, t) => {
-  for (var c = void 0, o = i.length - 1, n; o >= 0; o--)
-    (n = i[o]) && (c = n(r, e, c) || c);
-  return c && T(r, e, c), c;
-};
-const f = class f extends x {
+__name(getCellValue, "getCellValue");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _PartsComparisonTable = class _PartsComparisonTable extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.boundLangHandler = () => this.requestUpdate();
   }
@@ -334,46 +341,46 @@ const f = class f extends x {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
-  renderColumnHead(r) {
-    const e = r.color ? { "--col-color": r.color } : {};
-    return l`
+  renderColumnHead(type) {
+    const colorStyle = type.color ? { "--col-color": type.color } : {};
+    return html`
       <div
-        class=${m({ "pct-col-head": !0, "is-highlight": r.highlight })}
-        style=${g(e)}
+        class=${classMap({ "pct-col-head": !0, "is-highlight": type.highlight })}
+        style=${styleMap(colorStyle)}
       >
-        <span class="pct-col-head__name">${r.name}</span>
-        ${r.badge ? l`<span class="pct-badge">${r.badge}</span>` : d}
+        <span class="pct-col-head__name">${type.name}</span>
+        ${type.badge ? html`<span class="pct-badge">${type.badge}</span>` : nothing}
       </div>
     `;
   }
-  renderTable(r, e) {
-    return l`
-      <div class="pct-table-wrap" role="region" aria-label=${a("جدول المقارنة", "Comparison table")}>
+  renderTable(types, criteria) {
+    return html`
+      <div class="pct-table-wrap" role="region" aria-label=${t("جدول المقارنة", "Comparison table")}>
         <table class="pct-table">
           <thead>
             <tr>
-              <th scope="col">${a("المعيار", "Criteria")}</th>
-              ${r.map(
-      (t) => l`
-                  <th scope="col" style=${g(t.color ? { "--col-color": t.color } : {})}>
-                    ${this.renderColumnHead(t)}
+              <th scope="col">${t("المعيار", "Criteria")}</th>
+              ${types.map(
+      (type) => html`
+                  <th scope="col" style=${styleMap(type.color ? { "--col-color": type.color } : {})}>
+                    ${this.renderColumnHead(type)}
                   </th>
                 `
     )}
             </tr>
           </thead>
           <tbody>
-            ${e.map(
-      (t) => l`
+            ${criteria.map(
+      (row) => html`
                 <tr>
-                  <th scope="row">${t.label}</th>
-                  ${r.map(
-        (c) => l`
+                  <th scope="row">${row.label}</th>
+                  ${types.map(
+        (type) => html`
                       <td
-                        class=${m({ "pct-cell": !0, "is-highlight": c.highlight })}
-                        style=${g(c.color ? { "--col-color": c.color } : {})}
+                        class=${classMap({ "pct-cell": !0, "is-highlight": type.highlight })}
+                        style=${styleMap(type.color ? { "--col-color": type.color } : {})}
                       >
-                        ${v(c, t.key)}
+                        ${getCellValue(type, row.key)}
                       </td>
                     `
       )}
@@ -385,24 +392,24 @@ const f = class f extends x {
       </div>
     `;
   }
-  renderCard(r, e) {
-    const t = r.color ? { "--col-color": r.color } : {};
-    return l`
+  renderCard(type, criteria) {
+    const colorStyle = type.color ? { "--col-color": type.color } : {};
+    return html`
       <article
-        class=${m({ "pct-card": !0, "is-highlight": r.highlight })}
-        style=${g(t)}
-        aria-label=${r.name}
+        class=${classMap({ "pct-card": !0, "is-highlight": type.highlight })}
+        style=${styleMap(colorStyle)}
+        aria-label=${type.name}
       >
         <div class="pct-card__head">
-          <h3 class="pct-card__name">${r.name}</h3>
-          ${r.badge ? l`<span class="pct-badge">${r.badge}</span>` : d}
+          <h3 class="pct-card__name">${type.name}</h3>
+          ${type.badge ? html`<span class="pct-badge">${type.badge}</span>` : nothing}
         </div>
         <dl class="pct-card__rows">
-          ${e.map(
-      (c) => l`
+          ${criteria.map(
+      (row) => html`
               <div class="pct-card__row">
-                <dt>${c.label}</dt>
-                <dd>${v(r, c.key)}</dd>
+                <dt>${row.label}</dt>
+                <dd>${getCellValue(type, row.key)}</dd>
               </div>
             `
     )}
@@ -410,47 +417,47 @@ const f = class f extends x {
       </article>
     `;
   }
-  renderCards(r, e, t) {
-    return l`
-      <div class=${m({ "pct-cards": !0, ["pct-cards--stack"]: !0 })} role="list">
-        ${r.map((o) => this.renderCard(o, e))}
+  renderCards(types, criteria, layout) {
+    return html`
+      <div class=${classMap({ "pct-cards": !0, ["pct-cards--stack"]: !0 })} role="list">
+        ${types.map((type) => this.renderCard(type, criteria))}
       </div>
-      <div class="pct-scroll" role="list" aria-label=${a("تمرير أفقي للمقارنة", "Horizontal comparison scroll")}>
-        ${r.map((o) => this.renderCard(o, e))}
+      <div class="pct-scroll" role="list" aria-label=${t("تمرير أفقي للمقارنة", "Horizontal comparison scroll")}>
+        ${types.map((type) => this.renderCard(type, criteria))}
       </div>
     `;
   }
   render() {
-    const r = this.config || {}, e = S(r, "pct_"), t = R(r.pct_types), c = O(r.pct_rows), o = M(r.pct_layout), n = s(r.pct_title), u = s(r.pct_desc);
-    return l`
+    const c = this.config || {}, theme = readSectionTheme(c, "pct_"), types = parseTypes(c.pct_types), criteria = parseCriteriaRows(c.pct_rows), layout = resolveLayout(c.pct_layout), title = localizedString(c.pct_title), desc = localizedString(c.pct_desc);
+    return html`
       <section
         class="fs-section"
-        style=${g(L(e))}
-        aria-label=${n || a("مقارنة أنواع القطع", "Parts type comparison")}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title || t("مقارنة أنواع القطع", "Parts type comparison")}
       >
         <div class="fs-container">
-          ${n || u ? l`<div class="fs-hero">
-                ${n ? l`<h2 class="fs-title">${n}</h2>` : d}
-                ${u ? l`<p class="fs-desc">${u}</p>` : d}
-              </div>` : d}
+          ${title || desc ? html`<div class="fs-hero">
+                ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+                ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+              </div>` : nothing}
 
-          <div class=${m({ "pct-shell": !0, "pct-shell--table": o === "table", "pct-shell--cards": o === "cards" })}>
-            ${o === "table" ? this.renderTable(t, c) : d}
-            ${this.renderCards(t, c, o)}
+          <div class=${classMap({ "pct-shell": !0, "pct-shell--table": layout === "table", "pct-shell--cards": layout === "cards" })}>
+            ${layout === "table" ? this.renderTable(types, criteria) : nothing}
+            ${this.renderCards(types, criteria, layout)}
           </div>
-          ${E(r, "pct_", { ready: t.length > 0 })}
+          ${renderCommerceOutcome(c, "pct_", { ready: types.length > 0 })}
         </div>
       </section>
     `;
   }
 };
-f.styles = [C, z];
-let p = f;
-A([
-  w({ type: Object })
-], p.prototype, "config");
-q(p);
-typeof p < "u" && p.registerSallaComponent("salla-parts-comparison-table");
+__name(_PartsComparisonTable, "PartsComparisonTable"), _PartsComparisonTable.styles = [sharedSectionCss, componentStyles];
+let PartsComparisonTable = _PartsComparisonTable;
+__decorateClass([
+  property({ type: Object })
+], PartsComparisonTable.prototype, "config");
+bindSallaRegistration(PartsComparisonTable);
+typeof PartsComparisonTable < "u" && PartsComparisonTable.registerSallaComponent("salla-parts-comparison-table");
 export {
-  p as default
+  PartsComparisonTable as default
 };

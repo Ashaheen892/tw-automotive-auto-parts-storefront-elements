@@ -1,10 +1,12 @@
-import { css as S, LitElement as z, nothing as n, html as o } from "lit";
-import { property as L, state as k } from "lit/decorators.js";
-import { classMap as f } from "lit/directives/class-map.js";
-import { styleMap as U } from "lit/directives/style-map.js";
-import { n as C, l as v, f as _, e as $, c as I, k as E, h as F, d as R, t as i, g as j, s as N, i as P, r as B, a as M, b as O } from "./registerSalla-Dct4KN_E.js";
-import { r as T } from "./commerceOutcome-B3T0_-WJ.js";
-const q = S`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, nothing, html } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, l as localizedString, f as toNumber, e as extractLink, c as extractImageUrl, k as itemIdFromLabel, h as sortByOrder, d as isTruthy, t, g as getRadioValue, s as sharedSectionCss, i as isExternalUrl, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .vvh-shell {
     display: grid;
     gap: 1.15rem;
@@ -388,126 +390,135 @@ const q = S`
     }
   }
 `;
-function A(s) {
-  return j(s, "vertical").toLowerCase() === "horizontal" ? "horizontal" : "vertical";
+function resolveLayout(value) {
+  return getRadioValue(value, "vertical").toLowerCase() === "horizontal" ? "horizontal" : "vertical";
 }
-function D(s) {
-  return R(s.vvh_show_stats, !0);
+__name(resolveLayout, "resolveLayout");
+function showStats(config) {
+  return isTruthy(config.vvh_show_stats, !0);
 }
-function H(s) {
-  const e = C(s).map((t, a) => {
-    const l = v(t.title);
-    if (!l) return null;
-    const c = v(t.tag) || v(t.type) || v(t.service_type);
+__name(showStats, "showStats");
+function parseEvents(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => {
+    const title = localizedString(row.title);
+    if (!title) return null;
+    const category = localizedString(row.tag) || localizedString(row.type) || localizedString(row.service_type);
     return {
-      id: String(t.id ?? "").trim() || E(l, "") || `event-${a + 1}`,
-      date: v(t.date) || String(t.date ?? "").trim(),
-      km: _(t.km, 0),
-      title: l,
-      category: c,
-      image: I(t.image),
-      note: v(t.note),
-      documentUrl: $(t.document_url) || $(t.document),
-      nextService: v(t.next_service),
-      order: _(t.order, a + 1)
+      id: String(row.id ?? "").trim() || itemIdFromLabel(title, "") || `event-${i + 1}`,
+      date: localizedString(row.date) || String(row.date ?? "").trim(),
+      km: toNumber(row.km, 0),
+      title,
+      category,
+      image: extractImageUrl(row.image),
+      note: localizedString(row.note),
+      documentUrl: extractLink(row.document_url) || extractLink(row.document),
+      nextService: localizedString(row.next_service),
+      order: toNumber(row.order, i + 1)
     };
-  }).filter((t) => !!t), r = F(e, "order");
-  return r.length ? r : J();
+  }).filter((e) => !!e), sorted = sortByOrder(parsed, "order");
+  return sorted.length ? sorted : defaultEvents();
 }
-function J() {
+__name(parseEvents, "parseEvents");
+function defaultEvents() {
   return [
     {
       id: "oil",
-      title: i("تغيير الزيت", "Oil change"),
-      date: i("مارس 2025", "Mar 2025"),
+      title: t("تغيير الزيت", "Oil change"),
+      date: t("مارس 2025", "Mar 2025"),
       km: 45e3,
-      category: i("محرك", "Engine"),
+      category: t("محرك", "Engine"),
       image: "",
-      note: i("زيت تخليقي 5W-30 مع فلتر جديد.", "Synthetic 5W-30 oil with a new filter."),
+      note: t("زيت تخليقي 5W-30 مع فلتر جديد.", "Synthetic 5W-30 oil with a new filter."),
       documentUrl: "",
-      nextService: i("50,000 كم", "50,000 km"),
+      nextService: t("50,000 كم", "50,000 km"),
       order: 1
     },
     {
       id: "battery",
-      title: i("تبديل البطارية", "Battery replacement"),
-      date: i("يناير 2025", "Jan 2025"),
+      title: t("تبديل البطارية", "Battery replacement"),
+      date: t("يناير 2025", "Jan 2025"),
       km: 42e3,
-      category: i("كهرباء", "Electrical"),
+      category: t("كهرباء", "Electrical"),
       image: "",
-      note: i("بطارية 70 أمبير مع ضمان سنتين.", "70Ah battery with 2-year warranty."),
+      note: t("بطارية 70 أمبير مع ضمان سنتين.", "70Ah battery with 2-year warranty."),
       documentUrl: "",
       nextService: "",
       order: 2
     },
     {
       id: "brakes",
-      title: i("فحص الفرامل", "Brake inspection"),
-      date: i("نوفمبر 2024", "Nov 2024"),
+      title: t("فحص الفرامل", "Brake inspection"),
+      date: t("نوفمبر 2024", "Nov 2024"),
       km: 38e3,
-      category: i("فرامل", "Brakes"),
+      category: t("فرامل", "Brakes"),
       image: "",
-      note: i("فحمات عند 60% — لا حاجة للاستبدال الآن.", "Pads at 60% — no replacement needed yet."),
+      note: t("فحمات عند 60% — لا حاجة للاستبدال الآن.", "Pads at 60% — no replacement needed yet."),
       documentUrl: "",
-      nextService: i("45,000 كم", "45,000 km"),
+      nextService: t("45,000 كم", "45,000 km"),
       order: 3
     },
     {
       id: "tires",
-      title: i("تغيير الإطارات", "Tire change"),
-      date: i("سبتمبر 2024", "Sep 2024"),
+      title: t("تغيير الإطارات", "Tire change"),
+      date: t("سبتمبر 2024", "Sep 2024"),
       km: 35e3,
-      category: i("إطارات", "Tires"),
+      category: t("إطارات", "Tires"),
       image: "",
-      note: i("أربعة إطارات صيفية جديدة.", "Four new summer tires."),
+      note: t("أربعة إطارات صيفية جديدة.", "Four new summer tires."),
       documentUrl: "",
-      nextService: i("تدوير عند 40,000 كم", "Rotate at 40,000 km"),
+      nextService: t("تدوير عند 40,000 كم", "Rotate at 40,000 km"),
       order: 4
     },
     {
       id: "service",
-      title: i("الصيانة الدورية", "Routine service"),
-      date: i("يونيو 2024", "Jun 2024"),
+      title: t("الصيانة الدورية", "Routine service"),
+      date: t("يونيو 2024", "Jun 2024"),
       km: 3e4,
-      category: i("دورية", "Routine"),
+      category: t("دورية", "Routine"),
       image: "",
-      note: i("فحص شامل مع استبدال الفلاتر.", "Full inspection with filter replacement."),
+      note: t("فحص شامل مع استبدال الفلاتر.", "Full inspection with filter replacement."),
       documentUrl: "",
-      nextService: i("35,000 كم", "35,000 km"),
+      nextService: t("35,000 كم", "35,000 km"),
       order: 5
     }
   ];
 }
-function u(s, e) {
-  if (!s) return "";
-  const r = s.toLocaleString();
-  return e ? `${r} ${e}` : r;
+__name(defaultEvents, "defaultEvents");
+function formatKm(km, unitLabel) {
+  if (!km) return "";
+  const formatted = km.toLocaleString();
+  return unitLabel ? `${formatted} ${unitLabel}` : formatted;
 }
-function m(s, e, r, t) {
-  return v(s[e]) || i(r, t);
+__name(formatKm, "formatKm");
+function label(config, key, ar, en) {
+  return localizedString(config[key]) || t(ar, en);
 }
-function W(s) {
-  return s[0] ?? null;
+__name(label, "label");
+function latestEvent(events) {
+  return events[0] ?? null;
 }
-function K(s) {
-  for (const e of s)
-    if (e.nextService.trim()) return e.nextService.trim();
+__name(latestEvent, "latestEvent");
+function nextServiceHint(events) {
+  for (const event of events)
+    if (event.nextService.trim()) return event.nextService.trim();
   return "";
 }
-function G(s) {
-  const e = /* @__PURE__ */ new Set(), r = [];
-  for (const t of s) {
-    const a = t.category.trim();
-    !a || e.has(a) || (e.add(a), r.push(a));
+__name(nextServiceHint, "nextServiceHint");
+function uniqueCategories(events) {
+  const seen = /* @__PURE__ */ new Set(), out = [];
+  for (const event of events) {
+    const cat = event.category.trim();
+    !cat || seen.has(cat) || (seen.add(cat), out.push(cat));
   }
-  return r;
+  return out;
 }
-var Q = Object.defineProperty, b = (s, e, r, t) => {
-  for (var a = void 0, l = s.length - 1, c; l >= 0; l--)
-    (c = s[l]) && (a = c(e, r, a) || a);
-  return a && Q(e, r, a), a;
-};
-const x = class x extends z {
+__name(uniqueCategories, "uniqueCategories");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _VisualVehicleHistory = class _VisualVehicleHistory extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.selectedId = "", this.filter = "", this.boundLangHandler = () => this.requestUpdate();
   }
@@ -517,113 +528,113 @@ const x = class x extends z {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
-  willUpdate(e) {
-    var r;
-    if (e.has("config")) {
-      const t = this.events;
-      this.filter = "", this.selectedId = ((r = t[0]) == null ? void 0 : r.id) ?? "";
+  willUpdate(changed) {
+    var _a;
+    if (changed.has("config")) {
+      const events = this.events;
+      this.filter = "", this.selectedId = ((_a = events[0]) == null ? void 0 : _a.id) ?? "";
     }
   }
   get events() {
-    var e;
-    return H((e = this.config) == null ? void 0 : e.vvh_events);
+    var _a;
+    return parseEvents((_a = this.config) == null ? void 0 : _a.vvh_events);
   }
   get filtered() {
     return this.filter ? this.events.filter((e) => e.category === this.filter) : this.events;
   }
   get selected() {
-    const e = this.filtered;
-    return e.find((r) => r.id === this.selectedId) ?? e[0] ?? null;
+    const list = this.filtered;
+    return list.find((e) => e.id === this.selectedId) ?? list[0] ?? null;
   }
-  select(e) {
-    this.selectedId = e, this.updateComplete.then(() => {
-      var t;
-      const r = (t = this.renderRoot) == null ? void 0 : t.querySelector(".vvh-trigger.is-active");
-      r == null || r.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  select(id) {
+    this.selectedId = id, this.updateComplete.then(() => {
+      var _a;
+      const active = (_a = this.renderRoot) == null ? void 0 : _a.querySelector(".vvh-trigger.is-active");
+      active == null || active.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
     });
   }
-  setFilter(e) {
-    var t;
-    this.filter = e;
-    const r = e ? this.events.filter((a) => a.category === e) : this.events;
-    this.selectedId = ((t = r[0]) == null ? void 0 : t.id) ?? "";
+  setFilter(value) {
+    var _a;
+    this.filter = value;
+    const list = value ? this.events.filter((e) => e.category === value) : this.events;
+    this.selectedId = ((_a = list[0]) == null ? void 0 : _a.id) ?? "";
   }
-  shift(e) {
-    const r = this.filtered;
-    if (!r.length) return;
-    const a = (Math.max(0, r.findIndex((l) => {
-      var c;
-      return l.id === ((c = this.selected) == null ? void 0 : c.id);
-    })) + e + r.length) % r.length;
-    this.select(r[a].id);
+  shift(delta) {
+    const list = this.filtered;
+    if (!list.length) return;
+    const next = (Math.max(0, list.findIndex((e) => {
+      var _a;
+      return e.id === ((_a = this.selected) == null ? void 0 : _a.id);
+    })) + delta + list.length) % list.length;
+    this.select(list[next].id);
   }
-  renderStats(e) {
-    if (!D(this.config || {}) || !e.length) return n;
-    const r = m(this.config || {}, "vvh_unit_label", "كم", "km"), t = W(e), a = K(e);
-    return o`
-      <div class="vvh-stats" role="group" aria-label=${i("ملخص السجل", "Log summary")}>
+  renderStats(events) {
+    if (!showStats(this.config || {}) || !events.length) return nothing;
+    const unit = label(this.config || {}, "vvh_unit_label", "كم", "km"), latest = latestEvent(events), next = nextServiceHint(events);
+    return html`
+      <div class="vvh-stats" role="group" aria-label=${t("ملخص السجل", "Log summary")}>
         <div class="vvh-stat">
-          <p class="vvh-stat__label">${i("عدد السجلات", "Records")}</p>
-          <p class="vvh-stat__value">${e.length}</p>
+          <p class="vvh-stat__label">${t("عدد السجلات", "Records")}</p>
+          <p class="vvh-stat__value">${events.length}</p>
         </div>
         <div class="vvh-stat">
-          <p class="vvh-stat__label">${i("آخر خدمة", "Latest service")}</p>
+          <p class="vvh-stat__label">${t("آخر خدمة", "Latest service")}</p>
           <p class="vvh-stat__value">
-            ${(t == null ? void 0 : t.title) || "—"}
-            ${t != null && t.km ? o` · ${u(t.km, r)}` : n}
+            ${(latest == null ? void 0 : latest.title) || "—"}
+            ${latest != null && latest.km ? html` · ${formatKm(latest.km, unit)}` : nothing}
           </p>
         </div>
         <div class="vvh-stat">
-          <p class="vvh-stat__label">${m(this.config || {}, "vvh_next_label", "الصيانة القادمة", "Next service")}</p>
-          <p class="vvh-stat__value">${a || i("غير محددة", "Not set")}</p>
+          <p class="vvh-stat__label">${label(this.config || {}, "vvh_next_label", "الصيانة القادمة", "Next service")}</p>
+          <p class="vvh-stat__value">${next || t("غير محددة", "Not set")}</p>
         </div>
       </div>
     `;
   }
-  renderFilters(e) {
-    const r = G(e);
-    return r.length < 2 ? n : o`
-      <div class="vvh-filters" role="toolbar" aria-label=${i("تصفية حسب النوع", "Filter by type")}>
+  renderFilters(events) {
+    const cats = uniqueCategories(events);
+    return cats.length < 2 ? nothing : html`
+      <div class="vvh-filters" role="toolbar" aria-label=${t("تصفية حسب النوع", "Filter by type")}>
         <button
           type="button"
-          class=${f({ "vvh-filter": !0, "is-active": !this.filter })}
+          class=${classMap({ "vvh-filter": !0, "is-active": !this.filter })}
           @click=${() => this.setFilter("")}
         >
-          ${i("الكل", "All")}
+          ${t("الكل", "All")}
         </button>
-        ${r.map(
-      (t) => o`<button
+        ${cats.map(
+      (cat) => html`<button
             type="button"
-            class=${f({ "vvh-filter": !0, "is-active": this.filter === t })}
-            @click=${() => this.setFilter(t)}
+            class=${classMap({ "vvh-filter": !0, "is-active": this.filter === cat })}
+            @click=${() => this.setFilter(cat)}
           >
-            ${t}
+            ${cat}
           </button>`
     )}
       </div>
     `;
   }
-  renderDetail(e, r) {
-    if (!e)
-      return o`<div class="vvh-detail">
-        <p class="vvh-empty">${i("اختر سجلًا من الخط الزمني لعرض التفاصيل.", "Pick a log entry to see details.")}</p>
+  renderDetail(event, list) {
+    if (!event)
+      return html`<div class="vvh-detail">
+        <p class="vvh-empty">${t("اختر سجلًا من الخط الزمني لعرض التفاصيل.", "Pick a log entry to see details.")}</p>
       </div>`;
-    const t = this.config || {}, a = m(t, "vvh_unit_label", "كم", "km"), l = m(t, "vvh_next_label", "الصيانة القادمة", "Next service"), c = r.findIndex((g) => g.id === e.id);
-    return o`
+    const c = this.config || {}, unit = label(c, "vvh_unit_label", "كم", "km"), nextLabel = label(c, "vvh_next_label", "الصيانة القادمة", "Next service"), idx = list.findIndex((e) => e.id === event.id);
+    return html`
       <div class="vvh-detail" role="region" aria-live="polite">
         <div class="vvh-detail__head">
           <div>
             <p class="vvh-detail__kicker">
-              ${i("تفاصيل السجل", "Log details")}
-              ${c >= 0 ? ` · ${c + 1}/${r.length}` : ""}
+              ${t("تفاصيل السجل", "Log details")}
+              ${idx >= 0 ? ` · ${idx + 1}/${list.length}` : ""}
             </p>
-            <h3 class="vvh-detail__title">${e.title}</h3>
+            <h3 class="vvh-detail__title">${event.title}</h3>
           </div>
-          ${r.length > 1 ? o`<div class="vvh-detail__nav" dir="ltr">
+          ${list.length > 1 ? html`<div class="vvh-detail__nav" dir="ltr">
                 <button
                   type="button"
                   class="vvh-nav-btn"
-                  aria-label=${i("السابق", "Previous")}
+                  aria-label=${t("السابق", "Previous")}
                   @click=${() => this.shift(-1)}
                 >
                   ‹
@@ -631,134 +642,134 @@ const x = class x extends z {
                 <button
                   type="button"
                   class="vvh-nav-btn"
-                  aria-label=${i("التالي", "Next")}
+                  aria-label=${t("التالي", "Next")}
                   @click=${() => this.shift(1)}
                 >
                   ›
                 </button>
-              </div>` : n}
+              </div>` : nothing}
         </div>
 
         <p class="vvh-detail__meta">
-          ${e.date || n}
-          ${e.date && e.km ? " · " : n}
-          ${e.km ? u(e.km, a) : n}
-          ${e.category ? o` · <span class="vvh-chip vvh-chip--accent">${e.category}</span>` : n}
+          ${event.date || nothing}
+          ${event.date && event.km ? " · " : nothing}
+          ${event.km ? formatKm(event.km, unit) : nothing}
+          ${event.category ? html` · <span class="vvh-chip vvh-chip--accent">${event.category}</span>` : nothing}
         </p>
 
-        ${e.image ? o`<div class="vvh-detail__media">
-              <img src=${e.image} alt="" loading="lazy" decoding="async" />
-            </div>` : n}
+        ${event.image ? html`<div class="vvh-detail__media">
+              <img src=${event.image} alt="" loading="lazy" decoding="async" />
+            </div>` : nothing}
 
-        ${e.note ? o`<p class="vvh-detail__note">${e.note}</p>` : n}
+        ${event.note ? html`<p class="vvh-detail__note">${event.note}</p>` : nothing}
 
-        ${e.nextService ? o`<div class="vvh-next" role="note">
-              <span class="vvh-next__label">${l}</span>
-              <p class="vvh-next__text">${e.nextService}</p>
-            </div>` : n}
+        ${event.nextService ? html`<div class="vvh-next" role="note">
+              <span class="vvh-next__label">${nextLabel}</span>
+              <p class="vvh-next__text">${event.nextService}</p>
+            </div>` : nothing}
 
-        ${e.documentUrl ? o`<a
+        ${event.documentUrl ? html`<a
               class="fs-btn fs-btn--ghost fs-tap"
-              href=${e.documentUrl}
+              href=${event.documentUrl}
               target="_blank"
-              rel=${P(e.documentUrl) ? "noopener noreferrer" : n}
+              rel=${isExternalUrl(event.documentUrl) ? "noopener noreferrer" : nothing}
             >
-              ${i("عرض المستند", "View document")}
-            </a>` : n}
+              ${t("عرض المستند", "View document")}
+            </a>` : nothing}
       </div>
     `;
   }
-  renderProducts(e) {
-    return T(this.config || {}, "vvh_", {
-      ready: !!e
+  renderProducts(event) {
+    return renderCommerceOutcome(this.config || {}, "vvh_", {
+      ready: !!event
     });
   }
   render() {
-    const e = this.config || {}, r = B(e, "vvh_"), t = this.events, a = this.filtered, l = A(e.vvh_layout), c = m(e, "vvh_unit_label", "كم", "km"), g = v(e.vvh_title) || i("سجل صيانة السيارة", "Vehicle maintenance log"), y = v(e.vvh_desc) || i(
+    const c = this.config || {}, theme = readSectionTheme(c, "vvh_"), events = this.events, list = this.filtered, layout = resolveLayout(c.vvh_layout), unit = label(c, "vvh_unit_label", "كم", "km"), title = localizedString(c.vvh_title) || t("سجل صيانة السيارة", "Vehicle maintenance log"), desc = localizedString(c.vvh_desc) || t(
       "راجع خدمات سيارتك السابقة، وتصفّح القطع المناسبة لكل سجل صيانة.",
       "Review past vehicle services and browse matching parts for each log entry."
-    ), h = this.selected;
-    return o`
+    ), selected = this.selected;
+    return html`
       <section
         class="fs-section"
-        style=${U(M(r))}
-        aria-label=${g}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title}
       >
         <div class="fs-container">
           <div class="vvh-shell">
             <div class="fs-hero">
-              <p class="fs-eyebrow">${i("دفتر الصيانة", "Service logbook")}</p>
-              ${g ? o`<h2 class="fs-title">${g}</h2>` : n}
-              ${y ? o`<p class="fs-desc">${y}</p>` : n}
+              <p class="fs-eyebrow">${t("دفتر الصيانة", "Service logbook")}</p>
+              ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+              ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
             </div>
 
-            ${this.renderStats(t)}
-            ${this.renderFilters(t)}
+            ${this.renderStats(events)}
+            ${this.renderFilters(events)}
 
             <div
-              class=${f({
+              class=${classMap({
       "vvh-layout": !0,
-      "vvh-layout--vertical": l === "vertical",
-      "vvh-layout--horizontal": l === "horizontal"
+      "vvh-layout--vertical": layout === "vertical",
+      "vvh-layout--horizontal": layout === "horizontal"
     })}
             >
               <div class="vvh-card">
                 <div class="vvh-track" role="list">
-                  ${a.length ? a.map(
-      (d, w) => o`
+                  ${list.length ? list.map(
+      (event, i) => html`
                           <div class="vvh-item" role="listitem">
                             <button
                               type="button"
-                              class=${f({
+                              class=${classMap({
         "vvh-trigger": !0,
-        "is-active": d.id === (h == null ? void 0 : h.id)
+        "is-active": event.id === (selected == null ? void 0 : selected.id)
       })}
-                              aria-pressed=${d.id === (h == null ? void 0 : h.id) ? "true" : "false"}
-                              @click=${() => this.select(d.id)}
+                              aria-pressed=${event.id === (selected == null ? void 0 : selected.id) ? "true" : "false"}
+                              @click=${() => this.select(event.id)}
                             >
-                              <span class="vvh-trigger__index">${String(w + 1).padStart(2, "0")}</span>
+                              <span class="vvh-trigger__index">${String(i + 1).padStart(2, "0")}</span>
                               <span class="vvh-trigger__body">
-                                ${d.date ? o`<span class="vvh-trigger__date">${d.date}</span>` : n}
-                                <span class="vvh-trigger__title">${d.title}</span>
+                                ${event.date ? html`<span class="vvh-trigger__date">${event.date}</span>` : nothing}
+                                <span class="vvh-trigger__title">${event.title}</span>
                                 <span class="vvh-trigger__meta">
-                                  ${d.category ? o`<span class="vvh-chip">${d.category}</span>` : n}
-                                  ${d.km ? o`<span class="vvh-chip vvh-chip--accent"
-                                        >${u(d.km, c)}</span
-                                      >` : n}
+                                  ${event.category ? html`<span class="vvh-chip">${event.category}</span>` : nothing}
+                                  ${event.km ? html`<span class="vvh-chip vvh-chip--accent"
+                                        >${formatKm(event.km, unit)}</span
+                                      >` : nothing}
                                 </span>
                               </span>
                             </button>
                           </div>
                         `
-    ) : o`<p class="vvh-empty">${i("لا توجد سجلات في هذا التصنيف.", "No records in this filter.")}</p>`}
+    ) : html`<p class="vvh-empty">${t("لا توجد سجلات في هذا التصنيف.", "No records in this filter.")}</p>`}
                 </div>
               </div>
 
-              ${this.renderDetail(h, a)}
+              ${this.renderDetail(selected, list)}
             </div>
 
-            ${this.renderProducts(h)}
+            ${this.renderProducts(selected)}
           </div>
         </div>
       </section>
     `;
   }
 };
-x.styles = [N, q];
-let p = x;
-b([
-  L({ type: Object })
-], p.prototype, "config");
-b([
-  k()
-], p.prototype, "selectedId");
-b([
-  k()
-], p.prototype, "filter");
-O(
-  p
+__name(_VisualVehicleHistory, "VisualVehicleHistory"), _VisualVehicleHistory.styles = [sharedSectionCss, componentStyles];
+let VisualVehicleHistory = _VisualVehicleHistory;
+__decorateClass([
+  property({ type: Object })
+], VisualVehicleHistory.prototype, "config");
+__decorateClass([
+  state()
+], VisualVehicleHistory.prototype, "selectedId");
+__decorateClass([
+  state()
+], VisualVehicleHistory.prototype, "filter");
+bindSallaRegistration(
+  VisualVehicleHistory
 );
-typeof p < "u" && p.registerSallaComponent("salla-visual-vehicle-history");
+typeof VisualVehicleHistory < "u" && VisualVehicleHistory.registerSallaComponent("salla-visual-vehicle-history");
 export {
-  p as default
+  VisualVehicleHistory as default
 };

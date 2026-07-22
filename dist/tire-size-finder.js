@@ -1,10 +1,12 @@
-import { css as w, LitElement as x, html as d, nothing as m } from "lit";
-import { property as S, state as g } from "lit/decorators.js";
-import { classMap as z } from "lit/directives/class-map.js";
-import { styleMap as C } from "lit/directives/style-map.js";
-import { n as $, l as c, k as b, g as T, t as p, s as k, r as I, a as L, b as R } from "./registerSalla-Dct4KN_E.js";
-import { r as A } from "./commerceOutcome-B3T0_-WJ.js";
-const E = w`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, html, nothing } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, l as localizedString, k as itemIdFromLabel, g as getRadioValue, t, s as sharedSectionCss, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .tsf-shell {
     width: 100%;
     display: grid;
@@ -131,7 +133,7 @@ const E = w`
     color: var(--muted-color, #64748b);
     text-align: center;
   }
-`, D = [
+`, DEFAULT_TYPES_META = [
   {
     id: "all-season",
     ar: "طوال السنة",
@@ -161,72 +163,82 @@ const E = w`
     den: "Desert & rough roads"
   }
 ];
-function M() {
-  return D.map((s) => ({
-    id: s.id,
-    name: p(s.ar, s.en),
-    desc: p(s.dar, s.den)
+function defaultTireTypes() {
+  return DEFAULT_TYPES_META.map((x) => ({
+    id: x.id,
+    name: t(x.ar, x.en),
+    desc: t(x.dar, x.den)
   }));
 }
-const P = ["185", "195", "205", "215", "225", "235", "245", "255", "265"], U = ["35", "40", "45", "50", "55", "60", "65", "70"], W = ["15", "16", "17", "18", "19", "20", "21", "22"];
-function l(s, e, t, i) {
-  return c(s[e]) || p(t, i);
+__name(defaultTireTypes, "defaultTireTypes");
+const DEFAULT_WIDTHS = ["185", "195", "205", "215", "225", "235", "245", "255", "265"], DEFAULT_ASPECTS = ["35", "40", "45", "50", "55", "60", "65", "70"], DEFAULT_RIMS = ["15", "16", "17", "18", "19", "20", "21", "22"];
+function label(config, key, ar, en) {
+  return localizedString(config[key]) || t(ar, en);
 }
-function _(s) {
-  const e = $(s).map((t, i) => {
-    const r = c(t.name) || c(t.title);
-    return r ? {
-      id: b(r, "") || `type-${i + 1}`,
-      name: r,
-      desc: c(t.desc) || c(t.description)
+__name(label, "label");
+function parseTireTypes(raw) {
+  const rows = normalizeCollection(raw).map((row, i) => {
+    const name = localizedString(row.name) || localizedString(row.title);
+    return name ? {
+      id: itemIdFromLabel(name, "") || `type-${i + 1}`,
+      name,
+      desc: localizedString(row.desc) || localizedString(row.description)
     } : null;
-  }).filter((t) => !!t);
-  return e.length ? e : M();
+  }).filter((x) => !!x);
+  return rows.length ? rows : defaultTireTypes();
 }
-function v(s, e) {
-  const t = c(s, "") || String(s ?? "").trim();
-  if (!t) return e;
-  const i = t.split(/[,،|\s]+/).map((r) => r.trim()).filter(Boolean);
-  return i.length ? [...new Set(i)] : e;
+__name(parseTireTypes, "parseTireTypes");
+function parseSizeList(raw, fallback) {
+  const text = localizedString(raw, "") || String(raw ?? "").trim();
+  if (!text) return fallback;
+  const parts = text.split(/[,،|\s]+/).map((p) => p.trim()).filter(Boolean);
+  return parts.length ? [...new Set(parts)] : fallback;
 }
-function B(s) {
-  return v(s.tsf_widths, P);
+__name(parseSizeList, "parseSizeList");
+function resolveWidths(config) {
+  return parseSizeList(config.tsf_widths, DEFAULT_WIDTHS);
 }
-function F(s) {
-  return v(s.tsf_aspects, U);
+__name(resolveWidths, "resolveWidths");
+function resolveAspects(config) {
+  return parseSizeList(config.tsf_aspects, DEFAULT_ASPECTS);
 }
-function H(s) {
-  return v(s.tsf_rims, W);
+__name(resolveAspects, "resolveAspects");
+function resolveRims(config) {
+  return parseSizeList(config.tsf_rims, DEFAULT_RIMS);
 }
-function O(s) {
-  return $(s).map((e, t) => {
-    const i = String(e.width ?? "").trim(), r = String(e.aspect ?? e.profile ?? "").trim(), a = String(e.rim ?? e.diameter ?? "").trim();
-    if (!i || !r || !a) return null;
-    const f = T(e.type, "") || b(c(e.type_name), "") || "", u = `${i}/${r} R${a}`;
+__name(resolveRims, "resolveRims");
+function parseTireSizes(raw) {
+  return normalizeCollection(raw).map((row, i) => {
+    const width = String(row.width ?? "").trim(), aspect = String(row.aspect ?? row.profile ?? "").trim(), rim = String(row.rim ?? row.diameter ?? "").trim();
+    if (!width || !aspect || !rim) return null;
+    const typeId = getRadioValue(row.type, "") || itemIdFromLabel(localizedString(row.type_name), "") || "", labelText = `${width}/${aspect} R${rim}`;
     return {
-      id: b(u, "") || `size-${t + 1}`,
-      width: i,
-      aspect: r,
-      rim: a,
-      typeId: f,
-      label: u
+      id: itemIdFromLabel(labelText, "") || `size-${i + 1}`,
+      width,
+      aspect,
+      rim,
+      typeId,
+      label: labelText
     };
-  }).filter((e) => !!e);
+  }).filter((x) => !!x);
 }
-function j(s, e, t) {
-  return !s || !e || !t ? "" : `${s}/${e} R${t}`;
+__name(parseTireSizes, "parseTireSizes");
+function formatTireCode(width, aspect, rim) {
+  return !width || !aspect || !rim ? "" : `${width}/${aspect} R${rim}`;
 }
-function q(s, e, t, i, r) {
-  return s.find(
-    (a) => a.width === e && a.aspect === t && a.rim === i && (!r || !a.typeId || a.typeId === r)
+__name(formatTireCode, "formatTireCode");
+function findMatchingSize(rows, width, aspect, rim, typeId) {
+  return rows.find(
+    (r) => r.width === width && r.aspect === aspect && r.rim === rim && (!typeId || !r.typeId || r.typeId === typeId)
   ) || null;
 }
-var V = Object.defineProperty, h = (s, e, t, i) => {
-  for (var r = void 0, a = s.length - 1, f; a >= 0; a--)
-    (f = s[a]) && (r = f(e, t, r) || r);
-  return r && V(e, t, r), r;
-};
-const y = class y extends x {
+__name(findMatchingSize, "findMatchingSize");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _TireSizeFinder = class _TireSizeFinder extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.typeId = "", this.width = "", this.aspect = "", this.rim = "", this.boundLangHandler = () => this.requestUpdate();
   }
@@ -236,120 +248,120 @@ const y = class y extends x {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
-  willUpdate(e) {
-    var t, i;
-    if (e.has("config")) {
-      const r = _((t = this.config) == null ? void 0 : t.tsf_types);
-      this.typeId = ((i = r[0]) == null ? void 0 : i.id) || "", this.width = "", this.aspect = "", this.rim = "";
+  willUpdate(changed) {
+    var _a, _b;
+    if (changed.has("config")) {
+      const types = parseTireTypes((_a = this.config) == null ? void 0 : _a.tsf_types);
+      this.typeId = ((_b = types[0]) == null ? void 0 : _b.id) || "", this.width = "", this.aspect = "", this.rim = "";
     }
   }
   get types() {
-    var e;
-    return _((e = this.config) == null ? void 0 : e.tsf_types);
+    var _a;
+    return parseTireTypes((_a = this.config) == null ? void 0 : _a.tsf_types);
   }
   get activeType() {
-    return this.types.find((e) => e.id === this.typeId) ?? null;
+    return this.types.find((x) => x.id === this.typeId) ?? null;
   }
   get sizeRows() {
-    var e;
-    return O((e = this.config) == null ? void 0 : e.tsf_sizes);
+    var _a;
+    return parseTireSizes((_a = this.config) == null ? void 0 : _a.tsf_sizes);
   }
   get matchingSize() {
-    return q(this.sizeRows, this.width, this.aspect, this.rim, this.typeId);
+    return findMatchingSize(this.sizeRows, this.width, this.aspect, this.rim, this.typeId);
   }
   get code() {
-    return j(this.width, this.aspect, this.rim);
+    return formatTireCode(this.width, this.aspect, this.rim);
   }
   get ready() {
     return !!(this.typeId && this.width && this.aspect && this.rim);
   }
-  renderChips(e, t, i, r) {
-    return d`
-      <div class="tsf-chips" role="group" aria-label=${r}>
-        ${e.map(
-      (a) => d`<button
+  renderChips(values, selected, onPick, aria) {
+    return html`
+      <div class="tsf-chips" role="group" aria-label=${aria}>
+        ${values.map(
+      (v) => html`<button
             type="button"
-            class=${z({ "tsf-chip": !0, "is-active": t === a })}
-            aria-pressed=${t === a ? "true" : "false"}
-            @click=${() => i(a)}
+            class=${classMap({ "tsf-chip": !0, "is-active": selected === v })}
+            aria-pressed=${selected === v ? "true" : "false"}
+            @click=${() => onPick(v)}
           >
-            ${a}
+            ${v}
           </button>`
     )}
       </div>
     `;
   }
   renderProducts() {
-    return A(this.config || {}, "tsf_", {
+    return renderCommerceOutcome(this.config || {}, "tsf_", {
       ready: this.ready
     });
   }
   render() {
-    const e = this.config || {}, t = I(e, "tsf_"), i = c(e.tsf_title) || p("محدد مقاس الإطار", "Tire size finder"), r = c(e.tsf_desc) || p(
+    const c = this.config || {}, theme = readSectionTheme(c, "tsf_"), title = localizedString(c.tsf_title) || t("محدد مقاس الإطار", "Tire size finder"), desc = localizedString(c.tsf_desc) || t(
       "اختر نوع الإطار ثم العرض والنسبة والجنط لعرض المقاس المناسب للسيارة.",
       "Choose tire type, then width, aspect ratio, and rim to see the matching size."
-    ), a = B(e), f = F(e), u = H(e);
-    return d`
+    ), widths = resolveWidths(c), aspects = resolveAspects(c), rims = resolveRims(c);
+    return html`
       <section
         class="fs-section"
-        style=${C(L(t))}
-        aria-label=${i}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title}
       >
         <div class="fs-container">
-          ${i || r ? d`<div class="fs-hero">
-                ${i ? d`<h2 class="fs-title">${i}</h2>` : m}
-                ${r ? d`<p class="fs-desc">${r}</p>` : m}
-              </div>` : m}
+          ${title || desc ? html`<div class="fs-hero">
+                ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+                ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+              </div>` : nothing}
 
           <div class="tsf-shell">
             <div class="tsf-card">
               <div class="tsf-code" aria-live="polite">
-                <p class="tsf-code__label">${p("المقاس المختار", "Selected size")}</p>
+                <p class="tsf-code__label">${t("المقاس المختار", "Selected size")}</p>
                 <p class="tsf-code__value">${this.code || "— / — R—"}</p>
               </div>
 
               <div class="tsf-field">
-                <span class="tsf-label">${l(e, "tsf_type_label", "نوع الإطار", "Tire type")}</span>
+                <span class="tsf-label">${label(c, "tsf_type_label", "نوع الإطار", "Tire type")}</span>
                 <div class="tsf-types" role="group">
                   ${this.types.map(
-      (n) => d`<button
+      (type) => html`<button
                       type="button"
                       class="tsf-type"
-                      aria-pressed=${this.typeId === n.id ? "true" : "false"}
+                      aria-pressed=${this.typeId === type.id ? "true" : "false"}
                       @click=${() => {
-        this.typeId = n.id;
+        this.typeId = type.id;
       }}
                     >
-                      <span class="tsf-type__name">${n.name}</span>
-                      ${n.desc ? d`<span class="tsf-type__desc">${n.desc}</span>` : m}
+                      <span class="tsf-type__name">${type.name}</span>
+                      ${type.desc ? html`<span class="tsf-type__desc">${type.desc}</span>` : nothing}
                     </button>`
     )}
                 </div>
               </div>
 
               <div class="tsf-field">
-                <span class="tsf-label">${l(e, "tsf_width_label", "العرض", "Width")}</span>
-                ${this.renderChips(a, this.width, (n) => {
-      this.width = n;
-    }, l(e, "tsf_width_label", "العرض", "Width"))}
+                <span class="tsf-label">${label(c, "tsf_width_label", "العرض", "Width")}</span>
+                ${this.renderChips(widths, this.width, (v) => {
+      this.width = v;
+    }, label(c, "tsf_width_label", "العرض", "Width"))}
               </div>
 
               <div class="tsf-field">
-                <span class="tsf-label">${l(e, "tsf_aspect_label", "نسبة الارتفاع", "Aspect ratio")}</span>
-                ${this.renderChips(f, this.aspect, (n) => {
-      this.aspect = n;
-    }, l(e, "tsf_aspect_label", "نسبة الارتفاع", "Aspect ratio"))}
+                <span class="tsf-label">${label(c, "tsf_aspect_label", "نسبة الارتفاع", "Aspect ratio")}</span>
+                ${this.renderChips(aspects, this.aspect, (v) => {
+      this.aspect = v;
+    }, label(c, "tsf_aspect_label", "نسبة الارتفاع", "Aspect ratio"))}
               </div>
 
               <div class="tsf-field">
-                <span class="tsf-label">${l(e, "tsf_rim_label", "قطر الجنط", "Rim diameter")}</span>
-                ${this.renderChips(u, this.rim, (n) => {
-      this.rim = n;
-    }, l(e, "tsf_rim_label", "قطر الجنط", "Rim diameter"))}
+                <span class="tsf-label">${label(c, "tsf_rim_label", "قطر الجنط", "Rim diameter")}</span>
+                ${this.renderChips(rims, this.rim, (v) => {
+      this.rim = v;
+    }, label(c, "tsf_rim_label", "قطر الجنط", "Rim diameter"))}
               </div>
 
-              ${this.ready ? m : d`<p class="tsf-hint">
-                    ${p("أكمل اختيار النوع والمقاس لعرض النتيجة المناسبة.", "Complete type and size to see the right match.")}
+              ${this.ready ? nothing : html`<p class="tsf-hint">
+                    ${t("أكمل اختيار النوع والمقاس لعرض النتيجة المناسبة.", "Complete type and size to see the right match.")}
                   </p>`}
             </div>
 
@@ -360,27 +372,27 @@ const y = class y extends x {
     `;
   }
 };
-y.styles = [k, E];
-let o = y;
-h([
-  S({ type: Object })
-], o.prototype, "config");
-h([
-  g()
-], o.prototype, "typeId");
-h([
-  g()
-], o.prototype, "width");
-h([
-  g()
-], o.prototype, "aspect");
-h([
-  g()
-], o.prototype, "rim");
-R(
-  o
+__name(_TireSizeFinder, "TireSizeFinder"), _TireSizeFinder.styles = [sharedSectionCss, componentStyles];
+let TireSizeFinder = _TireSizeFinder;
+__decorateClass([
+  property({ type: Object })
+], TireSizeFinder.prototype, "config");
+__decorateClass([
+  state()
+], TireSizeFinder.prototype, "typeId");
+__decorateClass([
+  state()
+], TireSizeFinder.prototype, "width");
+__decorateClass([
+  state()
+], TireSizeFinder.prototype, "aspect");
+__decorateClass([
+  state()
+], TireSizeFinder.prototype, "rim");
+bindSallaRegistration(
+  TireSizeFinder
 );
-typeof o < "u" && o.registerSallaComponent("salla-tire-size-finder");
+typeof TireSizeFinder < "u" && TireSizeFinder.registerSallaComponent("salla-tire-size-finder");
 export {
-  o as default
+  TireSizeFinder as default
 };

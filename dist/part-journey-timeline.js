@@ -1,10 +1,12 @@
-import { css as $, LitElement as k, nothing as s, html as i } from "lit";
-import { property as w, state as S } from "lit/decorators.js";
-import { classMap as b } from "lit/directives/class-map.js";
-import { styleMap as _ } from "lit/directives/style-map.js";
-import { n as z, l as d, f as I, c as C, h as q, t, s as E, r as M, a as O, b as L } from "./registerSalla-Dct4KN_E.js";
-import { r as P } from "./commerceOutcome-B3T0_-WJ.js";
-const U = $`
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: !0 });
+import { css, LitElement, nothing, html } from "lit";
+import { property, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { n as normalizeCollection, l as localizedString, f as toNumber, c as extractImageUrl, h as sortByOrder, t, s as sharedSectionCss, r as readSectionTheme, a as themeStyleMap, b as bindSallaRegistration } from "./registerSalla-C-gSyj7s.js";
+import { r as renderCommerceOutcome } from "./commerceOutcome--G016JKs.js";
+const componentStyles = css`
   .pjt-shell {
     display: grid;
     gap: 1.5rem;
@@ -314,24 +316,25 @@ const U = $`
     }
   }
 `;
-function v(g) {
-  const e = z(g).map((a, r) => {
-    const n = d(a.title);
+function parseStages(raw) {
+  const parsed = normalizeCollection(raw).map((row, i) => {
+    const title = localizedString(row.title);
     return {
-      id: String(a.id ?? "").trim() || `stage-${r + 1}`,
-      title: n,
-      desc: d(a.desc) || d(a.description),
-      icon: String(a.icon ?? "").trim(),
-      image: C(a.image),
-      quality: d(a.quality),
-      duration: d(a.duration),
-      badge: d(a.badge),
-      order: I(a.order, r + 1)
+      id: String(row.id ?? "").trim() || `stage-${i + 1}`,
+      title,
+      desc: localizedString(row.desc) || localizedString(row.description),
+      icon: String(row.icon ?? "").trim(),
+      image: extractImageUrl(row.image),
+      quality: localizedString(row.quality),
+      duration: localizedString(row.duration),
+      badge: localizedString(row.badge),
+      order: toNumber(row.order, i + 1)
     };
-  }).filter((a) => a.title), o = q(e, "order");
-  return o.length ? o : B();
+  }).filter((stage) => stage.title), sorted = sortByOrder(parsed, "order");
+  return sorted.length ? sorted : defaultStages();
 }
-function B() {
+__name(parseStages, "parseStages");
+function defaultStages() {
   return [
     {
       id: "sourcing",
@@ -401,12 +404,13 @@ function B() {
     }
   ];
 }
-var H = Object.defineProperty, j = (g, e, o, a) => {
-  for (var r = void 0, n = g.length - 1, l; n >= 0; n--)
-    (l = g[n]) && (r = l(e, o, r) || r);
-  return r && H(e, o, r), r;
-};
-const f = class f extends k {
+__name(defaultStages, "defaultStages");
+var __defProp2 = Object.defineProperty, __decorateClass = /* @__PURE__ */ __name((decorators, target, key, kind) => {
+  for (var result = void 0, i = decorators.length - 1, decorator; i >= 0; i--)
+    (decorator = decorators[i]) && (result = decorator(target, key, result) || result);
+  return result && __defProp2(target, key, result), result;
+}, "__decorateClass");
+const _PartJourneyTimeline = class _PartJourneyTimeline extends LitElement {
   constructor() {
     super(...arguments), this.config = {}, this.activeId = "", this.boundLangHandler = () => this.requestUpdate();
   }
@@ -416,129 +420,129 @@ const f = class f extends k {
   disconnectedCallback() {
     window.removeEventListener("language-changed", this.boundLangHandler), super.disconnectedCallback();
   }
-  willUpdate(e) {
-    var o, a;
-    if (e.has("config")) {
-      const r = v((o = this.config) == null ? void 0 : o.pjt_stages);
-      r.some((n) => n.id === this.activeId) || (this.activeId = ((a = r[0]) == null ? void 0 : a.id) ?? "");
+  willUpdate(changed) {
+    var _a, _b;
+    if (changed.has("config")) {
+      const stages = parseStages((_a = this.config) == null ? void 0 : _a.pjt_stages);
+      stages.some((s) => s.id === this.activeId) || (this.activeId = ((_b = stages[0]) == null ? void 0 : _b.id) ?? "");
     }
   }
   get stages() {
-    var e;
-    return v((e = this.config) == null ? void 0 : e.pjt_stages);
+    var _a;
+    return parseStages((_a = this.config) == null ? void 0 : _a.pjt_stages);
   }
   get active() {
-    return this.stages.find((e) => e.id === this.activeId) ?? this.stages[0] ?? null;
+    return this.stages.find((s) => s.id === this.activeId) ?? this.stages[0] ?? null;
   }
   get activeIndex() {
-    const e = this.stages.findIndex((o) => o.id === this.activeId);
-    return e >= 0 ? e : 0;
+    const idx = this.stages.findIndex((s) => s.id === this.activeId);
+    return idx >= 0 ? idx : 0;
   }
-  select(e) {
-    this.activeId = e;
+  select(id) {
+    this.activeId = id;
   }
-  renderPanel(e, o, a) {
-    return e ? i`
+  renderPanel(stage, index, total) {
+    return stage ? html`
       <article class="pjt-panel" role="region" aria-live="polite">
-        <div class=${b({ "pjt-panel__grid": !0, "has-media": !!e.image })}>
+        <div class=${classMap({ "pjt-panel__grid": !0, "has-media": !!stage.image })}>
           <div class="pjt-panel__visual">
-            ${e.image ? i`<img src=${e.image} alt="" loading="lazy" decoding="async" />` : i`<div class="pjt-panel__visual-fallback" aria-hidden="true">
-                  <span class="pjt-panel__visual-icon">${e.icon || "◆"}</span>
+            ${stage.image ? html`<img src=${stage.image} alt="" loading="lazy" decoding="async" />` : html`<div class="pjt-panel__visual-fallback" aria-hidden="true">
+                  <span class="pjt-panel__visual-icon">${stage.icon || "◆"}</span>
                 </div>`}
-            ${e.badge ? i`<span class="pjt-panel__stamp">${e.badge}</span>` : s}
+            ${stage.badge ? html`<span class="pjt-panel__stamp">${stage.badge}</span>` : nothing}
           </div>
 
           <div class="pjt-panel__body">
             <p class="pjt-panel__kicker">
-              ${t("المرحلة", "Stage")} ${o + 1}
+              ${t("المرحلة", "Stage")} ${index + 1}
               <span aria-hidden="true">/</span>
-              ${a}
+              ${total}
             </p>
-            <h3 class="pjt-panel__title">${e.title}</h3>
-            ${e.desc ? i`<p class="pjt-panel__desc">${e.desc}</p>` : s}
+            <h3 class="pjt-panel__title">${stage.title}</h3>
+            ${stage.desc ? html`<p class="pjt-panel__desc">${stage.desc}</p>` : nothing}
 
             <div class="pjt-panel__facts">
-              ${e.quality ? i`<div class="pjt-fact">
+              ${stage.quality ? html`<div class="pjt-fact">
                     <span class="pjt-fact__label">${t("معيار الجودة", "Quality standard")}</span>
-                    <span class="pjt-fact__value">${e.quality}</span>
-                  </div>` : s}
-              ${e.duration ? i`<div class="pjt-fact">
+                    <span class="pjt-fact__value">${stage.quality}</span>
+                  </div>` : nothing}
+              ${stage.duration ? html`<div class="pjt-fact">
                     <span class="pjt-fact__label">${t("المدة التقريبية", "Approx. duration")}</span>
-                    <span class="pjt-fact__value">${e.duration}</span>
-                  </div>` : s}
+                    <span class="pjt-fact__value">${stage.duration}</span>
+                  </div>` : nothing}
             </div>
           </div>
         </div>
       </article>
-    ` : s;
+    ` : nothing;
   }
   render() {
-    const e = this.config || {}, o = M(e, "pjt_"), a = this.stages, r = this.active, n = this.activeIndex, l = d(e.pjt_title), m = d(e.pjt_desc), x = a.length ? Math.round((n + 1) / a.length * 100) : 0;
-    return i`
+    const c = this.config || {}, theme = readSectionTheme(c, "pjt_"), stages = this.stages, active = this.active, activeIdx = this.activeIndex, title = localizedString(c.pjt_title), desc = localizedString(c.pjt_desc), progress = stages.length ? Math.round((activeIdx + 1) / stages.length * 100) : 0;
+    return html`
       <section
         class="fs-section"
-        style=${_(O(o))}
-        aria-label=${l || t("رحلة القطعة", "Part journey timeline")}
+        style=${styleMap(themeStyleMap(theme))}
+        aria-label=${title || t("رحلة القطعة", "Part journey timeline")}
       >
         <div class="fs-container">
-          ${l || m ? i`<div class="fs-hero">
-                ${l ? i`<h2 class="fs-title">${l}</h2>` : s}
-                ${m ? i`<p class="fs-desc">${m}</p>` : s}
-              </div>` : s}
+          ${title || desc ? html`<div class="fs-hero">
+                ${title ? html`<h2 class="fs-title">${title}</h2>` : nothing}
+                ${desc ? html`<p class="fs-desc">${desc}</p>` : nothing}
+              </div>` : nothing}
 
           <div class="pjt-shell">
             <div class="pjt-rail" role="tablist" aria-label=${t("مراحل الرحلة", "Journey stages")}>
               <div class="pjt-rail__line" aria-hidden="true">
-                <span style=${_({ width: `${x}%` })}></span>
+                <span style=${styleMap({ width: `${progress}%` })}></span>
               </div>
 
               <div class="pjt-rail__steps">
-                ${a.map((c, u) => {
-      const h = c.id === (r == null ? void 0 : r.id), y = u < n;
-      return i`
+                ${stages.map((stage, i) => {
+      const isActive = stage.id === (active == null ? void 0 : active.id), isDone = i < activeIdx;
+      return html`
                     <button
                       type="button"
-                      class=${b({
+                      class=${classMap({
         "pjt-node": !0,
-        "is-active": h,
-        "is-done": y
+        "is-active": isActive,
+        "is-done": isDone
       })}
                       role="tab"
-                      aria-selected=${h ? "true" : "false"}
-                      @click=${() => this.select(c.id)}
+                      aria-selected=${isActive ? "true" : "false"}
+                      @click=${() => this.select(stage.id)}
                     >
                       <span class="pjt-node__dot" aria-hidden="true">
-                        ${c.icon ? i`<span class="pjt-node__icon">${c.icon}</span>` : i`<span class="pjt-node__num">${u + 1}</span>`}
+                        ${stage.icon ? html`<span class="pjt-node__icon">${stage.icon}</span>` : html`<span class="pjt-node__num">${i + 1}</span>`}
                       </span>
-                      <span class="pjt-node__label">${c.title}</span>
-                      ${c.badge ? i`<span class="pjt-node__badge">${c.badge}</span>` : s}
+                      <span class="pjt-node__label">${stage.title}</span>
+                      ${stage.badge ? html`<span class="pjt-node__badge">${stage.badge}</span>` : nothing}
                     </button>
                   `;
     })}
               </div>
             </div>
 
-            ${this.renderPanel(r, n, a.length)}
+            ${this.renderPanel(active, activeIdx, stages.length)}
           </div>
 
-          ${P(e, "pjt_", { ready: !!r })}
+          ${renderCommerceOutcome(c, "pjt_", { ready: !!active })}
         </div>
       </section>
     `;
   }
 };
-f.styles = [E, U];
-let p = f;
-j([
-  w({ type: Object })
-], p.prototype, "config");
-j([
-  S()
-], p.prototype, "activeId");
-L(
-  p
+__name(_PartJourneyTimeline, "PartJourneyTimeline"), _PartJourneyTimeline.styles = [sharedSectionCss, componentStyles];
+let PartJourneyTimeline = _PartJourneyTimeline;
+__decorateClass([
+  property({ type: Object })
+], PartJourneyTimeline.prototype, "config");
+__decorateClass([
+  state()
+], PartJourneyTimeline.prototype, "activeId");
+bindSallaRegistration(
+  PartJourneyTimeline
 );
-typeof p < "u" && p.registerSallaComponent("salla-part-journey-timeline");
+typeof PartJourneyTimeline < "u" && PartJourneyTimeline.registerSallaComponent("salla-part-journey-timeline");
 export {
-  p as default
+  PartJourneyTimeline as default
 };
