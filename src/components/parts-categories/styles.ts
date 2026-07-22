@@ -44,24 +44,16 @@ export const componentStyles = css`
     grid-template-columns: repeat(var(--pca-cols, 3), minmax(0, 1fr));
   }
 
-  .pca-slider {
-    display: flex;
-    gap: 0.9rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: 0.2rem;
+  .pca-swiper {
+    overflow: hidden;
   }
 
-  .pca-slider::-webkit-scrollbar {
-    display: none;
+  .pca-swiper .swiper-slide {
+    width: auto;
   }
 
-  .pca-slider > * {
-    flex: 0 0 auto;
+  .pca-slide {
     width: min(210px, 70vw);
-    scroll-snap-align: start;
   }
 
   /* —— Shared image-tile card look (showcase + projects) —— */

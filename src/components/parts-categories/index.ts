@@ -1,9 +1,8 @@
 import { html, LitElement, nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { ref } from 'lit/directives/ref.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { enableDragScroll } from '../../utils/dragScroll.js';
+import { destroyFsSwiper, fsSwiperCss, mountFsSwiper, type Swiper } from '../../utils/fsSwiper.js';
 import {
   extractLink,
   isExternalUrl,
@@ -39,9 +38,13 @@ export default class PartsCategories extends LitElement {
 
   @state() private layout: CategoryLayout = 'projects';
 
-  private boundLangHandler = () => this.requestUpdate();
+  private boundLangHandler = () => {
+    this.requestUpdate();
+    queueMicrotask(() => this.remountSwiper());
+  };
+  private swiper?: Swiper;
 
-  static styles = [sharedSectionCss, componentStyles];
+  static styles = [sharedSectionCss, fsSwiperCss, componentStyles];
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -50,6 +53,8 @@ export default class PartsCategories extends LitElement {
 
   disconnectedCallback(): void {
     window.removeEventListener('language-changed', this.boundLangHandler);
+    destroyFsSwiper(this.swiper);
+    this.swiper = undefined;
     super.disconnectedCallback();
   }
 
@@ -57,6 +62,25 @@ export default class PartsCategories extends LitElement {
     if (changed.has('config')) {
       this.layout = resolveLayout(this.config || {});
     }
+  }
+
+  updated(): void {
+    this.updateComplete.then(() => this.remountSwiper());
+  }
+
+  private remountSwiper(): void {
+    destroyFsSwiper(this.swiper);
+    this.swiper = undefined;
+
+    if (this.layout !== 'slider') return;
+
+    const root = this.renderRoot.querySelector('.pca-swiper') as HTMLElement | null;
+    if (!root || !this.items.length) return;
+
+    this.swiper = mountFsSwiper(root, {
+      slidesPerView: 'auto',
+      spaceBetween: 16,
+    });
   }
 
   private get items(): CategoryItem[] {
@@ -181,16 +205,20 @@ export default class PartsCategories extends LitElement {
     if (this.layout === 'showcase') return this.renderShowcase(items);
     if (this.layout === 'projects') return this.renderProjects(items);
 
+    if (this.layout === 'slider') {
+      return html`
+        <div class="swiper pca-swiper">
+          <div class="swiper-wrapper">
+            ${items.map((item) => html`<div class="swiper-slide pca-slide" role="listitem">${this.renderCard(item)}</div>`)}
+          </div>
+        </div>`;
+    }
+
     const cols = resolveColumns(this.config || {});
     return html`<div
-      class=${this.layout === 'slider' ? 'pca-slider' : 'pca-grid'}
-      style=${this.layout === 'grid' ? styleMap({ '--pca-cols': String(cols) }) : nothing}
+      class="pca-grid"
+      style=${styleMap({ '--pca-cols': String(cols) })}
       role="list"
-      ${ref((el) => {
-        if (el instanceof HTMLElement && el.classList.contains('pca-slider')) {
-          enableDragScroll(el);
-        }
-      })}
     >
       ${items.map((item) => html`<div role="listitem">${this.renderCard(item)}</div>`)}
     </div>`;

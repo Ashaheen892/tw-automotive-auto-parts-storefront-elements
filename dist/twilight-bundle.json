@@ -148,7 +148,9 @@
                             "format": "image",
                             "label": "صورة / شعار الشركة",
                             "value": "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1400&q=80",
-                            "icon": "sicon-image"
+                            "icon": "sicon-image",
+                            "description": "المقاس المقترح: 512×512 بكسل (أيقونة أو شعار مربع). Recommended size: 512×512px (square icon/logo). يفضّل JPG أو WebP بجودة عالية.",
+                            "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>512×512</b> بكسل — أيقونة أو شعار مربع</small>"
                         }
                     ],
                     "value": [
@@ -433,7 +435,9 @@
                     "label": "صورة/رسم السيارة",
                     "value": "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=900&q=80",
                     "required": false,
-                    "icon": "sicon-image"
+                    "icon": "sicon-image",
+                    "description": "المقاس المقترح: 1200×900 بكسل (صورة خريطة/واجهة). Recommended size: 1200×900px (map/diagram). يفضّل JPG أو WebP بجودة عالية.",
+                    "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>1200×900</b> بكسل — صورة خريطة/واجهة</small>"
                 },
                 {
                     "id": "icpm_detail_mode",
@@ -624,8 +628,8 @@
                             "id": "icpm_parts.image",
                             "key": "cc9b1657-f75a-4818-8bf5-c5ad5369429b",
                             "required": false,
-                            "description": null,
-                            "labelHTML": null,
+                            "description": "المقاس المقترح: 1200×900 بكسل (صورة خريطة/واجهة). Recommended size: 1200×900px (map/diagram). يفضّل JPG أو WebP بجودة عالية.",
+                            "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>1200×900</b> بكسل — صورة خريطة/واجهة</small>",
                             "type": "string",
                             "format": "image",
                             "label": "صورة",
@@ -1079,8 +1083,8 @@
                             "id": "dwg_warnings.image",
                             "key": "14216f59-586c-4ab1-b5d2-8a9b70e0c802",
                             "required": false,
-                            "description": null,
-                            "labelHTML": null,
+                            "description": "المقاس المقترح: 800×800 بكسل (مربع عام). Recommended size: 800×800px (general square). يفضّل JPG أو WebP بجودة عالية.",
+                            "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>800×800</b> بكسل — مربع عام</small>",
                             "type": "string",
                             "format": "image",
                             "label": "صورة الرمز",
@@ -4120,8 +4124,8 @@
                             "id": "ips_steps.image",
                             "key": "bc49eb92-bbff-4e6a-ba7e-1b2c9d1bd7b6",
                             "required": false,
-                            "description": null,
-                            "labelHTML": null,
+                            "description": "المقاس المقترح: 800×800 بكسل (بطاقة أو خطوة مربعة). Recommended size: 800×800px (square card/step). يفضّل JPG أو WebP بجودة عالية.",
+                            "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>800×800</b> بكسل — بطاقة أو خطوة مربعة</small>",
                             "type": "string",
                             "format": "image",
                             "label": "صورة",
@@ -5131,7 +5135,8 @@
                             "label": "صورة (اختياري)",
                             "value": "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1400&q=80",
                             "icon": "sicon-image",
-                            "description": "تظهر داخل المحتوى — مثل صورة بطاقة الضمان أو ختم الأصالة."
+                            "description": "المقاس المقترح: 800×800 بكسل (مربع عام). Recommended size: 800×800px (general square). يفضّل JPG أو WebP بجودة عالية.",
+                            "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>800×800</b> بكسل — مربع عام</small>"
                         },
                         {
                             "id": "wac_items.body",
@@ -8952,7 +8957,9 @@
                             "format": "image",
                             "label": "صورة التصنيف",
                             "value": "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1400&q=80",
-                            "required": false
+                            "required": false,
+                            "description": "المقاس المقترح: 800×800 بكسل (مربع عام). Recommended size: 800×800px (general square). يفضّل JPG أو WebP بجودة عالية.",
+                            "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>800×800</b> بكسل — مربع عام</small>"
                         },
                         {
                             "id": "link",
@@ -9251,7 +9258,9 @@
                     "format": "image",
                     "label": "صورة قبل",
                     "value": "https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=1000&q=80",
-                    "required": false
+                    "required": false,
+                    "description": "المقاس المقترح: 1000×1200 بكسل (صورة قبل/بعد عمودية). Recommended size: 1000×1200px (portrait before/after). يفضّل JPG أو WebP بجودة عالية.",
+                    "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>1000×1200</b> بكسل — صورة قبل/بعد عمودية</small>"
                 },
                 {
                     "id": "pba_after_image",
@@ -9260,7 +9269,9 @@
                     "format": "image",
                     "label": "صورة بعد",
                     "value": "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1400&q=80",
-                    "required": false
+                    "required": false,
+                    "description": "المقاس المقترح: 1000×1200 بكسل (صورة قبل/بعد عمودية). Recommended size: 1000×1200px (portrait before/after). يفضّل JPG أو WebP بجودة عالية.",
+                    "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>1000×1200</b> بكسل — صورة قبل/بعد عمودية</small>"
                 },
                 {
                     "id": "pba_before_label",
@@ -9329,7 +9340,9 @@
                             "format": "image",
                             "label": "صورة قبل",
                             "value": "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1400&q=80",
-                            "required": false
+                            "required": false,
+                            "description": "المقاس المقترح: 1000×1200 بكسل (صورة قبل/بعد عمودية). Recommended size: 1000×1200px (portrait before/after). يفضّل JPG أو WebP بجودة عالية.",
+                            "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>1000×1200</b> بكسل — صورة قبل/بعد عمودية</small>"
                         },
                         {
                             "id": "after_image",
@@ -9338,7 +9351,9 @@
                             "format": "image",
                             "label": "صورة بعد",
                             "value": "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1400&q=80",
-                            "required": false
+                            "required": false,
+                            "description": "المقاس المقترح: 1000×1200 بكسل (صورة قبل/بعد عمودية). Recommended size: 1000×1200px (portrait before/after). يفضّل JPG أو WebP بجودة عالية.",
+                            "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>1000×1200</b> بكسل — صورة قبل/بعد عمودية</small>"
                         }
                     ],
                     "value": [
@@ -9582,7 +9597,9 @@
                             "format": "image",
                             "label": "صورة البانر",
                             "value": "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1400&q=80",
-                            "required": false
+                            "required": false,
+                            "description": "المقاس المقترح: 800×800 بكسل (مربع عام). Recommended size: 800×800px (general square). يفضّل JPG أو WebP بجودة عالية.",
+                            "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>800×800</b> بكسل — مربع عام</small>"
                         },
                         {
                             "id": "link",
@@ -9885,7 +9902,9 @@
                     "label": "صورة القطعة المركزية",
                     "value": "https://files.catbox.moe/imxgf2.webp",
                     "required": false,
-                    "icon": "sicon-image"
+                    "icon": "sicon-image",
+                    "description": "المقاس المقترح: 800×800 بكسل (مربع عام). Recommended size: 800×800px (general square). يفضّل JPG أو WebP بجودة عالية.",
+                    "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>800×800</b> بكسل — مربع عام</small>"
                 },
                 {
                     "id": "pfs_center_caption",
@@ -9980,7 +9999,9 @@
                             "label": "أيقونة صورة (اختياري)",
                             "value": "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1400&q=80",
                             "required": false,
-                            "icon": "sicon-image"
+                            "icon": "sicon-image",
+                            "description": "المقاس المقترح: 512×512 بكسل (أيقونة أو شعار مربع). Recommended size: 512×512px (square icon/logo). يفضّل JPG أو WebP بجودة عالية.",
+                            "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>512×512</b> بكسل — أيقونة أو شعار مربع</small>"
                         }
                     ],
                     "value": [
@@ -10206,7 +10227,9 @@
                     "format": "image",
                     "label": "صورة العرض",
                     "value": "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1400&q=80",
-                    "required": false
+                    "required": false,
+                    "description": "المقاس المقترح: 800×800 بكسل (مربع عام). Recommended size: 800×800px (general square). يفضّل JPG أو WebP بجودة عالية.",
+                    "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>800×800</b> بكسل — مربع عام</small>"
                 },
                 {
                     "id": "lto_image_side",
@@ -10503,7 +10526,9 @@
                             "format": "image",
                             "label": "شعار الماركة",
                             "value": "",
-                            "required": true
+                            "required": true,
+                            "description": "المقاس المقترح: 800×800 بكسل (مربع عام). Recommended size: 800×800px (general square). يفضّل JPG أو WebP بجودة عالية.",
+                            "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>800×800</b> بكسل — مربع عام</small>"
                         },
                         {
                             "id": "link",
@@ -10707,7 +10732,9 @@
                     "format": "image",
                     "label": "صورة الغلاف / بديل الفيديو",
                     "value": "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1800&q=80",
-                    "required": false
+                    "required": false,
+                    "description": "المقاس المقترح: 1920×800 بكسل (بانر عريض). Recommended size: 1920×800px (wide banner). يفضّل JPG أو WebP بجودة عالية.",
+                    "labelHTML": "<small style=\"display:block;margin-top:4px;opacity:.85\">📐 المقاس المقترح: <b>1920×800</b> بكسل — بانر عريض</small>"
                 },
                 {
                     "id": "vh_autoplay",
